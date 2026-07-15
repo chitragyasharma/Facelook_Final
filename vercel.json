@@ -2,14 +2,17 @@
   "version": 2,
   "builds": [
     {
-      "src": "server.js",
+      "src": "server/server.js",
       "use": "@vercel/node"
-    }
+    },
+    { "src": "index.html.html", "use": "@vercel/static" },
+    { "src": "client/**", "use": "@vercel/static" },
+    { "src": "*.webp", "use": "@vercel/static" },
+    { "src": "*.png", "use": "@vercel/static" }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "server.js"
-    }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/server/server.js" },
+    { "source": "/admin", "destination": "/client/admin.html" },
+    { "source": "/(.*)", "destination": "/index.html.html" }
   ]
 }

@@ -5,6 +5,12 @@
       "name": "Test User",
       "email": "test@example.com",
       "password": "$2b$10$bEs93bFbpPE0Fve4JKgPLeHt7QqscsRDcQd3V6uAFpMrs9XIfb6g6"
+    },
+    {
+      "id": 2,
+      "name": "Test User",
+      "email": "test@facelook.in",
+      "password": "$2b$10$TUfXdEqzB2hUROYsC.JIEeP6SLu6exnPIr4Qb3ntzCLcHYf1cgFx6"
     }
   ],
   "products": [

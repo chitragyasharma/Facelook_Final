@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FACÉLOOK – Queen of Mattes</title>
+  <title>Facelook </title>
   <link
     href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Jost:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
@@ -154,16 +154,19 @@
       box-shadow: var(--shadow);
     }
 
+    .nav-logo-link {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+    }
+
     .nav-logo {
       font-family: 'Bebas Neue', cursive;
       font-size: 26px;
       letter-spacing: 3px;
       color: var(--rose);
       cursor: pointer;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      margin-left: 0 !important;
     }
 
     .nav-icons {
@@ -660,14 +663,29 @@
     }
 
     .product-img {
-      height: 130px;
-      background: linear-gradient(135deg, var(--nude), var(--nude-mid));
+      aspect-ratio: 1;
+      width: 100%;
+      background: var(--card);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 50px;
       position: relative;
+      overflow: hidden;
     }
+
+    .product-img>img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain !important;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+
 
     .product-tag {
       position: absolute;
@@ -928,13 +946,62 @@
     }
 
     .detail-img {
-      height: 260px;
-      background: linear-gradient(135deg, var(--nude), var(--nude-mid));
+      width: 100%;
+      height: auto;
+      background: var(--card);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 110px;
       position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+
+    #detail-emoji {
+      width: 100%;
+      height: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #detail-emoji img {
+      width: 100%;
+      height: auto;
+      object-fit: contain !important;
+      object-position: center;
+      display: block;
+      border-radius: 16px;
+    }
+
+    .thumbnail-gallery {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+    }
+
+    .thumbnail-gallery::-webkit-scrollbar {
+      display: none;
+    }
+
+    .thumb-img {
+      width: 70px;
+      height: 70px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 2px solid transparent;
+      cursor: pointer;
+      object-fit: contain;
+      flex-shrink: 0;
+      transition: border-color 0.2s;
+    }
+
+    .thumb-img.active {
+      border-color: var(--rose-d);
     }
 
     .detail-body {
@@ -1047,7 +1114,7 @@
 
     .sticky-footer {
       position: fixed;
-      bottom: 0;
+      bottom: 60px;
       left: 50%;
       transform: translateX(-50%);
       width: 100%;
@@ -1055,7 +1122,7 @@
       background: var(--nude-mid);
       border-top: 1px solid var(--border);
       padding: 12px 16px;
-      z-index: 50;
+      z-index: 1100;
     }
 
     #checkout-footer {
@@ -1101,12 +1168,25 @@
       width: 64px;
       height: 64px;
       border-radius: 12px;
-      background: linear-gradient(135deg, var(--nude), var(--nude-mid));
+      background: var(--card);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 28px;
       flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cart-item-img>img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain !important;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     .cart-item-info {
@@ -1740,6 +1820,171 @@
       display: flex;
     }
 
+    /* ══════════════════════════════════════
+       ACCOUNT DASHBOARD
+    ══════════════════════════════════════ */
+    .acc-header {
+      background: linear-gradient(160deg, var(--nude-mid), var(--nude));
+      padding: 30px 20px;
+      text-align: center;
+      font-family: 'Bebas Neue', cursive;
+      font-size: 32px;
+      color: var(--rose-d);
+      letter-spacing: 2px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .acc-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      .acc-wrapper {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+
+      .acc-tabs {
+        width: 280px;
+        position: sticky;
+        top: 100px;
+      }
+    }
+
+    .acc-tabs {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .acc-tab-btn {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--tm);
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .acc-tab-btn:last-child {
+      border-bottom: none;
+    }
+
+    .acc-tab-btn:hover {
+      background: var(--pale);
+      color: var(--rose);
+    }
+
+    .acc-tab-btn.active {
+      background: var(--pale);
+      color: var(--rose);
+      border-left: 4px solid var(--rose);
+    }
+
+    .acc-tab-icon {
+      font-size: 18px;
+    }
+
+    .acc-content-area {
+      flex: 1;
+    }
+
+    .acc-section {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      min-height: 400px;
+    }
+
+    .acc-section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .order-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      transition: all 0.2s;
+    }
+
+    .order-card:hover {
+      border-color: var(--rose-l);
+      box-shadow: var(--shadow);
+    }
+
+    .order-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--nude-mid);
+      padding-bottom: 10px;
+    }
+
+    .order-id {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--td);
+    }
+
+    .order-date {
+      font-size: 11px;
+      color: var(--tl);
+      margin-top: 2px;
+    }
+
+    .order-total {
+      font-weight: 800;
+      color: var(--rose-d);
+      font-size: 16px;
+    }
+
+    .order-status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .status-paid {
+      background: #E6F4EA;
+      color: #1E7E34;
+    }
+
+    .status-pending {
+      background: #FFF4E5;
+      color: #B76E00;
+    }
+
+    .bnav-badge {
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bnav-badge.show {
+      display: flex;
+    }
+
     .bnav-btn.active::after {
       content: '';
       width: 20px;
@@ -1797,9 +2042,9 @@
     }
 
     .shade-dot {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       border: 2px solid rgba(255, 255, 255, .7);
       box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
       cursor: pointer;
@@ -1810,57 +2055,10 @@
       transform: scale(1.25);
     }
 
-    /* ══════════════════════════════════════
-       ACCOUNT PAGE
-    ══════════════════════════════════════ */
-    .account-header {
-                background: linear-gradient(135deg, var(--rose-d), var(--rose));
-                padding: 40px 24px;
-                color: #fff;
-                text-align: center;
-                border-bottom-left-radius: 30px;
-                border-bottom-right-radius: 30px;
-                margin-bottom: 24px;
-            }
-            .account-name { font-family: 'Playfair Display', serif; font-size: 28px; font-style: italic; margin-bottom: 4px; }
-            .account-email { font-size: 14px; opacity: 0.8; letter-spacing: 0.5px; }
-            
-            .order-card {
-                background: var(--card);
-                border: 1px solid var(--border);
-                border-radius: 18px;
-                padding: 16px;
-                margin: 0 16px 16px;
-                box-shadow: var(--shadow);
-            }
-            .order-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-            .order-id { font-size: 11px; font-weight: 700; color: var(--tm); letter-spacing: 1px; }
-            .order-date { font-size: 10px; color: var(--tl); }
-            .order-status {
-                font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 12px; text-transform: uppercase;
-                letter-spacing: 1px;
-            }
-            .status-paid { background: #E8F5E9; color: #2E7D32; }
-            .status-pending { background: #FFF3E0; color: #E65100; }
-            .status-awaiting { background: #E3F2FD; color: #1565C0; }
-
-            .order-items { border-top: 1px dashed var(--border); padding-top: 12px; margin-top: 12px; }
-            .order-item-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--td); margin-bottom: 4px; }
-            .order-total-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: 800; color: var(--rose-d); margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
-            
-            .logout-btn {
-                margin: 20px 16px 40px;
-                background: #FFF0F2;
-                color: #D32F2F;
-                border: 1px solid #FFCDD2;
-                padding: 14px;
-                border-radius: 12px;
-                font-weight: 700;
-                width: calc(100% - 32px);
-                cursor: pointer;
-                transition: all 0.2s;
-            }
-            .logout-btn:hover { background: #FFEBEE; transform: translateY(-2px); }
+    .shade-dot.active {
+      border-color: var(--rose-d);
+      transform: scale(1.25);
+    }
 
     /* --- RESPONSIVE & DESKTOP ORIENTED OVERRIDES --- */
     .desktop-nav-links,
@@ -1888,7 +2086,7 @@
         box-sizing: border-box;
       }
 
-      .navbar .nav-logo {
+      .navbar .nav-logo-link {
         justify-self: start;
         margin-right: 0;
         position: static;
@@ -1905,15 +2103,29 @@
 
       .desktop-nav-icons {
         display: flex;
-        gap: 20px;
+        gap: 24px;
         align-items: center;
-        font-size: 18px;
+        font-size: 22px;
         justify-self: end;
       }
 
 
       .dropdown {
         cursor: pointer;
+        position: static;
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+      }
+
+      .dropdown::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        display: block;
       }
 
       .dropdown-content {
@@ -2014,9 +2226,10 @@
       }
 
       .detail-img {
-        height: 450px;
+        height: auto;
         border-radius: 20px;
         font-size: 200px !important;
+        align-items: flex-start;
       }
 
       .detail-body {
@@ -2028,6 +2241,23 @@
 
       .sticky-footer {
         display: none !important;
+      }
+
+      #checkout-footer {
+        display: block !important;
+        position: static;
+        background: transparent;
+        border: none;
+        padding: 24px 0;
+        transform: none;
+        text-align: center;
+        width: 100%;
+      }
+
+      #checkout-footer .btn {
+        max-width: 340px;
+        margin: 0 auto;
+        display: inline-block;
       }
 
       /* Limit sizes for cleaner desktop view */
@@ -2075,7 +2305,7 @@
       }
 
       .product-img {
-        height: 280px;
+        aspect-ratio: 1;
         font-size: 100px;
       }
 
@@ -2201,10 +2431,254 @@
         padding: 0;
       }
     }
+
+    /* Simulated Payment Overlay */
+    #sim-payment-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(5px);
+      z-index: 10000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sim-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--border);
+      border-top-color: var(--nude-dark);
+      border-radius: 50%;
+      animation: sim-spin 1s linear infinite;
+      margin-bottom: 24px;
+    }
+
+    .sim-spinner.success {
+      border-color: #28a745;
+      animation: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #28a745;
+      color: white;
+      border: none;
+      font-size: 24px;
+      pointer-events: none;
+    }
+
+    @keyframes sim-spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .sim-title {
+      font-family: 'Bebas Neue', cursive;
+      font-size: 32px;
+      color: var(--td);
+      letter-spacing: 1px;
+    }
+
+    .sim-sub {
+      font-size: 14px;
+      color: var(--tm);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ══════════════════════════════════════
+   ACCOUNT PAGE
+══════════════════════════════════════ */
+    .acc-header {
+      padding: 24px 20px 16px;
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: var(--td);
+      background: var(--nude-mid);
+    }
+
+    .acc-wrapper {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .acc-tabs {
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .acc-tab-btn {
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: background .2s;
+      color: var(--td);
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .acc-tab-btn:hover {
+      background: var(--pale);
+    }
+
+    .acc-tab-btn.active {
+      background: #eef5fc;
+      /* light blue */
+      color: #333;
+      font-weight: 600;
+    }
+
+    .acc-tab-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+      color: #666;
+    }
+
+    .acc-tab-btn.active .acc-tab-icon {
+      color: #000;
+    }
+
+    .acc-content-area {
+      padding: 24px 20px;
+      background: var(--bg);
+      min-height: 50vh;
+    }
+
+    .acc-section {
+      display: none;
+    }
+
+    .acc-section.active {
+      display: block;
+      animation: fadeIn .3s ease;
+    }
+
+    .order-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .order-head {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    .order-id {
+      font-weight: 700;
+      color: var(--td);
+      font-size: 14px;
+    }
+
+    .order-date {
+      font-size: 12px;
+      color: var(--tl);
+    }
+
+    .order-total {
+      font-weight: 800;
+      color: var(--rose-d);
+    }
+
+    @media (min-width: 768px) {
+      .acc-wrapper {
+        flex-direction: row;
+        max-width: 1000px;
+        margin: 40px auto;
+        background: transparent;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .acc-tabs {
+        width: 300px;
+        border-right: 1px solid var(--border);
+        flex-shrink: 0;
+        background: #fff;
+      }
+
+      .acc-content-area {
+        flex: 1;
+        padding: 40px;
+        background: #fff;
+        min-height: 600px;
+      }
+    }
+    /* Accordion Styles */
+    .accordion {
+      margin-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .accordion-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .accordion-btn {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--td);
+      cursor: pointer;
+      text-align: left;
+    }
+    .accordion-btn .icon {
+      font-size: 20px;
+      font-weight: 300;
+      transition: transform 0.3s;
+    }
+    .accordion-btn.active .icon {
+      transform: rotate(45deg);
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    .accordion-content-inner {
+      padding-bottom: 16px;
+      font-size: 14px;
+      color: var(--tl);
+      line-height: 1.6;
+    }
   </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
 <body>
+
+  <!-- PAYMENT SIMULATION OVERLAY -->
+  <div id="sim-payment-overlay">
+    <div class="sim-spinner" id="sim-spinner-icon"></div>
+    <div class="sim-title" id="sim-title-text">Processing Payment</div>
+    <div class="sim-sub" id="sim-sub-text">
+      <span style="font-size:16px;">🔒</span> Establishing secure connection...
+    </div>
+  </div>
 
   <!-- ANNOUNCEMENT BAR -->
   <div class="announcement"><span>✦ FACÉLOOK March Offers — Free Shipping on ₹599+ ✦</span></div>
@@ -2212,33 +2686,43 @@
   <!-- NAVBAR -->
   <nav class="navbar">
     <button class="hamburger" onclick="openSidebar()">☰</button>
-    <img src="logo.png" alt="FACÉLOOK" class="nav-logo" onclick="goTo('home')"
-      style="height:40px; cursor:pointer; margin-left: 24px;">
+    <a href="#home" class="nav-logo-link"><img src="logo.png" alt="FACÉLOOK" class="nav-logo"
+        style="height:40px; cursor:pointer;"></a>
     <div class="desktop-nav-links">
-      <a onclick="goTo('home')">Home</a>
-      <a onclick="goTo('shop')">Shop All</a>
+      <a href="#home">Home</a>
+      <a href="#shop">Shop All</a>
       <div class="dropdown">
         <a style="cursor:pointer;">Categories</a>
         <div class="dropdown-content">
-          <a onclick="shopByFilter('Bestseller')">Best Sellers</a>
-          <a onclick="shopByFilter('New')">New Arrivals</a>
-          <a onclick="shopByFilter('Lips')">Lips</a>
-          <a onclick="shopByFilter('Eyes')">Eyes</a>
-          <a onclick="shopByFilter('Face')">Face</a>
-          <a onclick="shopByFilter('Nails')">Nails</a>
+          <a href="#shop-Bestseller">Best Sellers</a>
+          <a href="#shop-New">New Arrivals</a>
+          <a href="#shop-Lips">Lips</a>
+          <a href="#shop-Eyes">Eyes</a>
+          <a href="#shop-Face">Face</a>
+          <a href="#shop-Nails">Nails</a>
         </div>
       </div>
     </div>
     <div class="desktop-nav-icons">
-      <div class="search-box desktop-search" onclick="goTo('shop')"
+      <div class="search-box desktop-search"
         style="width:240px; margin-right:10px; padding:10px 16px; border-radius:20px; border:1px solid var(--border); display:flex; align-items:center; gap:8px;">
         <span style="font-size: 14px;">🔍</span>
-        <input type="text" placeholder="Search..." readonly
-          style="border:none; outline:none; font-family:'Jost',sans-serif; cursor:pointer; pointer-events:none; background:transparent; width:100px;">
+        <input type="text" id="nav-search" placeholder="Search..." oninput="handleGlobalSearch(this)"
+          style="border:none; outline:none; font-family:'Jost',sans-serif; background:transparent; width:100%;">
       </div>
-      <span onclick="goTo('wishlist')" style="cursor:pointer;" title="Wishlist">♡</span>
-      <span onclick="goTo('cart')" style="cursor:pointer;" title="Cart">🛒</span>
-      <span onclick="goTo(state.user?'account':'auth')" style="cursor:pointer;" title="Account">👤</span>
+      <a href="#wishlist"
+        style="position:relative; display:flex; align-items:center; cursor:pointer; text-decoration:none; color:inherit;"
+        title="Wishlist">
+        <span>♡</span>
+        <span class="badge" id="wish-badge" style="top:-6px; right:-12px;">0</span>
+      </a>
+      <a href="#cart"
+        style="position:relative; display:flex; align-items:center; cursor:pointer; text-decoration:none; color:inherit;"
+        title="Cart">
+        <span>🛒</span>
+        <span class="badge" id="cart-badge" style="top:-6px; right:-12px;">0</span>
+      </a>
+      <a href="#account" style="cursor:pointer; text-decoration:none; color:inherit;" title="Account">👤</a>
     </div>
   </nav>
 
@@ -2250,14 +2734,21 @@
       <button class="sidebar-close" onclick="closeSidebar()">✕</button>
     </div>
     <div class="sidebar-greeting" id="sidebar-greeting"></div>
-    <div class="sidebar-link" onclick="goTo('home');closeSidebar()">🏠 Home</div>
-    <div class="sidebar-link" onclick="goTo('shop');closeSidebar()">🛍️ Shop All</div>
-    <div class="sidebar-link" onclick="goTo('wishlist');closeSidebar()">♡ Wishlist</div>
-    <div class="sidebar-link" onclick="goTo('cart');closeSidebar()">🛒 Cart</div>
-    <div class="sidebar-link" onclick="goTo('account');closeSidebar()">👤 My Account</div>
-    <div class="sidebar-link" onclick="goTo('about');closeSidebar()">📖 About Us</div>
-    <div class="sidebar-link" onclick="goTo('contact');closeSidebar()">📬 Contact</div>
-    <div style="margin-top:22px;" id="sidebar-auth-btn"></div>
+    <a href="#home" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🏠
+      Home</a>
+    <a href="#shop" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🛍️ Shop
+      All</a>
+    <a href="#wishlist" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">♡
+      Wishlist</a>
+    <a href="#cart" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🛒
+      Cart</a>
+    <a href="#about" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📖 About
+      Us</a>
+    <a href="#contact" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📬
+      Contact</a>
+    <div style="margin-top:22px; display:none;" id="sidebar-auth-btn">
+      <button class="btn btn-ghost btn-full" onclick="logout()" style="border-radius:12px;">SIGN OUT</button>
+    </div>
   </div>
 
   <!-- TOAST -->
@@ -2265,23 +2756,32 @@
 
   <!-- UPI QR MODAL -->
   <div class="overlay" id="upi-qr-overlay" style="display:none;z-index:9000;">
-    <div class="qr-modal" style="background:var(--card);border:1px solid var(--rose-m);border-radius:24px;padding:30px;max-width:90%;width:380px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;box-shadow:var(--shadow-h);">
-      <div style="font-family:'Bebas Neue',cursive;font-size:32px;color:var(--rose-d);letter-spacing:1px;margin-bottom:8px;">Scan to Pay</div>
-      <p style="color:var(--td);margin-bottom:20px;font-size:15px;">Amount to pay: <strong style="color:var(--rose);font-size:18px;">₹<span id="qr-amount"></span></strong></p>
-      
+    <div class="qr-modal"
+      style="background:var(--card);border:1px solid var(--rose-m);border-radius:24px;padding:30px;max-width:90%;width:380px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;box-shadow:var(--shadow-h);">
+      <div
+        style="font-family:'Bebas Neue',cursive;font-size:32px;color:var(--rose-d);letter-spacing:1px;margin-bottom:8px;">
+        Scan to Pay</div>
+      <p style="color:var(--td);margin-bottom:20px;font-size:15px;">Amount to pay: <strong
+          style="color:var(--rose);font-size:18px;">₹<span id="qr-amount"></span></strong></p>
+
       <div style="background:var(--pale);border-radius:16px;padding:16px;display:inline-block;margin-bottom:20px;">
         <img src="" id="upi-dynamic-qr" style="width:200px;height:200px;border-radius:8px;" alt="Business QR Code">
       </div>
-      
-      <p style="font-size:13px;color:var(--tm);margin-bottom:24px;">Or use UPI ID: <strong style="color:var(--td);">9910215683@ptyes</strong></p>
-      
+
+      <p style="font-size:13px;color:var(--tm);margin-bottom:24px;">Or use UPI ID: <strong
+          style="color:var(--td);">9910215683@ptyes</strong></p>
+
       <div style="text-align:left;margin-bottom:24px;">
-        <label style="font-size:12px;color:var(--tm);font-weight:600;text-transform:uppercase;letter-spacing:1px;">Enter UTR / Transaction ID (12 digits)</label>
-        <input type="text" id="upi-utr-input" placeholder="e.g. 312345678901" style="width:100%;padding:14px;margin-top:8px;border:1px solid var(--border);border-radius:12px;outline:none;font-family:'Jost',sans-serif;font-size:15px;text-align:center;letter-spacing:2px;font-weight:600;color:var(--td);background:var(--bg);" />
+        <label style="font-size:12px;color:var(--tm);font-weight:600;text-transform:uppercase;letter-spacing:1px;">Enter
+          UTR / Transaction ID (12 digits)</label>
+        <input type="text" id="upi-utr-input" placeholder="e.g. 312345678901"
+          style="width:100%;padding:14px;margin-top:8px;border:1px solid var(--border);border-radius:12px;outline:none;font-family:'Jost',sans-serif;font-size:15px;text-align:center;letter-spacing:2px;font-weight:600;color:var(--td);background:var(--bg);" />
       </div>
-      
-      <button class="btn btn-primary btn-full" style="margin-bottom:12px;" onclick="submitUpiQrPayment()">Confirm Payment</button>
-      <button class="btn btn-ghost btn-full" onclick="document.getElementById('upi-qr-overlay').style.display='none'">Cancel</button>
+
+      <button class="btn btn-primary btn-full" style="margin-bottom:12px;" onclick="submitUpiQrPayment()">Confirm
+        Payment</button>
+      <button class="btn btn-ghost btn-full"
+        onclick="document.getElementById('upi-qr-overlay').style.display='none'">Cancel</button>
     </div>
   </div>
 
@@ -2291,10 +2791,10 @@
   <div class="page active" id="page-home">
     <!-- Search -->
     <div class="search-wrap">
-      <div class="search-box" onclick="goTo('shop')" style="cursor:pointer;">
+      <div class="search-box">
         <span>🔍</span>
-        <input type="text" placeholder="Search lipsticks, foundations…" readonly
-          style="cursor:pointer;pointer-events:none;">
+        <input type="text" id="home-search" placeholder="Search lipsticks, foundations…"
+          oninput="handleGlobalSearch(this)">
       </div>
     </div>
 
@@ -2325,13 +2825,13 @@
       <div class="hero-blob blob1"></div>
       <div class="hero-blob blob2"></div>
       <div class="hero-blob blob3"></div>
-      <div class="hero-tag">✦ New Collection 2026</div>
-      <div class="hero-eyebrow">Queen Of</div>
-      <div class="hero-title">MATTES</div>
+      <div class="hero-tag">✦ New Collection 2026 ✦</div>
+      <div class="hero-eyebrow">Where Beauty Meets</div>
+      <div class="hero-title">CONFIDENCE</div>
       <p class="hero-sub">Lips that Rule Hearts</p>
       <div class="hero-btns">
-        <button class="btn btn-primary" onclick="goTo('shop')">Shop Now</button>
-        <button class="btn btn-secondary" onclick="goTo('about')">Explore</button>
+        <a href="#shop" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Shop Now</a>
+        <a href="#about" class="btn btn-secondary" style="text-decoration:none; display:inline-block;">Explore</a>
       </div>
     </div>
 
@@ -2340,7 +2840,7 @@
     <!-- Featured -->
     <div class="sec-header">
       <span class="sec-title">Featured Picks</span>
-      <span class="sec-link" onclick="goTo('shop')">View All →</span>
+      <a href="#shop" class="sec-link" style="text-decoration:none; color:inherit;">View All →</a>
     </div>
     <div class="products-scroll" id="home-featured"></div>
 
@@ -2360,7 +2860,7 @@
     <!-- Bestsellers -->
     <div class="sec-header">
       <span class="sec-title">Bestsellers</span>
-      <span class="sec-link" onclick="goTo('shop')">See More →</span>
+      <a href="#shop" class="sec-link" style="text-decoration:none; color:inherit;">See More →</a>
     </div>
     <div class="products-grid" id="home-bestsellers"></div>
 
@@ -2404,11 +2904,11 @@
       <img src="logo.png" alt="FACÉLOOK" class="footer-logo" style="height:45px; margin-bottom:12px;">
       <div class="footer-tagline">Beauty that Rules Hearts</div>
       <div class="footer-links">
-        <a onclick="goTo('shop')">Shop</a>
-        <a onclick="goTo('about')">About</a>
-        <a onclick="goTo('contact')">Contact</a>
-        <a onclick="goTo('wishlist')">Wishlist</a>
-        <a onclick="goTo('cart')">Cart</a>
+        <a href="#shop">Shop</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="#wishlist">Wishlist</a>
+        <a href="#cart">Cart</a>
       </div>
       <div class="footer-social">
         <div class="social-btn">📸</div>
@@ -2455,24 +2955,35 @@
 ════════════════════════════════════ -->
   <div class="page" id="page-product" style="padding-bottom:100px;">
     <div class="breadcrumb">
-      <a onclick="goTo('shop')">← Shop</a>
+      <a href="#shop">← Shop</a>
       <span>/</span>
       <span id="detail-cat" style="color:var(--tl)"></span>
       <span>/</span>
       <span id="detail-breadcrumb" style="color:var(--tl)"></span>
     </div>
     <div class="desktop-detail-wrapper">
-      <div class="detail-img">
-        <span id="detail-emoji" style="font-size:110px;"></span>
-        <span id="detail-tag-badge" style="position:absolute;top:14px;left:14px;"></span>
-        <button class="product-wish" id="detail-wish-btn" onclick="toggleDetailWish()"
-          style="position:absolute;top:14px;right:16px;font-size:26px;">♡</button>
-        <span id="detail-discount"
-          style="position:absolute;bottom:10px;right:14px;background:var(--rose-d);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;"></span>
+      <div style="display:flex;flex-direction:column;">
+        <div class="detail-img">
+          <span id="detail-emoji" style="font-size:110px;"></span>
+          <span id="detail-tag-badge" style="position:absolute;top:14px;left:14px;"></span>
+          <button class="product-wish" id="detail-wish-btn" onclick="toggleDetailWish()"
+            style="position:absolute;top:14px;right:16px;font-size:26px;">♡</button>
+          <span id="detail-discount"
+            style="position:absolute;bottom:10px;right:14px;background:var(--rose-d);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;"></span>
+        </div>
+        <div class="thumbnail-gallery" id="thumbnail-gallery" style="display:none;"></div>
       </div>
       <div class="detail-body">
         <div class="detail-title" id="detail-name"></div>
         <div class="detail-shade" id="detail-shade"></div>
+
+        <div id="detail-palette-container" style="display:none; margin: 16px 0 24px;">
+          <div
+            style="font-size:11px; font-weight:700; color:var(--tm); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">
+            Select Shade</div>
+          <div class="shade-dots" id="detail-palette-dots" style="justify-content:flex-start; flex-wrap:wrap;"></div>
+        </div>
+
         <div class="detail-price-row">
           <div>
             <span class="detail-price" id="detail-price"></span>
@@ -2484,7 +2995,6 @@
           <span id="detail-stars" style="color:var(--rose);font-size:14px;"></span>
           <span id="detail-reviews" style="font-size:12px;color:var(--tm);"></span>
         </div>
-        <p class="detail-desc" id="detail-desc"></p>
         <div class="qty-row">
           <span style="font-size:13px;font-weight:600;color:var(--td);">Qty:</span>
           <div class="qty-box">
@@ -2502,6 +3012,62 @@
         <div class="detail-actions">
           <button class="btn btn-primary btn-full" onclick="addDetailToCart()">Add to Cart</button>
           <button class="btn btn-secondary btn-full" onclick="buyNow()">Buy Now</button>
+        </div>
+
+        <div class="accordion">
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleAccordion(this)">
+              Product Description
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner" id="detail-desc" style="white-space: pre-line;"></div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleAccordion(this)">
+              How to Use
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                Apply directly from the tube or use a lip brush for precise application. For best results, exfoliate lips before use.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleAccordion(this)">
+              Ingredients
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                Enriched with Vitamin E, Shea Butter, and Jojoba Oil for hydration. Cruelty-free and Paraben-free.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleAccordion(this)">
+              Delivery & Payment Info
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                Delivery in 3-5 business days. Cash on Delivery (COD) available. Secure payment gateway via Razorpay.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleAccordion(this)">
+              Other Information
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                Net Weight: 4.5g<br>Manufactured in India.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2606,13 +3172,12 @@
       </div>
     </div>
     <div style="padding:24px 16px;text-align:center;">
-      <button class="btn btn-primary" onclick="goTo('shop')">Shop Our Products</button>
+      <a href="#shop" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Shop Our Products</a>
     </div>
     <footer>
       <img src="logo.png" alt="FACÉLOOK" class="footer-logo" style="height:45px; margin-bottom:12px;">
       <div class="footer-tagline">Beauty that Rules Hearts</div>
-      <div class="footer-links"><a onclick="goTo('shop')">Shop</a><a onclick="goTo('about')">About</a><a
-          onclick="goTo('contact')">Contact</a></div>
+      <div class="footer-links"><a href="#shop">Shop</a><a href="#about">About</a><a href="#contact">Contact</a></div>
       <div class="footer-copy">© 2026 FACÉLOOK. All rights reserved.</div>
     </footer>
   </div>
@@ -2676,76 +3241,252 @@
   </div>
 
   <!-- ═══════════════════════════════════
+     PAGE: ACCOUNT
+════════════════════════════════════ -->
+  <div class="page" id="page-account">
+    <div class="acc-header">Your Account</div>
+    <div class="acc-wrapper">
+      <div class="acc-tabs">
+        <div class="acc-tab-btn active" data-tab="profile" onclick="switchAccTab('profile')">
+          <span class="acc-tab-icon">👤</span> My Profile
+        </div>
+        <div class="acc-tab-btn" data-tab="orders" onclick="switchAccTab('orders')">
+          <span class="acc-tab-icon">📦</span> Orders
+        </div>
+        <div class="acc-tab-btn" data-tab="coupons" onclick="switchAccTab('coupons')">
+          <span class="acc-tab-icon">🎟️</span> Coupons
+        </div>
+        <div class="acc-tab-btn" data-tab="cards" onclick="switchAccTab('cards')">
+          <span class="acc-tab-icon">💳</span> Saved Cards & Wallet
+        </div>
+        <div class="acc-tab-btn" data-tab="addresses" onclick="switchAccTab('addresses')">
+          <span class="acc-tab-icon">📍</span> Saved Addresses
+        </div>
+        <div class="acc-tab-btn" data-tab="gift" onclick="switchAccTab('gift')">
+          <span class="acc-tab-icon">🎁</span> Gift Cards
+        </div>
+        <div class="acc-tab-btn" data-tab="notifications" onclick="switchAccTab('notifications')">
+          <span class="acc-tab-icon">🔔</span> Notifications
+        </div>
+        <div class="acc-tab-btn" data-tab="logout" onclick="logout()">
+          <span class="acc-tab-icon">🚪</span> Logout
+        </div>
+      </div>
+
+      <div class="acc-content-area">
+        <!-- Profile Section -->
+        <div class="acc-section active" id="acc-profile">
+          <div class="form-title">My Profile</div>
+          <p class="empty-sub">View and update your profile details.</p>
+          <div class="form-group" style="max-width: 400px; margin-top:20px;">
+            <label class="form-label">Name</label>
+            <input class="form-input" type="text" id="prof-name" disabled>
+          </div>
+          <div class="form-group" style="max-width: 400px;">
+            <label class="form-label">Email or Phone</label>
+            <input class="form-input" type="text" id="prof-email" disabled>
+          </div>
+        </div>
+
+        <!-- Orders Section -->
+        <div class="acc-section" id="acc-orders">
+          <div class="form-title">Your Orders</div>
+          <div id="acc-orders-content">
+            <div class="sim-spinner" style="margin:40px auto;border-color:var(--border);border-top-color:var(--rose);">
+            </div>
+          </div>
+        </div>
+
+        <!-- Coupons Section -->
+        <div class="acc-section" id="acc-coupons">
+          <div class="form-title">Coupons</div>
+          <div class="empty-state" style="padding:40px 20px;">
+            <div class="empty-icon">🎟️</div>
+            <div class="empty-title">No Active Coupons</div>
+            <p class="empty-sub">Earn coupons through our rewards program or special events.</p>
+          </div>
+        </div>
+
+        <!-- Cards Section -->
+        <div class="acc-section" id="acc-cards">
+          <div class="form-title">Saved Cards & Wallet</div>
+          <div class="empty-state" style="padding:40px 20px;">
+            <div class="empty-icon">💳</div>
+            <div class="empty-title">No Saved Cards</div>
+            <p class="empty-sub">Save a card during checkout for faster payments.</p>
+          </div>
+        </div>
+
+        <!-- Addresses Section -->
+        <div class="acc-section" id="acc-addresses">
+          <div class="form-title">Saved Addresses</div>
+          <div class="empty-state" style="padding:40px 20px;">
+            <div class="empty-icon">📍</div>
+            <div class="empty-title">No Saved Addresses</div>
+            <p class="empty-sub">Add addresses to ease your checkout process.</p>
+            <button class="btn btn-secondary">Add New Address</button>
+          </div>
+        </div>
+
+        <!-- Gift Cards Section -->
+        <div class="acc-section" id="acc-gift">
+          <div class="form-title">Gift Cards</div>
+          <div class="empty-state" style="padding:40px 20px;">
+            <div class="empty-icon">🎁</div>
+            <div class="empty-title">No Gift Cards</div>
+            <p class="empty-sub">You don't have any active gift cards.</p>
+          </div>
+        </div>
+
+        <!-- Notifications Section -->
+        <div class="acc-section" id="acc-notifications">
+          <div class="form-title">Notifications</div>
+          <div class="empty-state" style="padding:40px 20px;">
+            <div class="empty-icon">🔔</div>
+            <div class="empty-title">All Caught Up!</div>
+            <p class="empty-sub">You have no new notifications.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
      PAGE: AUTH
 ════════════════════════════════════ -->
   <div class="page" id="page-auth">
-    <div class="auth-header">
+    <div class="auth-header" id="auth-main-header">
       <img src="logo.png" alt="FACÉLOOK" class="auth-logo" style="height:45px; margin-bottom:16px;">
-      <div class="auth-title" id="auth-title">Welcome Back 💄</div>
-      <p class="auth-sub" id="auth-sub">Sign in to your account</p>
+      <div class="auth-title" id="auth-title">Welcome 💄</div>
+      <p class="auth-sub" id="auth-sub">Choose your login method to continue</p>
     </div>
-    <div class="auth-toggle">
-      <button class="auth-tab active" id="tab-login" onclick="switchAuth('login')">Sign In</button>
-      <button class="auth-tab" id="tab-signup" onclick="switchAuth('signup')">Sign Up</button>
+
+    <!-- HUB VIEW -->
+    <div class="auth-card" id="auth-hub-view">
+      <div id="g_id_onload" data-client_id="291867843413-2d12fqfpbe1b0n8dh9bau3eu43c8h40j.apps.googleusercontent.com"
+        data-context="signin" data-ux_mode="popup" data-callback="handleGoogleResponse" data-auto_prompt="false">
+      </div>
+      <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="outline"
+        data-text="continue_with" data-size="large" data-logo_alignment="left"
+        style="margin-bottom: 12px; display: flex; justify-content: center;">
+      </div>
+      <button class="btn btn-ghost btn-full"
+        style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Jost', sans-serif; font-weight: 500; letter-spacing: 0;"
+        onclick="switchAuthView('phone_entry')">
+        <span style="font-size:18px;">📱</span> Continue with Phone
+      </button>
+      <div style="display:flex; align-items:center; margin: 16px 0; color:var(--tl); font-size:12px;">
+        <div style="flex:1; height:1px; background:var(--border);"></div>
+        <div style="padding:0 10px;">or</div>
+        <div style="flex:1; height:1px; background:var(--border);"></div>
+      </div>
+      <button class="btn btn-secondary btn-full"
+        style="font-family: 'Jost', sans-serif; font-weight: 500; letter-spacing: 0;" onclick="switchAuthView('email')">
+        ✉️ Continue with Email
+      </button>
     </div>
-    <div class="auth-card">
-      <div class="form-group" id="name-group" style="display:none;">
-        <label class="form-label">Full Name</label>
-        <input class="form-input" type="text" id="auth-name" placeholder="Your full name">
-      </div>
+
+    <!-- PHONE ENTRY VIEW -->
+    <div class="auth-card" id="auth-phone-entry-view" style="display: none;">
+      <button onclick="switchAuthView('hub')"
+        style="background:none;border:none;color:var(--tl);margin-bottom:16px;cursor:pointer;font-size:13px;font-weight:600;">←
+        Back</button>
+      <div class="form-title" style="margin-bottom: 8px;">Enter Your Mobile Number</div>
+      <p style="font-size: 12px; color: var(--tm); margin-bottom: 20px;">We will send you a 4-digit OTP</p>
       <div class="form-group">
-        <label class="form-label">Email</label>
-        <input class="form-input" type="email" id="auth-email" placeholder="your@email.com">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <div class="pw-wrap">
-          <input class="form-input" type="password" id="auth-pw" placeholder="Enter password"
-            style="padding-right:42px;">
-          <button class="pw-toggle" onclick="togglePw()">👁️</button>
+        <div style="display:flex; gap:10px;">
+          <input class="form-input" type="text" value="+91" disabled
+            style="width:50px; text-align:center; padding: 11px 4px; background: var(--pale);">
+          <input class="form-input" type="tel" id="auth-phone" placeholder="10-digit mobile number" style="flex:1;">
         </div>
       </div>
-      <button class="btn btn-primary btn-full" style="margin-top:8px;" onclick="submitAuth()">Sign In</button>
-      <div id="forgot-link" style="text-align:center;margin-top:12px;"><span
-          style="font-size:12px;color:var(--rose);cursor:pointer;font-weight:600;">Forgot password?</span></div>
+      <button class="btn btn-primary btn-full" style="margin-top:8px;" onclick="submitPhoneEntry()">Get OTP</button>
     </div>
-    <div class="auth-footer">
-      <span id="auth-switch-text">Don't have an account? </span>
-      <span class="auth-link" id="auth-switch-btn" onclick="switchAuth('signup')">Sign Up</span>
+
+    <!-- PHONE OTP VIEW -->
+    <div class="auth-card" id="auth-phone-otp-view" style="display: none;">
+      <button onclick="switchAuthView('phone_entry')"
+        style="background:none;border:none;color:var(--tl);margin-bottom:16px;cursor:pointer;font-size:13px;font-weight:600;">←
+        Back</button>
+      <div class="form-title" style="margin-bottom: 8px;">Verify OTP</div>
+      <p style="font-size: 12px; color: var(--tm); margin-bottom: 20px;">Check your Terminal Console for the OTP sent to
+        <br><span id="display-phone" style="font-weight:600;color:var(--td);"></span>
+      </p>
+      <div class="form-group">
+        <input class="form-input" type="text" id="auth-otp" placeholder="Enter 4-digit OTP"
+          style="text-align:center; letter-spacing:4px; font-weight:600; font-size:18px;">
+        <div style="text-align:center;margin-top:10px;"><span
+            style="font-size:11px;color:var(--rose);cursor:pointer;font-weight:600;" onclick="submitPhoneEntry()">Resend
+            OTP</span></div>
+      </div>
+      <button class="btn btn-primary btn-full" style="margin-top:8px;" onclick="submitPhoneOTP()">Verify &
+        Login</button>
+    </div>
+
+    <!-- EMAIL VIEW -->
+    <div id="auth-email-view" style="display: none;">
+      <div style="text-align:center; margin-bottom:16px;">
+        <button onclick="switchAuthView('hub')"
+          style="background:none;border:none;color:var(--tl);cursor:pointer;font-size:13px;font-weight:600;text-decoration:underline;">←
+          Back to all options</button>
+      </div>
+      <div class="auth-toggle">
+        <button class="auth-tab active" id="tab-login" onclick="switchAuthMode('login')">Sign In</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchAuthMode('signup')">Sign Up</button>
+      </div>
+      <div class="auth-card">
+        <div class="form-group" id="name-group" style="display:none;">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" id="auth-name" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="auth-email" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="pw-wrap">
+            <input class="form-input" type="password" id="auth-pw" placeholder="Enter password"
+              style="padding-right:42px;">
+            <button class="pw-toggle" onclick="togglePw()">👁️</button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" style="margin-top:8px;" id="email-submit-btn"
+          onclick="submitAuth()">Sign In</button>
+        <div id="forgot-link" style="text-align:center;margin-top:12px;"><span
+            style="font-size:12px;color:var(--rose);cursor:pointer;font-weight:600;">Forgot password?</span></div>
+      </div>
+      <div class="auth-footer">
+        <span id="auth-switch-text">Don't have an account? </span>
+        <span class="auth-link" id="auth-switch-btn" onclick="switchAuthMode('signup')">Sign Up</span>
+      </div>
     </div>
   </div>
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <button class="bnav-btn active" id="bn-home" onclick="goTo('home')">
+    <a href="#home" class="bnav-btn" id="bn-home" style="text-decoration:none;">
       <span class="bnav-icon">🏠</span><span class="bnav-label">Home</span>
-    </button>
-    <button class="bnav-btn" id="bn-shop" onclick="goTo('shop')">
+    </a>
+    <a href="#shop" class="bnav-btn" id="bn-shop" style="text-decoration:none;">
       <span class="bnav-icon">🛍️</span><span class="bnav-label">Shop</span>
-    </button>
-    <button class="bnav-btn" id="bn-wishlist" onclick="goTo('wishlist')">
+    </a>
+    <a href="#wishlist" class="bnav-btn" id="bn-wishlist" style="text-decoration:none;">
       <span class="bnav-icon">♡</span><span class="bnav-label">Wishlist</span>
       <span class="bnav-badge" id="bn-wish-badge">0</span>
-    </button>
-    <button class="bnav-btn" id="bn-cart" onclick="goTo('cart')">
+    </a>
+    <a href="#cart" class="bnav-btn" id="bn-cart" style="text-decoration:none;">
       <span class="bnav-icon">🛒</span><span class="bnav-label">Cart</span>
       <span class="bnav-badge" id="bn-cart-badge">0</span>
-    </button>
-    <button class="bnav-btn" id="bn-auth" onclick="goTo(state.user?'account':'auth')">
+    </a>
+    <a href="#account" class="bnav-btn" id="bn-auth" style="text-decoration:none;">
       <span class="bnav-icon">👤</span><span class="bnav-label">Account</span>
-    </button>
+    </a>
   </div>
 
   <!-- ═══════════════════════════════════
-       PAGE: ACCOUNT
-  ════════════════════════════════════ -->
-  <div class="page" id="page-account" style="padding-bottom:100px;">
-    <div id="account-content"></div>
-  </div>
-
-  <!-- ═══════════════════════════════════
-       JAVASCRIPT
-  ════════════════════════════════════ -->
+     JAVASCRIPT
+════════════════════════════════════ -->
   <script>
     // ─── DATA ───────────────────────────────────
     const state = {
@@ -2759,6 +3500,7 @@
       checkoutStep: 1,
       authMode: 'login',
       checkoutData: {},
+      accTab: 'orders',
       token: localStorage.getItem('facelook_token') || null
     };
 
@@ -2774,37 +3516,91 @@
 
     let PRODUCTS = [];
 
+    // Connect to localhost backend when developing locally, otherwise use Render production URL
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:3000'
+      : 'https://facelpro.onrender.com';
+
     async function api(url, method = 'GET', body = null) {
       const headers = { 'Content-Type': 'application/json' };
       if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
-      const res = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : null });
+      const res = await fetch(API_BASE + url, { method, headers, body: body ? JSON.stringify(body) : null });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'API Error');
       return data;
     }
 
     // ─── NAVIGATION ─────────────────────────────
-    function goTo(page) {
+    function renderPage(page) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const pageEl = document.getElementById('page-' + page);
-      if (pageEl) pageEl.classList.add('active');
-      
+      document.getElementById('page-' + page).classList.add('active');
       document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
-      const bnMap = { home: 'bn-home', shop: 'bn-shop', wishlist: 'bn-wishlist', cart: 'bn-cart', auth: 'bn-auth', product: 'bn-shop', account: 'bn-auth' };
-      if (bnMap[page]) document.getElementById(bnMap[page])?.classList.add('active');
-      
+      const bnMap = { home: 'bn-home', shop: 'bn-shop', wishlist: 'bn-wishlist', cart: 'bn-cart', auth: 'bn-auth', product: 'bn-shop' };
+      if (bnMap[page]) document.getElementById(bnMap[page]).classList.add('active');
       state.page = page;
       window.scrollTo(0, 0);
+      if (page === 'home') renderHome();
       if (page === 'shop') renderShop();
       if (page === 'cart') renderCart();
       if (page === 'wishlist') renderWishlist();
       if (page === 'checkout') { state.checkoutStep = 1; renderCheckout(); }
-      if (page === 'account') renderAccount();
+      if (page === 'account') {
+        if (!state.token) { window.location.hash = '#auth'; return; }
+        renderAccount();
+      }
+    }
+
+    function goTo(page) {
+      window.location.hash = '#' + page;
+    }
+
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#', '') || 'home';
+      if (hash.startsWith('product-')) {
+        const pId = parseInt(hash.split('-')[1]);
+        if (pId) {
+          const p = PRODUCTS.find(x => x.id === pId);
+          if (p) {
+            openProduct(pId);
+          } else {
+            renderPage('home');
+          }
+        }
+      } else if (hash.startsWith('shop-')) {
+        const cat = hash.split('-')[1];
+        state.shopFilter = cat || 'All';
+        renderPage('shop');
+      } else {
+        if (hash === 'shop') state.shopFilter = 'All';
+        renderPage(hash);
+      }
+    });
+
+    function handleGlobalSearch(el) {
+      const q = el.value;
+      if (state.page !== 'shop') {
+        state.shopFilter = 'All';
+        goTo('shop');
+      }
+      const shopInput = document.getElementById('shop-search');
+      if (shopInput) {
+        shopInput.value = q;
+        renderShop();
+        // Keep focus on the shop input if we just navigated
+        if (el.id !== 'nav-search') {
+          shopInput.focus();
+        }
+      }
+
+      // Sync other search boxes
+      const navSearch = document.getElementById('nav-search');
+      const homeSearch = document.getElementById('home-search');
+      if (navSearch && navSearch !== el) navSearch.value = q;
+      if (homeSearch && homeSearch !== el) homeSearch.value = q;
     }
 
     function shopByFilter(filter) {
-      state.shopFilter = filter;
-      goTo('shop');
+      window.location.hash = '#shop-' + filter;
     }
 
     // ─── TOAST ──────────────────────────────────
@@ -2825,11 +3621,11 @@
       const inWish = state.wishlist.find(w => w.id === p.id);
       const disc = Math.round((1 - p.price / p.orig) * 100);
       return `
-    <div class="product-card" data-id="${p.id}" style="${extraStyle}" onclick="openProduct(${p.id})">
+    <a href="#product-${p.id}" target="_blank" class="product-card" data-id="${p.id}" style="${extraStyle}; text-decoration:none; color:inherit; display:block;">
       <div class="product-img">
-        <span style="font-size:50px;">${p.emoji}</span>
+        ${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;">` : `<span style="font-size:50px;">${p.emoji || '💄'}</span>`}
         ${p.tag ? `<span class="product-tag">${p.tag}</span>` : ''}
-        <button class="product-wish ${inWish ? 'active' : ''}" onclick="event.stopPropagation();toggleWish(${p.id})">${inWish ? '♥' : '♡'}</button>
+        <button class="product-wish ${inWish ? 'active' : ''}" onclick="event.preventDefault();event.stopPropagation();toggleWish(${p.id})">${inWish ? '♥' : '♡'}</button>
         <span class="product-discount">${disc}% OFF</span>
       </div>
       <div class="product-info">
@@ -2838,10 +3634,10 @@
         <div class="product-shade">${p.shade}</div>
         <div class="product-row">
           <div><span class="product-price">₹${p.price}</span><span class="product-orig">₹${p.orig}</span></div>
-          <button class="add-cart-btn" onclick="event.stopPropagation();addToCart(${p.id})">+</button>
+          <button class="add-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart(${p.id})">+</button>
         </div>
       </div>
-    </div>`;
+    </a>`;
     }
 
     // ─── HOME ────────────────────────────────────
@@ -2861,12 +3657,15 @@
     }
 
     function setFilter(cat) {
-      state.shopFilter = cat;
-      renderShop();
+      window.location.hash = '#shop-' + cat;
     }
 
     function clearSearch() {
       document.getElementById('shop-search').value = '';
+      const navSearch = document.getElementById('nav-search');
+      const homeSearch = document.getElementById('home-search');
+      if (navSearch) navSearch.value = '';
+      if (homeSearch) homeSearch.value = '';
       document.getElementById('clear-search').style.display = 'none';
       renderShop();
     }
@@ -2899,6 +3698,53 @@
     }
 
     // ─── PRODUCT DETAIL ──────────────────────────
+    function toggleAccordion(btn) {
+      btn.classList.toggle("active");
+      const content = btn.nextElementSibling;
+      const icon = btn.querySelector('.icon');
+      if (btn.classList.contains("active")) {
+        content.style.maxHeight = content.scrollHeight + "px";
+        icon.textContent = "−";
+      } else {
+        content.style.maxHeight = null;
+        icon.textContent = "+";
+      }
+    }
+
+    function selectPaletteShade(index, pid) {
+      const p = PRODUCTS.find(x => x.id === pid);
+      if (!p || !p.palette || !p.palette[index]) return;
+      const shadeData = p.palette[index];
+
+      const mainImg = document.getElementById('main-detail-img');
+      const isCompact = p.name && (p.name.toLowerCase().includes('cover me') || p.name.toLowerCase().includes('compact'));
+      const targetSrc = isCompact && p.images && p.images.length > 0 ? p.images[0] : (shadeData.image || p.image || '');
+
+      if (mainImg) {
+        if (!isCompact && targetSrc) {
+          mainImg.src = targetSrc;
+          mainImg.style.objectFit = 'contain';
+        }
+      } else {
+        document.getElementById('detail-emoji').innerHTML = targetSrc ? `<img src="${targetSrc}" id="main-detail-img" style="width:100%;height:100%;object-fit:contain;">` : (p.emoji || '💄');
+      }
+
+      document.getElementById('detail-shade').innerHTML = 'Shade: <span style="font-weight:600;color:var(--td);">' + shadeData.name + '</span>';
+
+      document.querySelectorAll('#detail-palette-dots .shade-dot').forEach((el, i) => {
+        el.classList.toggle('active', i === index);
+      });
+    }
+    function swapDetailImage(src, el, pid) {
+      const mainImg = document.getElementById('main-detail-img');
+      if (mainImg) {
+        mainImg.src = src;
+        mainImg.style.objectFit = 'contain';
+      }
+      document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
+      if (el) el.classList.add('active');
+    }
+
     function openProduct(id) {
       const p = PRODUCTS.find(x => x.id === id);
       state.currentProduct = p;
@@ -2906,11 +3752,61 @@
       const disc = Math.round((1 - p.price / p.orig) * 100);
       const inW = state.wishlist.find(w => w.id === p.id);
 
-      document.getElementById('detail-emoji').textContent = p.emoji;
+      let mainSrc = p.image;
+      if (p.images && p.images.length > 0) mainSrc = p.images[0];
+
+      document.getElementById('detail-emoji').innerHTML = mainSrc ? `<img src="${mainSrc}" id="main-detail-img" style="width:100%;height:100%;object-fit:contain;">` : (p.emoji || '💄');
+
+      const isCompactProduct = p.name && (p.name.toLowerCase().includes('cover me') || p.name.toLowerCase().includes('compact'));
+
+      const thumbGallery = document.getElementById('thumbnail-gallery');
+      let galleryImages = [];
+      if (p.images && p.images.length > 0) {
+        galleryImages = [...p.images];
+      }
+      if (isCompactProduct && p.palette && p.palette.length > 0) {
+        p.palette.forEach(sh => {
+          if (sh.image && !galleryImages.includes(sh.image)) {
+            galleryImages.push(sh.image);
+          }
+        });
+      }
+
+      if (galleryImages.length > 1) {
+        thumbGallery.style.display = 'flex';
+        thumbGallery.innerHTML = galleryImages.map((src, idx) =>
+          `<img src="${src}" class="thumb-img ${idx === 0 ? 'active' : ''}" onclick="swapDetailImage('${src}', this, ${p.id})">`
+        ).join('');
+      } else {
+        thumbGallery.style.display = 'none';
+        thumbGallery.innerHTML = '';
+      }
+
       document.getElementById('detail-cat').textContent = p.cat;
       document.getElementById('detail-breadcrumb').textContent = p.name;
       document.getElementById('detail-name').textContent = p.name;
-      document.getElementById('detail-shade').textContent = 'Shade: ' + p.shade;
+      const shadeEl = document.getElementById('detail-shade');
+      if (isCompactProduct) {
+        shadeEl.style.display = 'none';
+      } else {
+        shadeEl.style.display = 'block';
+        shadeEl.innerHTML = 'Shade: <span style="font-weight:600;color:var(--td);">' + p.shade + '</span>';
+      }
+
+      const palContainer = document.getElementById('detail-palette-container');
+      const palDots = document.getElementById('detail-palette-dots');
+      if (p.palette && p.palette.length > 0 && !isCompactProduct) {
+        palContainer.style.display = 'block';
+        palDots.innerHTML = p.palette.map((item, idx) =>
+          `<div class="shade-dot ${idx === 0 ? 'active' : ''}" style="background:${item.hex};" title="${item.name}" onclick="selectPaletteShade(${idx}, ${p.id})"></div>`
+        ).join('');
+
+        selectPaletteShade(0, p.id);
+      } else {
+        palContainer.style.display = 'none';
+        palDots.innerHTML = '';
+      }
+
       document.getElementById('detail-price').textContent = '₹' + p.price;
       document.getElementById('detail-orig').textContent = '₹' + p.orig;
       document.getElementById('detail-discount').textContent = disc + '% OFF';
@@ -2930,7 +3826,7 @@
       const related = PRODUCTS.filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4);
       document.getElementById('related-products').innerHTML = related.map(r => productCardHTML(r, 'width:140px;flex-shrink:0;')).join('');
 
-      goTo('product');
+      renderPage('product');
     }
 
     function changeQty(delta) {
@@ -3020,7 +3916,7 @@
     <div class="cart-items">
       ${state.cart.map(item => `
         <div class="cart-item">
-          <div class="cart-item-img">${item.emoji}</div>
+          <div class="cart-item-img">${item.image ? `<img src="${item.image}">` : (item.emoji || '💄')}</div>
           <div class="cart-item-info">
             <div class="cart-item-name">${item.name}</div>
             <div class="cart-item-shade">${item.shade}</div>
@@ -3146,70 +4042,12 @@
           </div>`).join('')}
         <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:16px;">
           <div style="font-size:13px;font-weight:700;color:var(--td);margin-bottom:10px;">Order Summary</div>
-          ${state.cart.map(item => `<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;color:var(--tm);"><span>${item.emoji} ${item.name} ×${item.qty}</span><span>₹${item.price * item.qty}</span></div>`).join('')}
+          ${state.cart.map(item => `<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;color:var(--tm);"><span style="display:flex;align-items:center;gap:6px;">${item.image ? `<img src="${item.image}" style="width:20px;height:20px;object-fit:cover;border-radius:4px;">` : (item.emoji || '💄')} ${item.name} ×${item.qty}</span><span>₹${item.price * item.qty}</span></div>`).join('')}
           <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px;display:flex;justify-content:space-between;font-weight:800;font-size:14px;color:var(--rose-d);"><span>Total</span><span>₹${total}</span></div>
         </div>
       </div>`;
         document.getElementById('checkout-footer').innerHTML = `<button class="btn btn-primary btn-full" onclick="nextCheckout(2)">Place Order — ₹${total}</button>`;
       }
-    }
-
-    // ─── ACCOUNT & ORDERS ───────────────────────
-    async function renderAccount() {
-      const el = document.getElementById('account-content');
-      if (!state.user) return goTo('auth');
-
-      el.innerHTML = `
-        <div class="account-header">
-          <div class="account-name">${state.user.name}</div>
-          <div class="account-email">${state.user.email}</div>
-        </div>
-        <div class="sec-header"><span class="sec-title">Order History</span></div>
-        <div id="orders-list"><div style="text-align:center;padding:40px;color:var(--tl);">Loading orders...</div></div>
-        <button class="logout-btn" onclick="logout()">Log Out</button>
-      `;
-
-      try {
-        const orders = await api('/api/orders');
-        const listEl = document.getElementById('orders-list');
-        if (orders.length === 0) {
-          listEl.innerHTML = `<div style="text-align:center;padding:40px;color:var(--tl);">No orders yet ✨</div>`;
-          return;
-        }
-
-        listEl.innerHTML = orders.map(o => {
-          const date = new Date(o.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-          const statusClass = o.status === 'Paid' ? 'status-paid' : o.status === 'Pending' ? 'status-pending' : 'status-awaiting';
-          return `
-            <div class="order-card">
-              <div class="order-top">
-                <div>
-                  <div class="order-id">ORDER #${o.id}</div>
-                  <div class="order-date">${date}</div>
-                </div>
-                <div class="order-status ${statusClass}">${o.status}</div>
-              </div>
-              ${o.razorpay_payment_id ? `<div style="font-size:10px;color:var(--tl);margin-bottom:8px;">Payment ID: ${o.razorpay_payment_id}</div>` : ''}
-              <div class="order-items">
-                <div class="order-item-row" style="font-weight:600;"><span>Total Amount</span><span>₹${o.total}</span></div>
-              </div>
-            </div>
-          `;
-        }).join('');
-      } catch (err) {
-        document.getElementById('orders-list').innerHTML = `<div style="text-align:center;padding:40px;color:red;">Error loading orders</div>`;
-      }
-    }
-
-    function logout() {
-      state.token = null;
-      state.user = null;
-      state.cart = [];
-      state.wishlist = [];
-      localStorage.removeItem('facelook_token');
-      updateBadges();
-      goTo('home');
-      showToast("Logged out successfully");
     }
 
     function selectPay(val) {
@@ -3220,54 +4058,34 @@
       renderCheckout();
     }
 
-    async function finishCheckout() {
-      const sub = state.cart.reduce((a, i) => a + i.price * i.qty, 0);
-      const ship = sub >= 599 ? 0 : 49;
-      const total = sub + ship;
-      try {
-        const res = await api('/api/checkout', 'POST', { total, details: state.checkoutData });
-        const order_id = res.order_id;
-
-        if (state.checkoutData.pay === 'cod') {
-          state.cart = [];
-          updateBadges();
-          state.checkoutStep = 3;
-          renderCheckout();
-          window.scrollTo(0, 0);
-        } else if (state.checkoutData.pay === 'upi') {
-          showUpiQrModal(total, order_id);
-        } else {
-          processRazorpayPayment(total, order_id);
-        }
-      } catch (err) { showToast(err.message); }
-    }
-
     async function processRazorpayPayment(amount, order_id) {
       try {
         const { key } = await api('/api/payment/key');
         const rzpOrder = await api('/api/payment/create-order', 'POST', { amount });
-        
+
         const options = {
           key: key,
           amount: rzpOrder.amount,
           currency: rzpOrder.currency,
           name: "FACELOOK",
-          description: "Queen of Mattes Collection",
+          description: "Purchase Payment",
           order_id: rzpOrder.id,
           handler: async function (response) {
             try {
-              await api('/api/payment/verify', 'POST', {
+              const verifyRes = await api('/api/payment/verify', 'POST', {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
                 order_id: order_id
               });
-              state.cart = [];
-              updateBadges();
-              state.checkoutStep = 3;
-              renderCheckout();
-              window.scrollTo(0, 0);
-              showToast("Payment Successful!");
+
+              if (verifyRes.success) {
+                state.cart = [];
+                updateBadges();
+                state.checkoutStep = 3;
+                renderCheckout();
+                showToast("Payment Successful!");
+              }
             } catch (err) {
               showToast("Verification failed: " + err.message);
             }
@@ -3296,10 +4114,6 @@
           };
         }
 
-        // Note: In real production, we would fetch the Razorpay Key ID from the backend
-        // For now, if the user has RAZORPAY_KEY_ID in .env, they should manually update this or we can add an endpoint to get it.
-        // Let's add an endpoint /api/payment/key to get the public key.
-
         const rzp = new Razorpay(options);
         rzp.on('payment.failed', function (response) {
           showToast("Payment Failed: " + response.error.description);
@@ -3307,6 +4121,32 @@
         rzp.open();
       } catch (err) {
         showToast("Error starting payment: " + err.message);
+      }
+    }
+
+    async function finishCheckout() {
+      const sub = state.cart.reduce((a, i) => a + i.price * i.qty, 0);
+      const ship = sub >= 599 ? 0 : 49;
+      const total = sub + ship;
+
+      try {
+        const res = await api('/api/checkout', 'POST', { total, details: state.checkoutData });
+        const order_id = res.order_id;
+
+        if (state.checkoutData.pay === 'cod') {
+          state.cart = [];
+          updateBadges();
+          state.checkoutStep = 3;
+          renderCheckout();
+          window.scrollTo(0, 0);
+        } else if (state.checkoutData.pay === 'upi') {
+          showUpiQrModal(total, order_id);
+        } else {
+          // Process digital payment with Razorpay
+          processRazorpayPayment(total, order_id);
+        }
+      } catch (err) {
+        showToast(err.message);
       }
     }
 
@@ -3318,10 +4158,7 @@
         state.checkoutData.address = document.getElementById('co-addr')?.value || '';
         state.checkoutData.city = document.getElementById('co-city')?.value || '';
         state.checkoutData.pincode = document.getElementById('co-pin')?.value || '';
-        if (!state.checkoutData.name || !state.checkoutData.email || !state.checkoutData.phone) { 
-          showToast('Please fill all required fields'); 
-          return; 
-        }
+        if (!state.checkoutData.name || !state.checkoutData.email) { showToast('Please fill required fields'); return; }
       }
       if (step === 2) {
         if (!state.checkoutData.pay) state.checkoutData.pay = 'card';
@@ -3334,7 +4171,77 @@
     }
 
     // ─── AUTH ────────────────────────────────────
-    function switchAuth(mode) {
+    let currentAuthPhone = '';
+
+    function switchAuthView(view) {
+      document.getElementById('auth-hub-view').style.display = view === 'hub' ? 'block' : 'none';
+      document.getElementById('auth-phone-entry-view').style.display = view === 'phone_entry' ? 'block' : 'none';
+      document.getElementById('auth-phone-otp-view').style.display = view === 'phone_otp' ? 'block' : 'none';
+      document.getElementById('auth-email-view').style.display = view === 'email' ? 'block' : 'none';
+
+      const title = document.getElementById('auth-title');
+      const sub = document.getElementById('auth-sub');
+      if (view === 'hub') { title.textContent = 'Welcome 💄'; sub.textContent = 'Choose your login method to continue'; }
+      if (view === 'phone_entry' || view === 'phone_otp') { title.textContent = 'Mobile Verification'; sub.textContent = 'Secure, fast authentication'; }
+      if (view === 'email') switchAuthMode('login');
+    }
+
+    async function submitPhoneEntry() {
+      const fieldVal = document.getElementById('auth-phone').value;
+      const p = fieldVal.trim().replace(/\s/g, '');
+      if (!p || p.length < 10) return showToast('Enter valid 10-digit number');
+      currentAuthPhone = p;
+      try {
+        await api('/api/auth/send-otp', 'POST', { phone: p });
+        document.getElementById('display-phone').textContent = '+91 ' + p;
+        switchAuthView('phone_otp');
+        showToast('OTP sent to your number!');
+      } catch (e) { showToast(e.message); }
+    }
+
+    async function submitPhoneOTP() {
+      const fieldVal = document.getElementById('auth-otp').value;
+      const otp = fieldVal.trim().replace(/\s/g, '');
+      if (!otp) return showToast('Enter OTP');
+      try {
+        const data = await api('/api/auth/verify-otp', 'POST', { phone: currentAuthPhone, otp });
+        authSuccess(data);
+      } catch (e) { showToast(e.message); }
+    }
+
+    async function handleGoogleResponse(response) {
+      try {
+        const data = await api('/api/auth/google', 'POST', { credential: response.credential });
+        authSuccess(data);
+      } catch (e) { showToast(e.message); }
+    }
+
+    // Developer tool to simulate Google login if Google Client ID is missing/invalid
+    window.addEventListener('load', () => {
+      const btnWrapper = document.querySelector('.g_id_signin');
+      if (btnWrapper) {
+        btnWrapper.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          const mockJwtPayload = btoa(JSON.stringify({ email: 'test@gmail.com', name: 'Google Tester', sub: 'mock123' }));
+          handleGoogleResponse({ credential: 'mock.' + mockJwtPayload + '.mock' });
+        });
+      }
+    });
+
+    async function authSuccess(data) {
+      state.token = data.token;
+      state.user = data.user;
+      localStorage.setItem('facelook_token', data.token);
+
+      showToast('Welcome, ' + state.user.name + '! 💄');
+
+      // Delay slightly so they can see the toast before the screen refreshes seamlessly to Home
+      setTimeout(() => {
+        window.location.reload();
+      }, 700);
+    }
+
+    function switchAuthMode(mode) {
       state.authMode = mode;
       document.getElementById('tab-login').classList.toggle('active', mode === 'login');
       document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
@@ -3342,10 +4249,10 @@
       document.getElementById('forgot-link').style.display = mode === 'login' ? 'block' : 'none';
       document.getElementById('auth-title').textContent = mode === 'login' ? 'Welcome Back 💄' : 'Create Account ✨';
       document.getElementById('auth-sub').textContent = mode === 'login' ? 'Sign in to your account' : 'Join the FACÉLOOK family';
-      document.querySelector('.auth-card button').textContent = mode === 'login' ? 'Sign In' : 'Create Account';
+      document.getElementById('email-submit-btn').textContent = mode === 'login' ? 'Sign In' : 'Create Account';
       document.getElementById('auth-switch-text').textContent = mode === 'login' ? "Don't have an account? " : "Already have an account? ";
       document.getElementById('auth-switch-btn').textContent = mode === 'login' ? 'Sign Up' : 'Sign In';
-      document.getElementById('auth-switch-btn').onclick = () => switchAuth(mode === 'login' ? 'signup' : 'login');
+      document.getElementById('auth-switch-btn').onclick = () => switchAuthMode(mode === 'login' ? 'signup' : 'login');
     }
 
     function togglePw() {
@@ -3364,35 +4271,22 @@
       try {
         const endpoint = state.authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
         const data = await api(endpoint, 'POST', { email, password: pw, name });
-        state.token = data.token;
-        state.user = data.user;
-        localStorage.setItem('facelook_token', data.token);
-
-        state.cart = await api('/api/cart');
-        state.wishlist = await api('/api/wishlist');
-
-        updateAuthUI();
-        updateBadges();
-        showToast('Welcome, ' + state.user.name + '! 💄');
-        goTo('home');
+        authSuccess(data);
       } catch (err) {
         showToast(err.message);
       }
     }
 
-    function handleAuthNav() {
-      if (state.user) {
-        if (confirm('Sign out of your account?')) {
-          state.user = null;
-          state.token = null;
-          localStorage.removeItem('facelook_token');
-          state.cart = [];
-          state.wishlist = [];
-          updateAuthUI();
-          updateBadges();
-          showToast('Signed out successfully');
-        }
-      } else goTo('auth');
+    function logout() {
+      state.user = null;
+      state.token = null;
+      localStorage.removeItem('facelook_token');
+      state.cart = [];
+      state.wishlist = [];
+      updateAuthUI();
+      updateBadges();
+      showToast('Signed out successfully');
+      goTo('home');
     }
 
     function updateAuthUI() {
@@ -3403,14 +4297,81 @@
       }
       const g = document.getElementById('sidebar-greeting');
       if (g) {
-        if (state.user) { g.style.display = 'block'; g.innerHTML = `👋 Hi, <strong style="color:var(--rose-d)">${state.user.name}</strong>!`; }
-        else g.style.display = 'none';
+        if (state.user) {
+          g.style.background = 'var(--pale)';
+          g.style.borderRadius = '12px';
+          g.style.padding = '12px 14px';
+          g.style.fontSize = '13px';
+          g.style.color = 'var(--tm)';
+          g.style.display = 'block';
+          g.innerHTML = `👋 Hi, <strong style="color:var(--rose-d)">${state.user.name}</strong>!`;
+        } else {
+          g.style.display = 'none';
+        }
       }
       const sab = document.getElementById('sidebar-auth-btn');
       if (sab) {
-        sab.innerHTML = state.user
-          ? `<button class="btn btn-ghost btn-full" onclick="handleAuthNav();closeSidebar();">Sign Out</button>`
-          : `<button class="btn btn-primary btn-full" onclick="goTo('auth');closeSidebar();">Sign In / Sign Up</button>`;
+        sab.style.display = 'block';
+        if (state.user) {
+          sab.innerHTML = `<button class="btn btn-ghost btn-full" onclick="logout();closeSidebar();" style="border-radius:30px; border:1px solid var(--nude-dark); color:var(--td); font-family:'Bebas Neue',cursive; font-size:18px;">SIGN OUT</button>`;
+        } else {
+          sab.innerHTML = `<button class="btn btn-primary btn-full" onclick="goTo('auth');closeSidebar();" style="border-radius:30px; font-family:'Bebas Neue',cursive; font-size:18px;">SIGN IN / SIGN UP</button>`;
+        }
+      }
+    }
+
+    // ─── ACCOUNT ─────────────────────────────────
+    function renderAccount() {
+      document.getElementById('prof-name').value = state.user?.name || '';
+      document.getElementById('prof-email').value = state.user?.email || state.user?.phone || '';
+      switchAccTab(state.accTab);
+    }
+
+    function switchAccTab(tab) {
+      state.accTab = tab;
+      document.querySelectorAll('.acc-tab-btn').forEach(btn => {
+        if (btn.dataset.tab === tab) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+      document.querySelectorAll('.acc-section').forEach(sec => {
+        if (sec.id === 'acc-' + tab) sec.classList.add('active');
+        else sec.classList.remove('active');
+      });
+      if (tab === 'orders') fetchOrders();
+    }
+
+    async function fetchOrders() {
+      if (!state.token) return;
+      try {
+        const orders = await api('/api/orders');
+        let html = '';
+        if (orders.length === 0) {
+          html = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">📦</div><div class="empty-title">No orders yet</div><p class="empty-sub">When you place orders, they will appear here.</p><button class="btn btn-primary" onclick="goTo('shop')">Start Shopping</button></div>`;
+        } else {
+          orders.forEach(o => {
+            const isPaid = o.status === 'Paid' || o.payment_status === 'Paid' || o.details?.pay === 'cod';
+            html += `<div class="order-card">
+              <div class="order-head">
+                <div>
+                  <div class="order-id">Order #${o.id || o._id.toString().slice(-6)}</div>
+                  <div class="order-date">Placed on ${new Date(o.createdAt || Date.now()).toLocaleDateString()}</div>
+                </div>
+                <div class="order-total">₹${o.total}</div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-size:13px;color:var(--tm);">
+                  Method: ${o.details?.pay?.toUpperCase() || 'Digital'}
+                </div>
+                <span class="order-status ${isPaid ? 'status-paid' : 'status-pending'}">
+                  ${isPaid ? 'Paid' : 'Pending'}
+                </span>
+              </div>
+            </div>`;
+          });
+        }
+        document.getElementById('acc-orders-content').innerHTML = html;
+      } catch (e) {
+        document.getElementById('acc-orders-content').innerHTML = `<div class="empty-state"><p style="color:var(--tl)">${e.message}</p></div>`;
       }
     }
 
@@ -3432,10 +4393,10 @@
       const wb = document.getElementById('wish-badge');
       const bnc = document.getElementById('bn-cart-badge');
       const bnw = document.getElementById('bn-wish-badge');
-      cb.textContent = cartN; cb.classList.toggle('show', cartN > 0);
-      wb.textContent = wishN; wb.classList.toggle('show', wishN > 0);
-      bnc.textContent = cartN; bnc.classList.toggle('show', cartN > 0);
-      bnw.textContent = wishN; bnw.classList.toggle('show', wishN > 0);
+      if (cb) { cb.textContent = cartN; cb.classList.toggle('show', cartN > 0); }
+      if (wb) { wb.textContent = wishN; wb.classList.toggle('show', wishN > 0); }
+      if (bnc) { bnc.textContent = cartN; bnc.classList.toggle('show', cartN > 0); }
+      if (bnw) { bnw.textContent = wishN; bnw.classList.toggle('show', wishN > 0); }
     }
 
     // ─── CONTACT ─────────────────────────────────
@@ -3472,10 +4433,10 @@
         showToast("Please enter a valid UTR or Transaction ID");
         return;
       }
-      
+
       try {
         await api('/api/checkout/upi', 'POST', { order_id: currentUpiOrderId, utr: utr });
-        
+
         document.getElementById('upi-qr-overlay').style.display = 'none';
         state.cart = [];
         updateBadges();
@@ -3490,6 +4451,14 @@
 
     // ─── INIT ────────────────────────────────────
     async function initApp() {
+      // Instantly switch to the correct page skeleton to avoid waiting on the homepage
+      const initialHash = window.location.hash.replace('#', '') || 'home';
+      const initialPage = initialHash.startsWith('product-') ? 'product' :
+        initialHash.startsWith('shop-') ? 'shop' : initialHash;
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const targetPage = document.getElementById('page-' + initialPage);
+      if (targetPage) targetPage.classList.add('active');
+
       try {
         PRODUCTS = await api('/api/products');
         if (state.token) {
@@ -3499,7 +4468,23 @@
       } catch (err) {
         console.error("Init Error:", err);
       }
-      renderHome();
+      // Trigger initial route
+      if (initialHash.startsWith('product-')) {
+        const pId = parseInt(initialHash.split('-')[1]);
+        if (pId) {
+          const p = PRODUCTS.find(x => x.id === pId);
+          if (p) {
+            openProduct(pId);
+          }
+        }
+      } else if (initialHash.startsWith('shop-')) {
+        const cat = initialHash.split('-')[1];
+        state.shopFilter = cat || 'All';
+        renderPage('shop');
+      } else {
+        if (initialHash === 'shop') state.shopFilter = 'All';
+        renderPage(initialHash);
+      }
       updateAuthUI();
       updateBadges();
     }
