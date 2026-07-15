@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const twilio = require('twilio');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
@@ -99,6 +100,21 @@ app.post('/api/auth/send-otp', async (req, res) => {
         console.log(`📱 MOCK SMS TO ${phone}`);
         console.log(`Your FACÉLOOK OTP is: ${otp}`);
         console.log(`========================================\n`);
+
+        if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+            const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+            try {
+                await client.messages.create({
+                    body: `Your FACÉLOOK verification code is: ${otp}`,
+                    from: process.env.TWILIO_PHONE_NUMBER,
+                    to: phone.startsWith('+') ? phone : `+91${phone}`
+                });
+                console.log(`✅ Twilio SMS sent successfully!`);
+            } catch (twilioErr) {
+                console.error(`❌ Twilio SMS failed:`, twilioErr.message);
+                return res.status(500).json({ error: 'Failed to send SMS via Twilio.' });
+            }
+        }
         
         res.json({ success: true, message: 'OTP sent successfully' });
     } catch (error) {

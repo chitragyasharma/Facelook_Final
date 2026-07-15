@@ -1,1 +1,9 @@
 node_modules/
+
+.vercel
+.env*
+*.png
+*.webp
+*.jpg
+*.jpeg
+*.svg
