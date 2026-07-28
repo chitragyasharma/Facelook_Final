@@ -11,7 +11,7 @@ const connectDB = async () => {
         await seedAdmin();
     } catch (err) {
         console.error('MongoDB connection error:', err.message);
-        process.exit(1);
+        console.warn('Running without MongoDB connection. APIs will use fallback data where available.');
     }
 };
 

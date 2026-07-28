@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const twilio = require('twilio');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
@@ -100,21 +99,6 @@ app.post('/api/auth/send-otp', async (req, res) => {
         console.log(`📱 MOCK SMS TO ${phone}`);
         console.log(`Your FACÉLOOK OTP is: ${otp}`);
         console.log(`========================================\n`);
-
-        if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
-            const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-            try {
-                await client.messages.create({
-                    body: `Your FACÉLOOK verification code is: ${otp}`,
-                    from: process.env.TWILIO_PHONE_NUMBER,
-                    to: phone.startsWith('+') ? phone : `+91${phone}`
-                });
-                console.log(`✅ Twilio SMS sent successfully!`);
-            } catch (twilioErr) {
-                console.error(`❌ Twilio SMS failed:`, twilioErr.message);
-                return res.status(500).json({ error: 'Failed to send SMS via Twilio.' });
-            }
-        }
         
         res.json({ success: true, message: 'OTP sent successfully' });
     } catch (error) {
@@ -179,12 +163,33 @@ app.post('/api/auth/google', async (req, res) => {
 });
 
 // --- PRODUCTS ---
+app.get('/api/admin/force-sync-products', async (req, res) => {
+    try {
+        const fs = require('fs');
+        const path = require('path');
+        const data = fs.readFileSync(path.join(__dirname, 'products.json'), 'utf-8');
+        const products = JSON.parse(data);
+        await Product.deleteMany({});
+        await Product.insertMany(products);
+        res.json({ success: true, count: products.length });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.get('/api/products', async (req, res) => {
     try {
+        const mongoose = require('mongoose');
         const products = await Product.find({}, '-_id -__v').sort({ id: 1 });
         res.json(products);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching products' });
+        console.error('Error fetching products:', error);
+        try {
+            const fs = require('fs');
+            const data = fs.readFileSync(path.join(__dirname, 'products.json'), 'utf-8');
+            return res.json(JSON.parse(data));
+        } catch (e) {
+            res.status(500).json({ error: 'Error fetching products' });
+        }
     }
 });
 
@@ -300,6 +305,11 @@ app.post('/api/checkout', authenticateToken, async (req, res) => {
         // Clear cart
         await Cart.deleteMany({ user_id: req.user.id });
         
+        console.log(`\n========================================`);
+        console.log(`📱 MOCK SMS TO ${req.user.phone || 'Customer'}`);
+        console.log(`Hi ${req.user.name}, your FACÉLOOK order #${order_id} is confirmed! Track here: https://facelookcosmetics.in/track`);
+        console.log(`========================================\n`);
+
         res.json({ success: true, order_id, message: "Order placed successfully" });
     } catch (error) {
         res.status(500).json({ error: 'Error during checkout' });
@@ -343,8 +353,15 @@ app.post('/api/payment/create-order', authenticateToken, async (req, res) => {
         const order = await razorpay.orders.create(options);
         res.json(order);
     } catch (error) {
-        console.error("Razorpay Order Error:", error);
-        res.status(500).json({ error: "Could not create Razorpay order: " + (error.description || error.message || "Unknown error") });
+        console.error('Razorpay Error:', error);
+        
+        // Extract stringified error to send to client for debugging
+        let errDesc = 'Unknown error';
+        try {
+            errDesc = typeof error === 'object' ? JSON.stringify(error) : String(error);
+        } catch(e) {}
+
+        res.status(500).json({ error: "Could not create Razorpay order: " + errDesc });
     }
 });
 
@@ -383,6 +400,35 @@ app.get('/api/orders', authenticateToken, async (req, res) => {
     }
 });
 
+app.get('/api/track/:orderId', async (req, res) => {
+    try {
+        const order_id = parseInt(req.params.orderId.replace(/\D/g, ''));
+        const order = await Order.findOne({ id: order_id });
+        if (!order) return res.status(404).json({ error: 'Order not found' });
+
+        // Mock tracking response based on order status
+        let tracking = [];
+        const date = new Date(order._id.getTimestamp());
+        const placedStr = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+        
+        tracking.push({ title: 'Order Placed', date: placedStr, status: 'completed' });
+        
+        if (order.status === 'Paid' || order.status === 'pending') {
+            tracking.push({ title: 'Processing', date: 'In Progress', status: 'active' });
+            tracking.push({ title: 'Shipped', date: 'Pending', status: 'pending' });
+            tracking.push({ title: 'Delivered', date: 'Pending', status: 'pending' });
+        } else if (order.status === 'Shipped') {
+            tracking.push({ title: 'Processing', date: 'Completed', status: 'completed' });
+            tracking.push({ title: 'Shipped', date: 'Today', status: 'active' });
+            tracking.push({ title: 'Delivered', date: 'Pending', status: 'pending' });
+        }
+        
+        res.json({ order_id: order.id, total: order.total, tracking });
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching tracking' });
+    }
+});
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/index.html.html'));
 });
@@ -393,4 +439,71 @@ app.get('/admin', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+});
+
+
+function slugify(text) {
+    return text.toString().toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
+
+app.get('/sitemap.xml', async (req, res) => {
+    try {
+        const products = await Product.find({}, 'name updatedAt');
+        let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.facelookcosmetics.in/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.facelookcosmetics.in/shop</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.facelookcosmetics.in/category/face</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.facelookcosmetics.in/category/lips</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.facelookcosmetics.in/category/eyes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.facelookcosmetics.in/category/nails</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+`;
+
+        products.forEach(p => {
+            const slug = slugify(p.name);
+            xml += `  <url>
+    <loc>https://www.facelookcosmetics.in/product/${slug}</loc>
+    <lastmod>${new Date(p.updatedAt || Date.now()).toISOString().split('T')[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+`;
+        });
+
+        xml += `</urlset>`;
+        
+        res.header('Content-Type', 'application/xml');
+        res.send(xml);
+    } catch (err) {
+        res.status(500).send('Error generating sitemap');
+    }
 });

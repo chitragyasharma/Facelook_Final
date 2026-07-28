@@ -19,7 +19,6 @@
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.4.0",
     "mongoose": "^9.3.3",
-    "razorpay": "^2.9.6",
-    "twilio": "^6.0.2"
+    "razorpay": "^2.9.6"
   }
 }

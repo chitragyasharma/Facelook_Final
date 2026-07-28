@@ -5,14 +5,51 @@
       "src": "server/server.js",
       "use": "@vercel/node"
     },
-    { "src": "index.html.html", "use": "@vercel/static" },
-    { "src": "client/**", "use": "@vercel/static" },
-    { "src": "*.webp", "use": "@vercel/static" },
-    { "src": "*.png", "use": "@vercel/static" }
+    {
+      "src": "index.html.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "client/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.webp",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.svg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "robots.txt",
+      "use": "@vercel/static"
+    }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/server/server.js" },
-    { "source": "/admin", "destination": "/client/admin.html" },
-    { "source": "/(.*)", "destination": "/index.html.html" }
+    {
+      "source": "/sitemap.xml",
+      "destination": "/server/server.js"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/robots.txt"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/server/server.js"
+    },
+    {
+      "source": "/admin",
+      "destination": "/client/admin.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html.html"
+    }
   ]
 }

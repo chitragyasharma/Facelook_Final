@@ -4,8 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <base href="/">
-  <title>Facelook</title>
+  <title>Facelook </title>
   <link
     href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Jost:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
@@ -161,6 +160,7 @@
       transform: translateX(-50%);
       display: flex;
     }
+
     .nav-logo {
       font-family: 'Bebas Neue', cursive;
       font-size: 26px;
@@ -1965,8 +1965,15 @@
       letter-spacing: 1px;
     }
 
-    .status-paid { background: #E6F4EA; color: #1E7E34; }
-    .status-pending { background: #FFF4E5; color: #B76E00; }
+    .status-paid {
+      background: #E6F4EA;
+      color: #1E7E34;
+    }
+
+    .status-pending {
+      background: #FFF4E5;
+      color: #B76E00;
+    }
 
     .bnav-badge {
       display: none;
@@ -2246,7 +2253,7 @@
         text-align: center;
         width: 100%;
       }
-      
+
       #checkout-footer .btn {
         max-width: 340px;
         margin: 0 auto;
@@ -2485,6 +2492,7 @@
       align-items: center;
       gap: 8px;
     }
+
     /* ══════════════════════════════════════
    ACCOUNT PAGE
 ══════════════════════════════════════ */
@@ -2495,18 +2503,18 @@
       color: var(--td);
       background: var(--nude-mid);
     }
-    
+
     .acc-wrapper {
       display: flex;
       flex-direction: column;
     }
-    
+
     .acc-tabs {
       background: #fff;
       display: flex;
       flex-direction: column;
     }
-    
+
     .acc-tab-btn {
       padding: 16px 20px;
       border-bottom: 1px solid #f0f0f0;
@@ -2519,42 +2527,44 @@
       font-size: 15px;
       font-weight: 500;
     }
-    
+
     .acc-tab-btn:hover {
       background: var(--pale);
     }
-    
+
     .acc-tab-btn.active {
-      background: #eef5fc; /* light blue */
+      background: #eef5fc;
+      /* light blue */
       color: #333;
       font-weight: 600;
     }
-    
+
     .acc-tab-icon {
       font-size: 20px;
       width: 24px;
       text-align: center;
       color: #666;
     }
-    
+
     .acc-tab-btn.active .acc-tab-icon {
       color: #000;
     }
-    
+
     .acc-content-area {
       padding: 24px 20px;
       background: var(--bg);
       min-height: 50vh;
     }
-    
+
     .acc-section {
       display: none;
     }
+
     .acc-section.active {
       display: block;
       animation: fadeIn .3s ease;
     }
-    
+
     .order-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -2563,7 +2573,7 @@
       margin-bottom: 16px;
       box-shadow: var(--shadow);
     }
-    
+
     .order-head {
       display: flex;
       justify-content: space-between;
@@ -2571,33 +2581,89 @@
       padding-bottom: 12px;
       margin-bottom: 12px;
     }
-    
-    .order-id { font-weight: 700; color: var(--td); font-size: 14px; }
-    .order-date { font-size: 12px; color: var(--tl); }
-    .order-total { font-weight: 800; color: var(--rose-d); }
-    
+
+    .order-id {
+      font-weight: 700;
+      color: var(--td);
+      font-size: 14px;
+    }
+
+    .order-date {
+      font-size: 12px;
+      color: var(--tl);
+    }
+
+    .order-total {
+      font-weight: 800;
+      color: var(--rose-d);
+    }
+
     @media (min-width: 768px) {
       .acc-wrapper {
-         flex-direction: row;
-         max-width: 1000px;
-         margin: 40px auto;
-         background: transparent;
-         border-radius: 20px;
-         box-shadow: var(--shadow);
-         overflow: hidden;
+        flex-direction: row;
+        max-width: 1000px;
+        margin: 40px auto;
+        background: transparent;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
       }
+
       .acc-tabs {
-         width: 300px;
-         border-right: 1px solid var(--border);
-         flex-shrink: 0;
-         background: #fff;
+        width: 300px;
+        border-right: 1px solid var(--border);
+        flex-shrink: 0;
+        background: #fff;
       }
+
       .acc-content-area {
-         flex: 1;
-         padding: 40px;
-         background: #fff;
-         min-height: 600px;
+        flex: 1;
+        padding: 40px;
+        background: #fff;
+        min-height: 600px;
       }
+    }
+    /* Accordion Styles */
+    .accordion {
+      margin-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .accordion-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .accordion-btn {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--td);
+      cursor: pointer;
+      text-align: left;
+    }
+    .accordion-btn .icon {
+      font-size: 20px;
+      font-weight: 300;
+      transition: transform 0.3s;
+    }
+    .accordion-btn.active .icon {
+      transform: rotate(45deg);
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    .accordion-content-inner {
+      padding-bottom: 16px;
+      font-size: 14px;
+      color: var(--tl);
+      line-height: 1.6;
     }
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -2615,25 +2681,25 @@
   </div>
 
   <!-- ANNOUNCEMENT BAR -->
-  <div class="announcement"><span>✦ FACÉLOOK 2026 Collection — Free Shipping on ₹599+ ✦</span></div>
+  <div class="announcement"><span>✦ FACÉLOOK March Offers — Free Shipping on ₹599+ ✦</span></div>
 
   <!-- NAVBAR -->
   <nav class="navbar">
     <button class="hamburger" onclick="openSidebar()">☰</button>
-    <a href="/" onclick="event.preventDefault(); goTo('home')" class="nav-logo-link"><img src="logo.svg" alt="FACÉLOOK" class="nav-logo"
+    <a href="#home" class="nav-logo-link"><img src="logo.svg" alt="FACÉLOOK" class="nav-logo"
         style="height:40px; cursor:pointer;"></a>
     <div class="desktop-nav-links">
-      <a href="/" onclick="event.preventDefault(); goTo('home')">Home</a>
-      <a href="/shop" onclick="event.preventDefault(); goTo('shop')">Shop All</a>
+      <a href="#home">Home</a>
+      <a href="#shop">Shop All</a>
       <div class="dropdown">
         <a style="cursor:pointer;">Categories</a>
         <div class="dropdown-content">
-          <a href="/category/bestseller" onclick="event.preventDefault(); shopByFilter('Bestseller')">Best Sellers</a>
-          <a href="/category/new" onclick="event.preventDefault(); shopByFilter('New')">New Arrivals</a>
-          <a href="/category/lips" onclick="event.preventDefault(); shopByFilter('Lips')">Lips</a>
-          <a href="/category/eyes" onclick="event.preventDefault(); shopByFilter('Eyes')">Eyes</a>
-          <a href="/category/face" onclick="event.preventDefault(); shopByFilter('Face')">Face</a>
-          <a href="/category/nails" onclick="event.preventDefault(); shopByFilter('Nails')">Nails</a>
+          <a href="#shop-Bestseller">Best Sellers</a>
+          <a href="#shop-New">New Arrivals</a>
+          <a href="#shop-Lips">Lips</a>
+          <a href="#shop-Eyes">Eyes</a>
+          <a href="#shop-Face">Face</a>
+          <a href="#shop-Nails">Nails</a>
         </div>
       </div>
     </div>
@@ -2644,18 +2710,19 @@
         <input type="text" id="nav-search" placeholder="Search..." oninput="handleGlobalSearch(this)"
           style="border:none; outline:none; font-family:'Jost',sans-serif; background:transparent; width:100%;">
       </div>
-      <a href="/wishlist" onclick="event.preventDefault(); goTo('wishlist')" style="position:relative; display:flex; align-items:center; cursor:pointer; text-decoration:none; color:inherit;"
+      <a href="#wishlist"
+        style="position:relative; display:flex; align-items:center; cursor:pointer; text-decoration:none; color:inherit;"
         title="Wishlist">
         <span>♡</span>
         <span class="badge" id="wish-badge" style="top:-6px; right:-12px;">0</span>
       </a>
-      <a href="/cart" onclick="event.preventDefault(); goTo('cart')" style="position:relative; display:flex; align-items:center; cursor:pointer; text-decoration:none; color:inherit;"
+      <a href="#cart"
+        style="position:relative; display:flex; align-items:center; cursor:pointer; text-decoration:none; color:inherit;"
         title="Cart">
         <span>🛒</span>
         <span class="badge" id="cart-badge" style="top:-6px; right:-12px;">0</span>
       </a>
-      <a href="/profile" onclick="event.preventDefault(); goTo('profile')" style="cursor:pointer; text-decoration:none; color:inherit;"
-        title="Account">👤</a>
+      <a href="#account" style="cursor:pointer; text-decoration:none; color:inherit;" title="Account">👤</a>
     </div>
   </nav>
 
@@ -2667,12 +2734,18 @@
       <button class="sidebar-close" onclick="closeSidebar()">✕</button>
     </div>
     <div class="sidebar-greeting" id="sidebar-greeting"></div>
-    <a href="/" onclick="event.preventDefault(); goTo('home')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🏠 Home</a>
-    <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🛍️ Shop All</a>
-    <a href="/wishlist" onclick="event.preventDefault(); goTo('wishlist')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">♡ Wishlist</a>
-    <a href="/cart" onclick="event.preventDefault(); goTo('cart')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🛒 Cart</a>
-    <a href="/about" onclick="event.preventDefault(); goTo('about')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📖 About Us</a>
-    <a href="/contact" onclick="event.preventDefault(); goTo('contact')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📬 Contact</a>
+    <a href="#home" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🏠
+      Home</a>
+    <a href="#shop" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🛍️ Shop
+      All</a>
+    <a href="#wishlist" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">♡
+      Wishlist</a>
+    <a href="#cart" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🛒
+      Cart</a>
+    <a href="#about" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📖 About
+      Us</a>
+    <a href="#contact" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📬
+      Contact</a>
     <div style="margin-top:22px; display:none;" id="sidebar-auth-btn">
       <button class="btn btn-ghost btn-full" onclick="logout()" style="border-radius:12px;">SIGN OUT</button>
     </div>
@@ -2681,7 +2754,36 @@
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
+  <!-- UPI QR MODAL -->
+  <div class="overlay" id="upi-qr-overlay" style="display:none;z-index:9000;">
+    <div class="qr-modal"
+      style="background:var(--card);border:1px solid var(--rose-m);border-radius:24px;padding:30px;max-width:90%;width:380px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;box-shadow:var(--shadow-h);">
+      <div
+        style="font-family:'Bebas Neue',cursive;font-size:32px;color:var(--rose-d);letter-spacing:1px;margin-bottom:8px;">
+        Scan to Pay</div>
+      <p style="color:var(--td);margin-bottom:20px;font-size:15px;">Amount to pay: <strong
+          style="color:var(--rose);font-size:18px;">₹<span id="qr-amount"></span></strong></p>
 
+      <div style="background:var(--pale);border-radius:16px;padding:16px;display:inline-block;margin-bottom:20px;">
+        <img src="" id="upi-dynamic-qr" style="width:200px;height:200px;border-radius:8px;" alt="Business QR Code">
+      </div>
+
+      <p style="font-size:13px;color:var(--tm);margin-bottom:24px;">Or use UPI ID: <strong
+          style="color:var(--td);">9910215683@ptyes</strong></p>
+
+      <div style="text-align:left;margin-bottom:24px;">
+        <label style="font-size:12px;color:var(--tm);font-weight:600;text-transform:uppercase;letter-spacing:1px;">Enter
+          UTR / Transaction ID (12 digits)</label>
+        <input type="text" id="upi-utr-input" placeholder="e.g. 312345678901"
+          style="width:100%;padding:14px;margin-top:8px;border:1px solid var(--border);border-radius:12px;outline:none;font-family:'Jost',sans-serif;font-size:15px;text-align:center;letter-spacing:2px;font-weight:600;color:var(--td);background:var(--bg);" />
+      </div>
+
+      <button class="btn btn-primary btn-full" style="margin-bottom:12px;" onclick="submitUpiQrPayment()">Confirm
+        Payment</button>
+      <button class="btn btn-ghost btn-full"
+        onclick="document.getElementById('upi-qr-overlay').style.display='none'">Cancel</button>
+    </div>
+  </div>
 
   <!-- ═══════════════════════════════════
      PAGE: HOME
@@ -2691,7 +2793,8 @@
     <div class="search-wrap">
       <div class="search-box">
         <span>🔍</span>
-        <input type="text" id="home-search" placeholder="Search lipsticks, foundations…" oninput="handleGlobalSearch(this)">
+        <input type="text" id="home-search" placeholder="Search lipsticks, foundations…"
+          oninput="handleGlobalSearch(this)">
       </div>
     </div>
 
@@ -2727,8 +2830,8 @@
       <div class="hero-title">CONFIDENCE</div>
       <p class="hero-sub">Lips that Rule Hearts</p>
       <div class="hero-btns">
-        <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Shop Now</a>
-        <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn btn-secondary" style="text-decoration:none; display:inline-block;">Explore</a>
+        <a href="#shop" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Shop Now</a>
+        <a href="#about" class="btn btn-secondary" style="text-decoration:none; display:inline-block;">Explore</a>
       </div>
     </div>
 
@@ -2737,7 +2840,7 @@
     <!-- Featured -->
     <div class="sec-header">
       <span class="sec-title">Featured Picks</span>
-      <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="sec-link" style="text-decoration:none; color:inherit;">View All →</a>
+      <a href="#shop" class="sec-link" style="text-decoration:none; color:inherit;">View All →</a>
     </div>
     <div class="products-scroll" id="home-featured"></div>
 
@@ -2757,7 +2860,7 @@
     <!-- Bestsellers -->
     <div class="sec-header">
       <span class="sec-title">Bestsellers</span>
-      <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="sec-link" style="text-decoration:none; color:inherit;">See More →</a>
+      <a href="#shop" class="sec-link" style="text-decoration:none; color:inherit;">See More →</a>
     </div>
     <div class="products-grid" id="home-bestsellers"></div>
 
@@ -2797,7 +2900,34 @@
       </div>
     </div>
 
-    
+    <footer style="padding:40px 20px; background:var(--bg); border-top:1px solid var(--border); text-align:center;">
+      <img src="logo.svg" alt="FACÉLOOK" class="footer-logo" style="height:55px; margin-bottom:15px; display:block; margin:0 auto 15px auto;">
+      <div class="footer-tagline" style="font-family:'Inter',sans-serif; color:var(--tl); font-size:14px; margin-bottom:25px;">Beauty that Rules Hearts</div>
+      
+      <div class="footer-links" style="display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin-bottom:25px; font-size:13px; font-weight:500;">
+        <a href="#shop" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Shop</a>
+        <a href="#about" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">About</a>
+        <a href="#contact" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Contact</a>
+      </div>
+
+      <div class="footer-legal-links" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-bottom:30px; font-size:12px;">
+        <a href="#privacy" style="color:var(--tl); text-decoration:none;">Privacy Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#refund" style="color:var(--tl); text-decoration:none;">Refund Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#shipping" style="color:var(--tl); text-decoration:none;">Shipping Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#terms" style="color:var(--tl); text-decoration:none;">Terms & Conditions</a>
+      </div>
+
+      <div class="footer-social" style="display:flex; justify-content:center; gap:20px; margin-bottom:30px;">
+        <a href="https://instagram.com/facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">📸</a>
+        <a href="https://youtube.com/@facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">▶️</a>
+        <a href="https://twitter.com/facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🐦</a>
+        <a href="https://tiktok.com/@facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🎵</a>
+      </div>
+      <div class="footer-copy" style="font-size:12px; color:var(--tl); font-family:'Inter',sans-serif;">© 2026 FACELOOK. All rights reserved.</div>
+    </footer>
   </div>
 
   <!-- ═══════════════════════════════════
@@ -2844,7 +2974,34 @@
       </div>
     </div>
 
-    
+    <footer style="padding:40px 20px; background:var(--bg); border-top:1px solid var(--border); text-align:center;">
+      <img src="logo.svg" alt="FACÉLOOK" class="footer-logo" style="height:55px; margin-bottom:15px; display:block; margin:0 auto 15px auto;">
+      <div class="footer-tagline" style="font-family:'Inter',sans-serif; color:var(--tl); font-size:14px; margin-bottom:25px;">Beauty that Rules Hearts</div>
+      
+      <div class="footer-links" style="display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin-bottom:25px; font-size:13px; font-weight:500;">
+        <a href="#shop" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Shop</a>
+        <a href="#about" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">About</a>
+        <a href="#contact" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Contact</a>
+      </div>
+
+      <div class="footer-legal-links" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-bottom:30px; font-size:12px;">
+        <a href="#privacy" style="color:var(--tl); text-decoration:none;">Privacy Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#refund" style="color:var(--tl); text-decoration:none;">Refund Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#shipping" style="color:var(--tl); text-decoration:none;">Shipping Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#terms" style="color:var(--tl); text-decoration:none;">Terms & Conditions</a>
+      </div>
+
+      <div class="footer-social" style="display:flex; justify-content:center; gap:20px; margin-bottom:30px;">
+        <a href="https://instagram.com/facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">📸</a>
+        <a href="https://youtube.com/@facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">▶️</a>
+        <a href="https://twitter.com/facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🐦</a>
+        <a href="https://tiktok.com/@facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🎵</a>
+      </div>
+      <div class="footer-copy" style="font-size:12px; color:var(--tl); font-family:'Inter',sans-serif;">© 2026 FACELOOK. All rights reserved.</div>
+    </footer>
   </div>
 
   <!-- ═══════════════════════════════════
@@ -2852,7 +3009,7 @@
 ════════════════════════════════════ -->
   <div class="page" id="page-product" style="padding-bottom:100px;">
     <div class="breadcrumb">
-      <a href="/shop" onclick="event.preventDefault(); goTo('shop')">← Shop</a>
+      <a href="#shop">← Shop</a>
       <span>/</span>
       <span id="detail-cat" style="color:var(--tl)"></span>
       <span>/</span>
@@ -2892,7 +3049,6 @@
           <span id="detail-stars" style="color:var(--rose);font-size:14px;"></span>
           <span id="detail-reviews" style="font-size:12px;color:var(--tm);"></span>
         </div>
-        <p class="detail-desc" id="detail-desc"></p>
         <div class="qty-row">
           <span style="font-size:13px;font-weight:600;color:var(--td);">Qty:</span>
           <div class="qty-box">
@@ -2912,20 +3068,63 @@
           <button class="btn btn-secondary btn-full" onclick="buyNow()">Buy Now</button>
         </div>
 
+        <div class="accordion">
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleAccordion(this)">
+              Product Description
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner" id="detail-desc" style="white-space: pre-line;"></div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleAccordion(this)">
+              How to Use
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                Apply directly from the tube or use a lip brush for precise application. For best results, exfoliate lips before use.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleAccordion(this)">
+              Ingredients
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                Enriched with Vitamin E, Shea Butter, and Jojoba Oil for hydration. Cruelty-free and Paraben-free.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleAccordion(this)">
+              Delivery & Payment Info
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                Delivery in 3-5 business days. Cash on Delivery (COD) available. Secure payment gateway via Razorpay.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-btn" onclick="toggleAccordion(this)">
+              Other Information
+              <span class="icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <div class="accordion-content-inner">
+                Net Weight: 4.5g<br>Manufactured in India.
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    
-    <!-- REVIEWS SECTION -->
-    <div class="reviews-section" id="detail-reviews-section">
-      <div class="reviews-header">
-        <div class="reviews-title">Customer Reviews</div>
-        <button class="write-review-btn" onclick="openReviewModal()">Write a Review</button>
-      </div>
-      <div id="reviews-list">
-        <!-- populated dynamically -->
-      </div>
-    </div>
-
     <div id="related-section" style="border-top:1px solid var(--border);">
       <div class="sec-header"><span class="sec-title">You May Also Like</span></div>
       <div class="products-scroll" id="related-products"></div>
@@ -2949,46 +3148,34 @@
       </div>
     </div>
 
-    
-  </div>
-
-  <!-- ═══════════════════════════════════
-     PAGE: TRACK ORDER
-════════════════════════════════════ -->
-  <div class="page" id="page-track" style="padding-bottom:100px;">
-    <div class="breadcrumb" style="padding: 16px;">
-      <a href="/shop" onclick="event.preventDefault(); goTo('shop')">← Back</a>
-    </div>
-    <div class="track-container">
-      <div class="track-title">Track Your Order</div>
-      <p style="text-align:center; color:var(--tm); font-size:14px; margin-bottom:24px;">Enter your Order ID to check the current delivery status.</p>
+    <footer style="padding:40px 20px; background:var(--bg); border-top:1px solid var(--border); text-align:center;">
+      <img src="logo.svg" alt="FACÉLOOK" class="footer-logo" style="height:55px; margin-bottom:15px; display:block; margin:0 auto 15px auto;">
+      <div class="footer-tagline" style="font-family:'Inter',sans-serif; color:var(--tl); font-size:14px; margin-bottom:25px;">Beauty that Rules Hearts</div>
       
-      <input type="text" id="track-order-id" class="track-input" placeholder="Order ID (e.g. ORD-12345)">
-      <button class="track-btn" onclick="submitTracking()">Track Order</button>
-
-      <div class="track-result" id="track-result">
-        <h4 style="margin-bottom: 12px;">Order Status: <span style="color:var(--rose);">Shipped</span></h4>
-        <div class="timeline">
-          <div class="timeline-step completed">
-            <div class="timeline-title">Order Placed</div>
-            <div class="timeline-date">Yesterday, 10:30 AM</div>
-          </div>
-          <div class="timeline-step active">
-            <div class="timeline-title">Shipped</div>
-            <div class="timeline-date">Today, 09:15 AM</div>
-            <div style="font-size:12px; color:var(--tl); margin-top:4px;">Tracking ID: AWB84736291 (Shiprocket)</div>
-          </div>
-          <div class="timeline-step">
-            <div class="timeline-title">Out for Delivery</div>
-            <div class="timeline-date">Pending</div>
-          </div>
-          <div class="timeline-step">
-            <div class="timeline-title">Delivered</div>
-            <div class="timeline-date">Pending</div>
-          </div>
-        </div>
+      <div class="footer-links" style="display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin-bottom:25px; font-size:13px; font-weight:500;">
+        <a href="#shop" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Shop</a>
+        <a href="#about" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">About</a>
+        <a href="#contact" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Contact</a>
       </div>
-    </div>
+
+      <div class="footer-legal-links" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-bottom:30px; font-size:12px;">
+        <a href="#privacy" style="color:var(--tl); text-decoration:none;">Privacy Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#refund" style="color:var(--tl); text-decoration:none;">Refund Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#shipping" style="color:var(--tl); text-decoration:none;">Shipping Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#terms" style="color:var(--tl); text-decoration:none;">Terms & Conditions</a>
+      </div>
+
+      <div class="footer-social" style="display:flex; justify-content:center; gap:20px; margin-bottom:30px;">
+        <a href="https://instagram.com/facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">📸</a>
+        <a href="https://youtube.com/@facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">▶️</a>
+        <a href="https://twitter.com/facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🐦</a>
+        <a href="https://tiktok.com/@facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🎵</a>
+      </div>
+      <div class="footer-copy" style="font-size:12px; color:var(--tl); font-family:'Inter',sans-serif;">© 2026 FACELOOK. All rights reserved.</div>
+    </footer>
   </div>
 
   <!-- ═══════════════════════════════════
@@ -3083,9 +3270,36 @@
       </div>
     </div>
     <div style="padding:24px 16px;text-align:center;">
-      <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Shop Our Products</a>
+      <a href="#shop" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Shop Our Products</a>
     </div>
-    
+    <footer style="padding:40px 20px; background:var(--bg); border-top:1px solid var(--border); text-align:center;">
+      <img src="logo.svg" alt="FACÉLOOK" class="footer-logo" style="height:55px; margin-bottom:15px; display:block; margin:0 auto 15px auto;">
+      <div class="footer-tagline" style="font-family:'Inter',sans-serif; color:var(--tl); font-size:14px; margin-bottom:25px;">Beauty that Rules Hearts</div>
+      
+      <div class="footer-links" style="display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin-bottom:25px; font-size:13px; font-weight:500;">
+        <a href="#shop" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Shop</a>
+        <a href="#about" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">About</a>
+        <a href="#contact" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Contact</a>
+      </div>
+
+      <div class="footer-legal-links" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-bottom:30px; font-size:12px;">
+        <a href="#privacy" style="color:var(--tl); text-decoration:none;">Privacy Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#refund" style="color:var(--tl); text-decoration:none;">Refund Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#shipping" style="color:var(--tl); text-decoration:none;">Shipping Policy</a>
+        <span style="color:var(--border)">|</span>
+        <a href="#terms" style="color:var(--tl); text-decoration:none;">Terms & Conditions</a>
+      </div>
+
+      <div class="footer-social" style="display:flex; justify-content:center; gap:20px; margin-bottom:30px;">
+        <a href="https://instagram.com/facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">📸</a>
+        <a href="https://youtube.com/@facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">▶️</a>
+        <a href="https://twitter.com/facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🐦</a>
+        <a href="https://tiktok.com/@facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🎵</a>
+      </div>
+      <div class="footer-copy" style="font-size:12px; color:var(--tl); font-family:'Inter',sans-serif;">© 2026 FACELOOK. All rights reserved.</div>
+    </footer>
   </div>
 
   <!-- ═══════════════════════════════════
@@ -3111,10 +3325,8 @@
         <div style="font-size:24px;">📞</div>
         <div>
           <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);font-weight:600;">
-            WhatsApp Us</div>
-          <div style="font-size:14px;color:var(--td);font-weight:500;">
-            <a href="https://wa.me/919910215683" target="_blank" style="color:inherit; text-decoration:none;">Chat on WhatsApp</a>
-          </div>
+            Call Us</div>
+          <div style="font-size:14px;color:var(--td);font-weight:500;">+91 98765 43210</div>
         </div>
       </div>
       <div class="contact-card">
@@ -3180,19 +3392,19 @@
           <span class="acc-tab-icon">🚪</span> Logout
         </div>
       </div>
-      
+
       <div class="acc-content-area">
         <!-- Profile Section -->
         <div class="acc-section active" id="acc-profile">
           <div class="form-title">My Profile</div>
           <p class="empty-sub">View and update your profile details.</p>
           <div class="form-group" style="max-width: 400px; margin-top:20px;">
-              <label class="form-label">Name</label>
-              <input class="form-input" type="text" id="prof-name" disabled>
+            <label class="form-label">Name</label>
+            <input class="form-input" type="text" id="prof-name" disabled>
           </div>
           <div class="form-group" style="max-width: 400px;">
-              <label class="form-label">Email or Phone</label>
-              <input class="form-input" type="text" id="prof-email" disabled>
+            <label class="form-label">Email or Phone</label>
+            <input class="form-input" type="text" id="prof-email" disabled>
           </div>
         </div>
 
@@ -3200,10 +3412,11 @@
         <div class="acc-section" id="acc-orders">
           <div class="form-title">Your Orders</div>
           <div id="acc-orders-content">
-             <div class="sim-spinner" style="margin:40px auto;border-color:var(--border);border-top-color:var(--rose);"></div>
+            <div class="sim-spinner" style="margin:40px auto;border-color:var(--border);border-top-color:var(--rose);">
+            </div>
           </div>
         </div>
-        
+
         <!-- Coupons Section -->
         <div class="acc-section" id="acc-coupons">
           <div class="form-title">Coupons</div>
@@ -3223,7 +3436,7 @@
             <p class="empty-sub">Save a card during checkout for faster payments.</p>
           </div>
         </div>
-        
+
         <!-- Addresses Section -->
         <div class="acc-section" id="acc-addresses">
           <div class="form-title">Saved Addresses</div>
@@ -3371,7 +3584,7 @@
         style="background:none;border:none;color:var(--tl);margin-bottom:16px;cursor:pointer;font-size:13px;font-weight:600;">←
         Back</button>
       <div class="form-title" style="margin-bottom: 8px;">Verify OTP</div>
-      <p style="font-size: 12px; color: var(--tm); margin-bottom: 20px;">We've sent an OTP to
+      <p style="font-size: 12px; color: var(--tm); margin-bottom: 20px;">Check your Terminal Console for the OTP sent to
         <br><span id="display-phone" style="font-weight:600;color:var(--td);"></span>
       </p>
       <div class="form-group">
@@ -3427,21 +3640,21 @@
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <a href="/" onclick="event.preventDefault(); goTo('home')" class="bnav-btn" id="bn-home" style="text-decoration:none;">
+    <a href="#home" class="bnav-btn" id="bn-home" style="text-decoration:none;">
       <span class="bnav-icon">🏠</span><span class="bnav-label">Home</span>
     </a>
-    <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="bnav-btn" id="bn-shop" style="text-decoration:none;">
+    <a href="#shop" class="bnav-btn" id="bn-shop" style="text-decoration:none;">
       <span class="bnav-icon">🛍️</span><span class="bnav-label">Shop</span>
     </a>
-    <a href="/wishlist" onclick="event.preventDefault(); goTo('wishlist')" class="bnav-btn" id="bn-wishlist" style="text-decoration:none;">
+    <a href="#wishlist" class="bnav-btn" id="bn-wishlist" style="text-decoration:none;">
       <span class="bnav-icon">♡</span><span class="bnav-label">Wishlist</span>
       <span class="bnav-badge" id="bn-wish-badge">0</span>
     </a>
-    <a href="/cart" onclick="event.preventDefault(); goTo('cart')" class="bnav-btn" id="bn-cart" style="text-decoration:none;">
+    <a href="#cart" class="bnav-btn" id="bn-cart" style="text-decoration:none;">
       <span class="bnav-icon">🛒</span><span class="bnav-label">Cart</span>
       <span class="bnav-badge" id="bn-cart-badge">0</span>
     </a>
-    <a href="/profile" onclick="event.preventDefault(); goTo('profile')" class="bnav-btn" id="bn-auth" style="text-decoration:none;">
+    <a href="#account" class="bnav-btn" id="bn-auth" style="text-decoration:none;">
       <span class="bnav-icon">👤</span><span class="bnav-label">Account</span>
     </a>
   </div>
@@ -3449,49 +3662,6 @@
   <!-- ═══════════════════════════════════
      JAVASCRIPT
 ════════════════════════════════════ -->
-  <footer style="padding:40px 20px; background:var(--bg); border-top:1px solid var(--border); text-align:center;">
-      <img src="logo.svg" alt="FACÉLOOK" class="footer-logo" style="height:55px; margin-bottom:15px; display:block; margin:0 auto 15px auto;">
-      <div class="footer-tagline" style="font-family:'Inter',sans-serif; color:var(--tl); font-size:14px; margin-bottom:25px;">Beauty that Rules Hearts</div>
-      
-      <div class="footer-links" style="display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin-bottom:25px; font-size:13px; font-weight:500;">
-        <a href="/shop" onclick="event.preventDefault(); goTo('shop')" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Shop</a>
-        <a href="/about" onclick="event.preventDefault(); goTo('about')" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">About</a>
-        <a href="/contact" onclick="event.preventDefault(); goTo('contact')" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Contact</a>
-        <a href="/track" onclick="event.preventDefault(); navigate('/track')" style="color:var(--tm); text-decoration:none; text-transform:uppercase; letter-spacing:1px;">Track Order</a>
-      </div>
-
-      <div class="footer-legal-links" style="display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-bottom:30px; font-size:12px;">
-        <a href="/privacy" onclick="event.preventDefault(); goTo('privacy')" style="color:var(--tl); text-decoration:none;">Privacy Policy</a>
-        <span style="color:var(--border)">|</span>
-        <a href="/refund" onclick="event.preventDefault(); goTo('refund')" style="color:var(--tl); text-decoration:none;">Refund Policy</a>
-        <span style="color:var(--border)">|</span>
-        <a href="/shipping" onclick="event.preventDefault(); goTo('shipping')" style="color:var(--tl); text-decoration:none;">Shipping Policy</a>
-        <span style="color:var(--border)">|</span>
-        <a href="/terms" onclick="event.preventDefault(); goTo('terms')" style="color:var(--tl); text-decoration:none;">Terms & Conditions</a>
-      </div>
-
-      <div class="footer-social" style="display:flex; justify-content:center; gap:20px; margin-bottom:30px;">
-        <a href="https://instagram.com/facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">📸</a>
-        <a href="https://youtube.com/@facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">▶️</a>
-        <a href="https://twitter.com/facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🐦</a>
-        <a href="https://tiktok.com/@facelookcosmetics" target="_blank" style="text-decoration:none; font-size:24px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🎵</a>
-      </div>
-      <div class="footer-copy" style="font-size:12px; color:var(--tl); font-family:'Inter',sans-serif;">© 2026 FACELOOK. All rights reserved.</div>
-    </footer>
-
-
-  <!-- Write Review Modal -->
-  <div class="review-modal-overlay" id="review-modal-overlay">
-    <div class="review-modal">
-      <span class="review-close" onclick="closeReviewModal()">&times;</span>
-      <h3>Write a Review</h3>
-      <input type="text" id="review-name" placeholder="Your Name">
-      <input type="text" id="review-title" placeholder="Review Title (e.g. Loved it!)">
-      <textarea id="review-body" placeholder="Share your experience with this product..."></textarea>
-      <button class="btn btn-primary btn-full" onclick="submitReview()">Submit Review</button>
-    </div>
-  </div>
-  
   <script>
     // ─── DATA ───────────────────────────────────
     const state = {
@@ -3521,10 +3691,10 @@
 
     let PRODUCTS = [];
 
-    // Connect to localhost backend when developing locally, otherwise use Render production URL
+    // Connect to localhost backend when developing locally, otherwise use the same domain (Vercel)
     const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? 'http://localhost:3000'
-      : 'https://facelpro.onrender.com';
+      : '';
 
     async function api(url, method = 'GET', body = null) {
       const headers = { 'Content-Type': 'application/json' };
@@ -3550,131 +3720,36 @@
       if (page === 'wishlist') renderWishlist();
       if (page === 'checkout') { state.checkoutStep = 1; renderCheckout(); }
       if (page === 'account') {
-         if(!state.token) { goTo('auth'); return; }
-         renderAccount();
+        if (!state.token) { window.location.hash = '#auth'; return; }
+        renderAccount();
       }
     }
-
-    // --- ROUTING & SEO ---
-    function slugify(text) {
-      return text.toString().toLowerCase()
-        .replace(/\s+/g, '-')           // Replace spaces with -
-        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-        .replace(/^-+/, '')             // Trim - from start of text
-        .replace(/-+$/, '');            // Trim - from end of text
-    }
-
-    function updateSEO(title, desc, image) {
-      document.title = title ? `${title} | Facelook Cosmetics` : 'Facelook Cosmetics';
-      if (desc) {
-        let metaDesc = document.querySelector('meta[name="description"]');
-        if (!metaDesc) {
-          metaDesc = document.createElement('meta');
-          metaDesc.name = 'description';
-          document.head.appendChild(metaDesc);
-        }
-        metaDesc.content = desc;
-      }
-    }
-
-    function injectJSONLD(product) {
-      let script = document.getElementById('product-ld');
-      if (script) script.remove();
-      
-      script = document.createElement('script');
-      script.id = 'product-ld';
-      script.type = 'application/ld+json';
-      const ld = {
-        "@context": "https://schema.org/",
-        "@type": "Product",
-        "name": product.name,
-        "image": "https://www.facelookcosmetics.in/assets/" + (product.image || 'default.webp'),
-        "description": product.desc,
-        "sku": product.id.toString(),
-        "brand": {
-          "@type": "Brand",
-          "name": "Facelook Cosmetics"
-        },
-        "offers": {
-          "@type": "Offer",
-          "url": "https://www.facelookcosmetics.in/product/" + product.slug,
-          "priceCurrency": "INR",
-          "price": product.price,
-          "availability": "https://schema.org/InStock"
-        }
-      };
-      script.textContent = JSON.stringify(ld);
-      document.head.appendChild(script);
-    }
-
-    function clearJSONLD() {
-      const script = document.getElementById('product-ld');
-      if (script) script.remove();
-    }
-
-    function navigate(path, push = true) {
-      if (push) {
-        window.history.pushState(null, '', path);
-      }
-      handleRoute();
-    }
-
-    function handleRoute() {
-      const path = window.location.pathname;
-      
-      if (path.startsWith('/product/')) {
-        const slug = path.split('/product/')[1];
-        if (slug) {
-          const p = PRODUCTS.find(x => x.slug === slug);
-          if (p) {
-            openProduct(p.id, false); // false means don't push state again
-            return;
-          }
-        }
-        navigate('/'); // fallback
-      } else if (path.startsWith('/category/')) {
-        const cat = path.split('/category/')[1];
-        state.shopFilter = cat.charAt(0).toUpperCase() + cat.slice(1); // naive capitalize
-        renderPage('shop');
-        updateSEO(`Shop ${state.shopFilter}`, `Browse our ${state.shopFilter} category.`);
-        clearJSONLD();
-      } else {
-        let page = path.replace('/', '') || 'home';
-        // Handle old hash paths if they exist
-        if (page === 'shop') state.shopFilter = 'All';
-        renderPage(page);
-        
-        let seoTitles = {
-          'home': 'Home',
-          'shop': 'Shop All',
-          'cart': 'Shopping Cart',
-          'profile': 'My Account',
-          'contact': 'Contact Us',
-          'privacy': 'Privacy Policy',
-          'terms': 'Terms & Conditions',
-          'shipping': 'Shipping Policy',
-          'refund': 'Refund Policy'
-        };
-        updateSEO(seoTitles[page] || 'Home', '');
-        clearJSONLD();
-      }
-    }
-
-    window.addEventListener('popstate', () => {
-      handleRoute();
-    });
 
     function goTo(page) {
-      if (page === 'home') navigate('/');
-      else navigate('/' + page);
+      window.location.hash = '#' + page;
     }
 
-    function shopByFilter(filter) {
-      navigate('/category/' + filter.toLowerCase());
-    }
-
-    
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#', '') || 'home';
+      if (hash.startsWith('product-')) {
+        const pId = parseInt(hash.split('-')[1]);
+        if (pId) {
+          const p = PRODUCTS.find(x => x.id === pId);
+          if (p) {
+            openProduct(pId);
+          } else {
+            renderPage('home');
+          }
+        }
+      } else if (hash.startsWith('shop-')) {
+        const cat = hash.split('-')[1];
+        state.shopFilter = cat || 'All';
+        renderPage('shop');
+      } else {
+        if (hash === 'shop') state.shopFilter = 'All';
+        renderPage(hash);
+      }
+    });
 
     function handleGlobalSearch(el) {
       const q = el.value;
@@ -3691,7 +3766,7 @@
           shopInput.focus();
         }
       }
-      
+
       // Sync other search boxes
       const navSearch = document.getElementById('nav-search');
       const homeSearch = document.getElementById('home-search');
@@ -3700,11 +3775,7 @@
     }
 
     function shopByFilter(filter) {
-      if (filter.toLowerCase() === 'all') {
-        navigate('/shop');
-      } else {
-        navigate('/category/' + filter.toLowerCase());
-      }
+      window.location.hash = '#shop-' + filter;
     }
 
     // ─── TOAST ──────────────────────────────────
@@ -3713,81 +3784,6 @@
       t.textContent = '✓ ' + msg;
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 2400);
-    }
-
-
-
-    // ─── TRACKING ────────────────────────────────
-    async function submitTracking() {
-      const oid = document.getElementById('track-order-id').value;
-      if(!oid) {
-        showToast('Please enter an Order ID');
-        return;
-      }
-      
-      const resContainer = document.getElementById('track-result');
-      resContainer.style.display = 'block';
-      resContainer.innerHTML = '<div style="text-align:center; padding: 20px;">Fetching status...</div>';
-      
-      try {
-        const res = await fetch('/api/track/' + encodeURIComponent(oid));
-        if (!res.ok) throw new Error('Not found');
-        const data = await res.json();
-        
-        let timelineHTML = '';
-        data.tracking.forEach(t => {
-            timelineHTML += `
-            <div class="timeline-step ${t.status}">
-              <div class="timeline-title">${t.title}</div>
-              <div class="timeline-date">${t.date}</div>
-            </div>`;
-        });
-        
-        resContainer.innerHTML = `
-          <h4 style="margin-bottom: 12px;">Order Status: <span style="color:var(--rose);">${data.tracking.find(t => t.status === 'active')?.title || 'Completed'}</span></h4>
-          <div class="timeline">
-            ${timelineHTML}
-          </div>
-        `;
-      } catch (err) {
-        resContainer.innerHTML = '<div style="color:red; text-align:center;">Order not found. Please check your Order ID.</div>';
-      }
-    }
-
-    // ─── REVIEWS ──────────────────────────────────
-    const MOCK_REVIEWS = [
-      { name: 'Priya K.', title: 'Absolutely love the pigmentation!', body: 'This is my second time buying this. The color payoff is insane and it stays on all day.', rating: 5, date: '2 days ago' },
-      { name: 'Ananya S.', title: 'Good for everyday use', body: 'Very smooth application. Not entirely transfer-proof but I love how lightweight it feels.', rating: 4, date: '1 week ago' },
-      { name: 'Megha R.', title: 'Gorgeous shade', body: 'Looks exactly like the picture. Highly recommend for festive seasons.', rating: 5, date: '2 weeks ago' }
-    ];
-
-    function renderReviews() {
-      const list = document.getElementById('reviews-list');
-      if (!list) return;
-      list.innerHTML = MOCK_REVIEWS.map(r => `
-        <div class="review-card">
-          <div class="review-stars">${stars(r.rating)}</div>
-          <div class="review-title">${r.title}</div>
-          <div class="review-body">${r.body}</div>
-          <div class="review-meta">${r.name} &bull; ${r.date}</div>
-        </div>
-      `).join('');
-    }
-
-    function openReviewModal() {
-      document.getElementById('review-modal-overlay').classList.add('active');
-    }
-
-    function closeReviewModal() {
-      document.getElementById('review-modal-overlay').classList.remove('active');
-    }
-
-    function submitReview() {
-      closeReviewModal();
-      showToast('Review submitted for moderation!');
-      document.getElementById('review-name').value = '';
-      document.getElementById('review-title').value = '';
-      document.getElementById('review-body').value = '';
     }
 
     // ─── STARS ──────────────────────────────────
@@ -3799,19 +3795,8 @@
     function productCardHTML(p, extraStyle = '') {
       const inWish = state.wishlist.find(w => w.id === p.id);
       const disc = Math.round((1 - p.price / p.orig) * 100);
-      
-      let swatchesHTML = '';
-      if (p.palette && p.palette.length > 0 && !p.name.toLowerCase().includes('compact') && !p.name.toLowerCase().includes('cover me')) {
-        const displayPalettes = p.palette.slice(0, 4);
-        const extraCount = p.palette.length - 4;
-        swatchesHTML = `<div class="grid-swatches-container">` + 
-          displayPalettes.map(c => `<div class="grid-swatch" style="background:${c.hex};" title="${c.name}"></div>`).join('') +
-          (extraCount > 0 ? `<div class="grid-swatch-more">+${extraCount}</div>` : '') +
-          `</div>`;
-      }
-
       return `
-    <a href="/product/${p.slug}" onclick="event.preventDefault(); openProduct(${p.id})" target="_blank" class="product-card" data-id="${p.id}" style="${extraStyle}; text-decoration:none; color:inherit; display:block;">
+    <a href="#product-${p.id}" target="_blank" class="product-card" data-id="${p.id}" style="${extraStyle}; text-decoration:none; color:inherit; display:block;">
       <div class="product-img">
         ${p.image ? `<img src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;">` : `<span style="font-size:50px;">${p.emoji || '💄'}</span>`}
         ${p.tag ? `<span class="product-tag">${p.tag}</span>` : ''}
@@ -3822,8 +3807,7 @@
         <div class="product-stars">${stars(p.rating)}</div>
         <div class="product-name">${p.name}</div>
         <div class="product-shade">${p.shade}</div>
-        ${swatchesHTML}
-        <div class="product-row" style="margin-top: 8px;">
+        <div class="product-row">
           <div><span class="product-price">₹${p.price}</span><span class="product-orig">₹${p.orig}</span></div>
           <button class="add-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart(${p.id})">+</button>
         </div>
@@ -3848,11 +3832,7 @@
     }
 
     function setFilter(cat) {
-      if (cat.toLowerCase() === 'all') {
-        navigate('/shop');
-      } else {
-        navigate('/category/' + cat.toLowerCase());
-      }
+      window.location.hash = '#shop-' + cat;
     }
 
     function clearSearch() {
@@ -3893,6 +3873,19 @@
     }
 
     // ─── PRODUCT DETAIL ──────────────────────────
+    function toggleAccordion(btn) {
+      btn.classList.toggle("active");
+      const content = btn.nextElementSibling;
+      const icon = btn.querySelector('.icon');
+      if (btn.classList.contains("active")) {
+        content.style.maxHeight = content.scrollHeight + "px";
+        icon.textContent = "−";
+      } else {
+        content.style.maxHeight = null;
+        icon.textContent = "+";
+      }
+    }
+
     function selectPaletteShade(index, pid) {
       const p = PRODUCTS.find(x => x.id === pid);
       if (!p || !p.palette || !p.palette[index]) return;
@@ -3900,13 +3893,15 @@
 
       const mainImg = document.getElementById('main-detail-img');
       const isCompact = p.name && (p.name.toLowerCase().includes('cover me') || p.name.toLowerCase().includes('compact'));
+      const targetSrc = isCompact && p.images && p.images.length > 0 ? p.images[0] : (shadeData.image || p.image || '');
+
       if (mainImg) {
-        if (!isCompact) {
-          mainImg.src = shadeData.image;
+        if (!isCompact && targetSrc) {
+          mainImg.src = targetSrc;
           mainImg.style.objectFit = 'contain';
         }
       } else {
-        document.getElementById('detail-emoji').innerHTML = `<img src="${isCompact ? p.images[0] : shadeData.image}" id="main-detail-img" style="width:100%;height:100%;object-fit:contain;">`;
+        document.getElementById('detail-emoji').innerHTML = targetSrc ? `<img src="${targetSrc}" id="main-detail-img" style="width:100%;height:100%;object-fit:contain;">` : (p.emoji || '💄');
       }
 
       document.getElementById('detail-shade').innerHTML = 'Shade: <span style="font-weight:600;color:var(--td);">' + shadeData.name + '</span>';
@@ -3925,12 +3920,8 @@
       if (el) el.classList.add('active');
     }
 
-    function openProduct(id, push = true) {
+    function openProduct(id) {
       const p = PRODUCTS.find(x => x.id === id);
-      if (!p) return;
-      if (push) window.history.pushState(null, '', '/product/' + p.slug);
-      updateSEO(p.name, p.desc);
-      injectJSONLD(p);
       state.currentProduct = p;
       state.detailQty = 1;
       const disc = Math.round((1 - p.price / p.orig) * 100);
@@ -4324,7 +4315,7 @@
           renderCheckout();
           window.scrollTo(0, 0);
         } else {
-          // Process all digital payments (Card, UPI, Netbanking) with Razorpay
+          // Process digital payment with Razorpay (Card, UPI, Netbanking)
           processRazorpayPayment(total, order_id);
         }
       } catch (err) {
@@ -4377,6 +4368,7 @@
         await api('/api/auth/send-otp', 'POST', { phone: p });
         document.getElementById('display-phone').textContent = '+91 ' + p;
         switchAuthView('phone_otp');
+        showToast('OTP sent to your number!');
       } catch (e) { showToast(e.message); }
     }
 
@@ -4484,8 +4476,8 @@
           g.style.padding = '12px 14px';
           g.style.fontSize = '13px';
           g.style.color = 'var(--tm)';
-          g.style.display = 'block'; 
-          g.innerHTML = `👋 Hi, <strong style="color:var(--rose-d)">${state.user.name}</strong>!`; 
+          g.style.display = 'block';
+          g.innerHTML = `👋 Hi, <strong style="color:var(--rose-d)">${state.user.name}</strong>!`;
         } else {
           g.style.display = 'none';
         }
@@ -4493,34 +4485,34 @@
       const sab = document.getElementById('sidebar-auth-btn');
       if (sab) {
         sab.style.display = 'block';
-        if(state.user) {
-           sab.innerHTML = `<button class="btn btn-ghost btn-full" onclick="logout();closeSidebar();" style="border-radius:30px; border:1px solid var(--nude-dark); color:var(--td); font-family:'Bebas Neue',cursive; font-size:18px;">SIGN OUT</button>`;
+        if (state.user) {
+          sab.innerHTML = `<button class="btn btn-ghost btn-full" onclick="logout();closeSidebar();" style="border-radius:30px; border:1px solid var(--nude-dark); color:var(--td); font-family:'Bebas Neue',cursive; font-size:18px;">SIGN OUT</button>`;
         } else {
-           sab.innerHTML = `<button class="btn btn-primary btn-full" onclick="goTo('auth');closeSidebar();" style="border-radius:30px; font-family:'Bebas Neue',cursive; font-size:18px;">SIGN IN / SIGN UP</button>`;
+          sab.innerHTML = `<button class="btn btn-primary btn-full" onclick="goTo('auth');closeSidebar();" style="border-radius:30px; font-family:'Bebas Neue',cursive; font-size:18px;">SIGN IN / SIGN UP</button>`;
         }
       }
     }
 
     // ─── ACCOUNT ─────────────────────────────────
     function renderAccount() {
-       document.getElementById('prof-name').value = state.user?.name || '';
-       document.getElementById('prof-email').value = state.user?.email || state.user?.phone || '';
-       switchAccTab(state.accTab);
+      document.getElementById('prof-name').value = state.user?.name || '';
+      document.getElementById('prof-email').value = state.user?.email || state.user?.phone || '';
+      switchAccTab(state.accTab);
     }
-    
+
     function switchAccTab(tab) {
-       state.accTab = tab;
-       document.querySelectorAll('.acc-tab-btn').forEach(btn => {
-           if(btn.dataset.tab === tab) btn.classList.add('active');
-           else btn.classList.remove('active');
-       });
-       document.querySelectorAll('.acc-section').forEach(sec => {
-           if(sec.id === 'acc-' + tab) sec.classList.add('active');
-           else sec.classList.remove('active');
-       });
-       if(tab === 'orders') fetchOrders();
+      state.accTab = tab;
+      document.querySelectorAll('.acc-tab-btn').forEach(btn => {
+        if (btn.dataset.tab === tab) btn.classList.add('active');
+        else btn.classList.remove('active');
+      });
+      document.querySelectorAll('.acc-section').forEach(sec => {
+        if (sec.id === 'acc-' + tab) sec.classList.add('active');
+        else sec.classList.remove('active');
+      });
+      if (tab === 'orders') fetchOrders();
     }
-    
+
     async function fetchOrders() {
       if (!state.token) return;
       try {
@@ -4598,26 +4590,50 @@
       showToast('Subscribed! Welcome to FACELOOK 💌');
     }
 
+    let currentUpiOrderId = null;
+    function showUpiQrModal(amount, orderId) {
+      currentUpiOrderId = orderId;
+      document.getElementById('qr-amount').innerText = amount;
+      document.getElementById('upi-dynamic-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=3A2020&data=upi://pay?pa=9910215683@ptyes%26pn=FACELOOK%26am=${amount}`;
+      document.getElementById('upi-qr-overlay').style.display = 'block';
+      const input = document.getElementById('upi-utr-input');
+      if (input) input.value = '';
+    }
 
+    async function submitUpiQrPayment() {
+      const utr = document.getElementById('upi-utr-input').value;
+      if (!utr || utr.length < 5) {
+        showToast("Please enter a valid UTR or Transaction ID");
+        return;
+      }
+
+      try {
+        await api('/api/checkout/upi', 'POST', { order_id: currentUpiOrderId, utr: utr });
+
+        document.getElementById('upi-qr-overlay').style.display = 'none';
+        state.cart = [];
+        updateBadges();
+        state.checkoutStep = 3;
+        renderCheckout();
+        window.scrollTo(0, 0);
+        showToast("Payment submitted for verification!");
+      } catch (err) {
+        showToast("Error: " + err.message);
+      }
+    }
 
     // ─── INIT ────────────────────────────────────
     async function initApp() {
       // Instantly switch to the correct page skeleton to avoid waiting on the homepage
-      const path = window.location.pathname;
-      let initialPage = 'home';
-      if (path.startsWith('/product/')) initialPage = 'product';
-      else if (path.startsWith('/category/')) initialPage = 'shop';
-      else if (path !== '/' && path !== '') initialPage = path.replace('/', '');
-      
+      const initialHash = window.location.hash.replace('#', '') || 'home';
+      const initialPage = initialHash.startsWith('product-') ? 'product' :
+        initialHash.startsWith('shop-') ? 'shop' : initialHash;
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       const targetPage = document.getElementById('page-' + initialPage);
       if (targetPage) targetPage.classList.add('active');
 
       try {
         PRODUCTS = await api('/api/products');
-        // Add slugs to all products
-        PRODUCTS.forEach(p => p.slug = slugify(p.name));
-        
         if (state.token) {
           state.cart = await api('/api/cart');
           state.wishlist = await api('/api/wishlist');
@@ -4625,63 +4641,28 @@
       } catch (err) {
         console.error("Init Error:", err);
       }
-      
-      // Trigger route
-      handleRoute();
-      
+      // Trigger initial route
+      if (initialHash.startsWith('product-')) {
+        const pId = parseInt(initialHash.split('-')[1]);
+        if (pId) {
+          const p = PRODUCTS.find(x => x.id === pId);
+          if (p) {
+            openProduct(pId);
+          }
+        }
+      } else if (initialHash.startsWith('shop-')) {
+        const cat = initialHash.split('-')[1];
+        state.shopFilter = cat || 'All';
+        renderPage('shop');
+      } else {
+        if (initialHash === 'shop') state.shopFilter = 'All';
+        renderPage(initialHash);
+      }
       updateAuthUI();
       updateBadges();
     }
     initApp();
   </script>
-  <!-- Floating WhatsApp Widget -->
-  <a href="https://wa.me/919910215683" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp">
-    <svg viewBox="0 0 32 32" class="whatsapp-icon" xmlns="http://www.w3.org/2000/svg">
-      <path d="M16 2a13 13 0 0 0-11 20L3 30l7.8-2.6A13 13 0 1 0 16 2zm0 24a11 11 0 0 1-5.6-1.5l-.4-.2-4.2 1.4 1.4-4.1-.3-.4A11 11 0 1 1 16 26zm6-8.2c-.3-.2-2-.9-2.3-1-.3-.1-.5-.2-.7.2-.2.3-.9 1-.1 1.3.3.3 1.1 1.7 1.4 2 .4.3.8.4 1.4.1l1.8-.9c.4-.2.4-.7.4-.8l-.3-.2z"/>
-      <path d="M12.6 10.4c-.3-.8-.5-.8-.7-.8h-.6c-.2 0-.6.1-.9.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.1.2 2 3 5 4.3 2.9 1.3 2.9.8 3.5.8.5 0 1.6-.6 1.8-1.3.2-.6.2-1.2.1-1.3-.1-.1-.3-.2-.6-.4l-1.9-.9c-.3-.2-.6-.2-.8.2s-.9 1.1-1.1 1.3c-.2.2-.5.3-.8.1-.3-.1-1.4-.5-2.6-1.6-1-1-1.2-1.3-1.4-1.6-.2-.3 0-.5.2-.6l.4-.5c.2-.2.3-.4.4-.7s0-.5-.1-.7c-.1-.2-.8-1.9-1.1-2.6z"/>
-    </svg>
-  </a>
-  <style>
-    .whatsapp-float {
-      position: fixed;
-      width: 60px;
-      height: 60px;
-      bottom: 40px;
-      right: 40px;
-      background-color: #25d366;
-      color: #FFF;
-      border-radius: 50px;
-      text-align: center;
-      font-size: 30px;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .whatsapp-float:hover {
-      transform: scale(1.1);
-      box-shadow: 0px 6px 14px rgba(0,0,0,0.4);
-    }
-    .whatsapp-icon {
-      width: 35px;
-      height: 35px;
-      fill: white;
-    }
-    @media (max-width: 768px) {
-      .whatsapp-float {
-        width: 50px;
-        height: 50px;
-        bottom: 20px;
-        right: 20px;
-      }
-      .whatsapp-icon {
-        width: 30px;
-        height: 30px;
-      }
-    }
-  </style>
 </body>
 
 </html>
