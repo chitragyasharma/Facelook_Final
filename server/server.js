@@ -621,7 +621,7 @@ app.get('/admin', (req, res) => {
 });
 
 app.get('{*path}', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/index.html.html'));
+    res.sendFile(path.join(__dirname, '../index.html.html'));
 });
 
 app.listen(PORT, () => {
