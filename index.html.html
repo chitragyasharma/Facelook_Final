@@ -5,7 +5,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <base href="/">
-  <title>Facelook</title>
+  <title>Facelook Cosmetics</title>
+  
+  <!-- Basic SEO -->
+  <meta name="description" content="Discover premium beauty products tailored for you at Facelook Cosmetics.">
+  <meta name="keywords" content="makeup, cosmetics, beauty, lipstick, foundation, india">
+  
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:title" content="Facelook Cosmetics">
+  <meta property="og:description" content="Discover premium beauty products tailored for you at Facelook Cosmetics.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://facelookcosmetics.in">
+  <meta property="og:image" content="https://facelookcosmetics.in/assets/og-image.jpg">
+  
+  <!-- Google Analytics (Placeholder) -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script> -->
+
+  <!-- Meta Pixel (Placeholder) -->
+  <!-- <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'XXXXXXXXXXXXXXXX');
+    fbq('track', 'PageView');
+  </script> -->
+
   <link
     href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Jost:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
@@ -2690,6 +2725,9 @@
     }
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Firebase SDK (v8 compat for script tags) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 </head>
 
 <body>
@@ -2881,7 +2919,7 @@
           <input class="nl-input-new" type="email" placeholder="Enter Your Email">
           <p class="nl-disclaimer">Sign up for fab updates from FACELOOK Cosmetics. Standard rates apply. Read our Terms
             and Privacy.</p>
-          <button class="nl-btn-new" onclick="subscribeNL()">Subscribe</button>
+          <button class="nl-btn-new" onclick="subscribeNL(this)">Subscribe</button>
         </div>
       </div>
     </div>
@@ -2928,7 +2966,7 @@
           <input class="nl-input-new" type="email" placeholder="Enter Your Email">
           <p class="nl-disclaimer">Sign up for fab updates from FACELOOK Cosmetics. Standard rates apply. Read our Terms
             and Privacy.</p>
-          <button class="nl-btn-new" onclick="subscribeNL()">Subscribe</button>
+          <button class="nl-btn-new" onclick="subscribeNL(this)">Subscribe</button>
         </div>
       </div>
     </div>
@@ -3033,7 +3071,7 @@
           <input class="nl-input-new" type="email" placeholder="Enter Your Email">
           <p class="nl-disclaimer">Sign up for fab updates from FACELOOK Cosmetics. Standard rates apply. Read our Terms
             and Privacy.</p>
-          <button class="nl-btn-new" onclick="subscribeNL()">Subscribe</button>
+          <button class="nl-btn-new" onclick="subscribeNL(this)">Subscribe</button>
         </div>
       </div>
     </div>
@@ -3594,15 +3632,34 @@
       <h3>Write a Review</h3>
       <input type="text" id="review-name" placeholder="Your Name">
       <input type="text" id="review-title" placeholder="Review Title (e.g. Loved it!)">
+      <select id="review-rating" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 12px; font-family: inherit;">
+        <option value="5">★★★★★ (5 Stars)</option>
+        <option value="4">★★★★☆ (4 Stars)</option>
+        <option value="3">★★★☆☆ (3 Stars)</option>
+        <option value="2">★★☆☆☆ (2 Stars)</option>
+        <option value="1">★☆☆☆☆ (1 Star)</option>
+      </select>
       <textarea id="review-body" placeholder="Share your experience with this product..."></textarea>
       <button class="btn btn-primary btn-full" onclick="submitReview()">Submit Review</button>
     </div>
   </div>
   
   <script>
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     // ─── DATA ───────────────────────────────────
     const state = {
       page: 'home',
+      coupon: null,
+      couponDiscount: 0,
       cart: [],
       wishlist: [],
       user: null,
@@ -3673,15 +3730,27 @@
     }
 
     function updateSEO(title, desc, image) {
-      document.title = title ? `${title} | Facelook Cosmetics` : 'Facelook Cosmetics';
-      if (desc) {
-        let metaDesc = document.querySelector('meta[name="description"]');
-        if (!metaDesc) {
-          metaDesc = document.createElement('meta');
-          metaDesc.name = 'description';
-          document.head.appendChild(metaDesc);
+      const fullTitle = title ? `${title} | Facelook Cosmetics` : 'Facelook Cosmetics';
+      document.title = fullTitle;
+      
+      const updateMeta = (nameAttr, nameVal, content) => {
+        let el = document.querySelector(`meta[${nameAttr}="${nameVal}"]`);
+        if (!el) {
+          el = document.createElement('meta');
+          el.setAttribute(nameAttr, nameVal);
+          document.head.appendChild(el);
         }
-        metaDesc.content = desc;
+        el.content = content;
+      };
+
+      if (desc) {
+        updateMeta('name', 'description', desc);
+        updateMeta('property', 'og:description', desc);
+      }
+      
+      updateMeta('property', 'og:title', fullTitle);
+      if (image) {
+        updateMeta('property', 'og:image', image);
       }
     }
 
@@ -3862,49 +3931,62 @@
     }
 
     // ─── REVIEWS ──────────────────────────────────
-    const MOCK_REVIEWS = [
-      { name: 'Priya K.', title: 'Absolutely love the pigmentation!', body: 'This is my second time buying this. The color payoff is insane and it stays on all day.', rating: 5, date: '2 days ago' },
-      { name: 'Ananya S.', title: 'Good for everyday use', body: 'Very smooth application. Not entirely transfer-proof but I love how lightweight it feels.', rating: 4, date: '1 week ago' },
-      { name: 'Megha R.', title: 'Gorgeous shade', body: 'Looks exactly like the picture. Highly recommend for festive seasons.', rating: 5, date: '2 weeks ago' }
-    ];
-
-    function renderReviews() {
+    async function renderReviews() {
       const list = document.getElementById('reviews-list');
       if (!list) return;
+      if (!state.currentProduct) return;
       
-      const summaryHTML = `
-        <div class="reviews-summary">
-          <div>
-            <div class="reviews-rating-big">4.8</div>
-            <div class="reviews-rating-stars">★★★★★</div>
-            <div class="reviews-rating-count">Based on 124 reviews</div>
-          </div>
-          <div style="flex:1;">
-             <div style="font-size:13px; color:var(--tm); line-height:1.6;">
-               <strong>98%</strong> of customers recommend this product.<br>
-               "Excellent pigmentation and long-lasting formula."
-             </div>
-          </div>
-        </div>
-      `;
-      
-      const reviewsHTML = MOCK_REVIEWS.map(r => {
-        const initials = r.name.split(' ').map(n=>n[0]).join('').substring(0,2);
-        return `
-        <div class="review-card" style="padding: 24px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-          <div class="review-card-header">
-            <div class="review-avatar">${initials}</div>
+      try {
+        list.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--tm);">Loading reviews...</div>';
+        const res = await api('/api/reviews/' + state.currentProduct.id);
+        const reviews = res.reviews || [];
+        
+        let avgRating = 0;
+        if (reviews.length > 0) {
+            avgRating = (reviews.reduce((a,b) => a+b.rating, 0) / reviews.length).toFixed(1);
+        }
+        
+        const summaryHTML = `
+          <div class="reviews-summary">
             <div>
-              <div class="review-meta" style="font-weight:600; color:var(--td); font-size:14px;">${r.name} <span class="review-verified">✓ Verified Buyer</span></div>
-              <div class="review-stars">${stars(r.rating)} <span style="color:var(--tl); font-size:12px; margin-left:6px;">${r.date}</span></div>
+              <div class="reviews-rating-big">${avgRating > 0 ? avgRating : '0.0'}</div>
+              <div class="reviews-rating-stars">${stars(avgRating > 0 ? avgRating : 0)}</div>
+              <div class="reviews-rating-count">Based on ${reviews.length} reviews</div>
+            </div>
+            <div style="flex:1;">
+               <div style="font-size:13px; color:var(--tm); line-height:1.6;">
+                 ${reviews.length > 0 ? 'Verified customer feedback.' : 'Be the first to review this product!'}
+               </div>
             </div>
           </div>
-          <div class="review-title" style="font-size:15px; margin-bottom:8px;">${r.title}</div>
-          <div class="review-body" style="font-size:14px; line-height:1.6; color:#444;">${r.body}</div>
-        </div>
-      `}).join('');
-      
-      list.innerHTML = summaryHTML + reviewsHTML;
+        `;
+        
+        if (reviews.length === 0) {
+           list.innerHTML = summaryHTML + '<div style="padding: 20px; text-align: center; color: var(--tm);">No reviews yet. Write one!</div>';
+           return;
+        }
+
+        const reviewsHTML = reviews.map(r => {
+          const initials = r.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+          const dateStr = new Date(r.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+          return `
+          <div class="review-card" style="padding: 24px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+            <div class="review-card-header">
+              <div class="review-avatar">${initials}</div>
+              <div>
+                <div class="review-meta" style="font-weight:600; color:var(--td); font-size:14px;">${r.name} <span class="review-verified">✓ Verified Buyer</span></div>
+                <div class="review-stars">${stars(r.rating)} <span style="color:var(--tl); font-size:12px; margin-left:6px;">${dateStr}</span></div>
+              </div>
+            </div>
+            <div class="review-title" style="font-size:15px; margin-bottom:8px;">${r.title}</div>
+            <div class="review-body" style="font-size:14px; line-height:1.6; color:#444;">${r.body}</div>
+          </div>
+        `}).join('');
+        
+        list.innerHTML = summaryHTML + reviewsHTML;
+      } catch(e) {
+        list.innerHTML = '<div style="padding: 20px; color: red;">Error loading reviews</div>';
+      }
     }
 
     function openReviewModal() {
@@ -3915,12 +3997,28 @@
       document.getElementById('review-modal-overlay').classList.remove('active');
     }
 
-    function submitReview() {
-      closeReviewModal();
-      showToast('Review submitted for moderation!');
-      document.getElementById('review-name').value = '';
-      document.getElementById('review-title').value = '';
-      document.getElementById('review-body').value = '';
+    async function submitReview() {
+      const name = document.getElementById('review-name').value;
+      const title = document.getElementById('review-title').value;
+      const body = document.getElementById('review-body').value;
+      const rating = document.getElementById('review-rating').value;
+      
+      if(!name || !title || !body) return showToast("All fields required");
+      
+      try {
+          const res = await api('/api/reviews', 'POST', {
+             productId: state.currentProduct.id,
+             name, title, body, rating
+          });
+          closeReviewModal();
+          showToast('Review submitted successfully!');
+          document.getElementById('review-name').value = '';
+          document.getElementById('review-title').value = '';
+          document.getElementById('review-body').value = '';
+          renderReviews();
+      } catch(e) {
+          showToast(e.message || "Error submitting review");
+      }
     }
 
     // ─── STARS ──────────────────────────────────
@@ -4143,6 +4241,7 @@
       const related = PRODUCTS.filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4);
       document.getElementById('related-products').innerHTML = related.map(r => productCardHTML(r, 'width:140px;flex-shrink:0;')).join('');
 
+      renderReviews();
       renderPage('product');
     }
 
@@ -4358,12 +4457,36 @@
             <span style="font-size:14px;color:var(--td);font-weight:500;">${lbl}</span>
           </div>`).join('')}
         <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--td);margin-bottom:10px;">Apply Coupon</div>
+          <div style="display:flex;gap:8px;margin-bottom:16px;">
+            <input type="text" id="co-coupon" class="form-input" placeholder="Coupon Code" value="${state.coupon ? state.coupon.code : ''}" style="flex:1;text-transform:uppercase;">
+            <button class="btn btn-secondary" onclick="applyCoupon()" style="padding:0 16px;">Apply</button>
+          </div>
           <div style="font-size:13px;font-weight:700;color:var(--td);margin-bottom:10px;">Order Summary</div>
-          ${state.cart.map(item => `<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;color:var(--tm);"><span style="display:flex;align-items:center;gap:6px;">${item.image ? `<img src="${item.image}" style="width:20px;height:20px;object-fit:cover;border-radius:4px;">` : (item.emoji || '💄')} ${item.name} ×${item.qty}</span><span>₹${item.price * item.qty}</span></div>`).join('')}
-          <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px;display:flex;justify-content:space-between;font-weight:800;font-size:14px;color:var(--rose-d);"><span>Total</span><span>₹${total}</span></div>
+          ${state.cart.map(item => `<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;color:var(--tm);"><span style="display:flex;align-items:center;gap:6px;">${item.image ? `<img src="${item.image}" style="width:20px;height:20px;object-fit:cover;border-radius:4px;">` : (item.emoji || '💄')} ${escapeHTML(item.name)} ×${item.qty}</span><span>₹${item.price * item.qty}</span></div>`).join('')}
+          ${state.coupon ? `<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:12px;color:var(--rose-d);"><span>Discount (${state.coupon.code})</span><span>-₹${state.couponDiscount}</span></div>` : ''}
+          <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px;display:flex;justify-content:space-between;font-weight:800;font-size:14px;color:var(--rose-d);"><span>Total</span><span>₹${Math.max(0, total - state.couponDiscount)}</span></div>
         </div>
       </div>`;
-        document.getElementById('checkout-footer').innerHTML = `<button class="btn btn-primary btn-full" onclick="nextCheckout(2)">Place Order — ₹${total}</button>`;
+        document.getElementById('checkout-footer').innerHTML = `<button class="btn btn-primary btn-full" onclick="nextCheckout(2)">Place Order — ₹${Math.max(0, total - state.couponDiscount)}</button>`;
+      }
+    }
+
+    async function applyCoupon() {
+      const code = document.getElementById('co-coupon').value;
+      if (!code) return showToast('Please enter a coupon code');
+      const sub = state.cart.reduce((a, i) => a + i.price * i.qty, 0);
+      try {
+        const res = await api('/api/coupons/validate', 'POST', { code, cartTotal: sub });
+        state.coupon = res.coupon;
+        state.couponDiscount = res.discount;
+        showToast('Coupon applied successfully!');
+        renderCheckout();
+      } catch (err) {
+        showToast(err.message);
+        state.coupon = null;
+        state.couponDiscount = 0;
+        renderCheckout();
       }
     }
 
@@ -4444,10 +4567,11 @@
     async function finishCheckout() {
       const sub = state.cart.reduce((a, i) => a + i.price * i.qty, 0);
       const ship = sub >= 599 ? 0 : 49;
-      const total = sub + ship;
+      const total = Math.max(0, sub + ship - (state.couponDiscount || 0));
 
       try {
-        const res = await api('/api/checkout', 'POST', { total, details: state.checkoutData });
+        const payloadDetails = { ...state.checkoutData, coupon: state.coupon ? state.coupon.code : null, discount: state.couponDiscount || 0 };
+        const res = await api('/api/checkout', 'POST', { total, details: payloadDetails });
         const order_id = res.order_id;
 
         if (state.checkoutData.pay === 'cod') {
@@ -4473,7 +4597,18 @@
         state.checkoutData.address = document.getElementById('co-addr')?.value || '';
         state.checkoutData.city = document.getElementById('co-city')?.value || '';
         state.checkoutData.pincode = document.getElementById('co-pin')?.value || '';
-        if (!state.checkoutData.name || !state.checkoutData.email) { showToast('Please fill required fields'); return; }
+        if (!state.checkoutData.name || !state.checkoutData.email || !state.checkoutData.phone || !state.checkoutData.address || !state.checkoutData.city || !state.checkoutData.pincode) { 
+          return showToast('Please fill all required fields'); 
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.checkoutData.email)) {
+          return showToast('Please enter a valid email address');
+        }
+        if (!/^\d{10}$/.test(state.checkoutData.phone)) {
+          return showToast('Please enter a valid 10-digit phone number');
+        }
+        if (!/^\d{6}$/.test(state.checkoutData.pincode)) {
+          return showToast('Please enter a valid 6-digit pincode');
+        }
       }
       if (step === 2) {
         if (!state.checkoutData.pay) state.checkoutData.pay = 'card';
@@ -4758,21 +4893,40 @@
     }
 
     // ─── CONTACT ─────────────────────────────────
-    function sendMessage() {
+    async function sendMessage() {
       const name = document.getElementById('c-name')?.value;
       const email = document.getElementById('c-email')?.value;
-      if (!name || !email) { showToast('Please fill in your name and email'); return; }
-      document.getElementById('contact-form-area').innerHTML = `
-    <div style="text-align:center;padding:32px 0;">
-      <div style="font-size:48px;margin-bottom:12px;">💌</div>
-      <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--rose-d);font-style:italic;">Message Sent!</div>
-      <p style="font-size:13px;color:var(--tl);margin-top:6px;">We'll reply within 24 hours.</p>
-    </div>`;
+      const message = document.getElementById('c-msg')?.value;
+      if (!name || !email || !message) { showToast('Please fill in your name, email, and message'); return; }
+      
+      try {
+        await api('/api/contact', 'POST', { name, email, subject: 'Contact Form Submission', message });
+        document.getElementById('contact-form-area').innerHTML = `
+      <div style="text-align:center;padding:32px 0;">
+        <div style="font-size:48px;margin-bottom:12px;">💌</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--rose-d);font-style:italic;">Message Sent!</div>
+        <p style="font-size:13px;color:var(--tl);margin-top:6px;">We'll reply within 24 hours.</p>
+      </div>`;
+      } catch (e) {
+        showToast(e.message);
+      }
     }
 
     // ─── NEWSLETTER ──────────────────────────────
-    function subscribeNL() {
-      showToast('Subscribed! Welcome to FACELOOK 💌');
+    async function subscribeNL(btnElement) {
+      const parent = btnElement.closest('.newsletter-split') || document;
+      const emailInput = parent.querySelector('input[type="email"]');
+      const email = emailInput ? emailInput.value : null;
+      
+      if (!email) { showToast('Please enter an email address'); return; }
+      
+      try {
+        const res = await api('/api/newsletter', 'POST', { email });
+        showToast(res.message || 'Subscribed! Welcome to FACELOOK 💌');
+        if (emailInput) emailInput.value = '';
+      } catch (e) {
+        showToast(e.message);
+      }
     }
 
 

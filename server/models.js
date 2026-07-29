@@ -167,6 +167,16 @@ const SettingSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now }
 });
 
+const ReviewSchema = new mongoose.Schema({
+    id: { type: Number, required: true, unique: true },
+    productId: { type: Number, required: true },
+    name: { type: String, required: true },
+    rating: { type: Number, required: true },
+    title: { type: String, required: true },
+    body: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+});
+
 module.exports = {
     User: mongoose.model('User', UserSchema),
     Product: mongoose.model('Product', ProductSchema),
@@ -179,4 +189,5 @@ module.exports = {
     Return: mongoose.model('Return', ReturnSchema),
     Influencer: mongoose.model('Influencer', InfluencerSchema),
     Setting: mongoose.model('Setting', SettingSchema),
+    Review: mongoose.model('Review', ReviewSchema),
 };

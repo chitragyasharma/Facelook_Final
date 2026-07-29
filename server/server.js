@@ -1,11 +1,15 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const connectDB = require('./db');
-const { User, Product, Cart, Wishlist, Order } = require('./models');
+const { User, Product, Cart, Wishlist, Order, Review, Coupon } = require('./models');
+const fs = require('fs');
 const adminRoutes = require('./admin-routes');
 const Razorpay = require('razorpay');
 
@@ -21,6 +25,8 @@ const razorpay = new Razorpay({
 // Connect to MongoDB
 connectDB();
 
+app.use(helmet({ contentSecurityPolicy: false })); // Keep scripts/styles working for monolithic SPA
+app.use(compression());
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
@@ -61,7 +67,7 @@ app.post('/api/auth/register', async (req, res) => {
         const newUser = new User({ id, name, email, password: hash });
         await newUser.save();
 
-        const token = jwt.sign({ id, name, email }, SECRET_KEY);
+        const token = jwt.sign({ id, name, email }, SECRET_KEY, { expiresIn: '7d' });
         res.json({ token, user: { name, email } });
     } catch (error) {
         res.status(500).json({ error: 'Server error during registration' });
@@ -77,31 +83,47 @@ app.post('/api/auth/login', async (req, res) => {
             return res.status(400).json({ error: "Invalid credentials (did you sign up with Google?)" });
         }
         
-        const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, SECRET_KEY);
+        const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, SECRET_KEY, { expiresIn: '7d' });
         res.json({ token, user: { name: user.name, email: user.email } });
     } catch (error) {
         res.status(500).json({ error: 'Server error during login' });
     }
 });
 
-// --- OTP Store (In-Memory for demonstration) ---
-const OTP_STORE = {};
+// --- MSG91 OTP Integration ---
+const MSG91_AUTH_KEY = process.env.MSG91_AUTH_KEY;
+const MSG91_TEMPLATE_ID = process.env.MSG91_TEMPLATE_ID;
+const OTP_STORE = {}; // Fallback for when MSG91 is not configured
 
-app.post('/api/auth/send-otp', async (req, res) => {
+const otpLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit each IP to 5 requests per window
+    message: { error: 'Too many OTP requests from this IP, please try again after 15 minutes' }
+});
+
+app.post('/api/auth/send-otp', otpLimiter, async (req, res) => {
     try {
         const { phone } = req.body;
         if (!phone) return res.status(400).json({ error: 'Phone number required' });
         
-        const otp = Math.floor(1000 + Math.random() * 9000).toString();
-        OTP_STORE[phone] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 };
-        
-        console.log(`\n========================================`);
-        console.log(`📱 MOCK SMS TO ${phone}`);
-        console.log(`Your FACÉLOOK OTP is: ${otp}`);
-        console.log(`========================================\n`);
-        
-        res.json({ success: true, message: 'OTP sent successfully' });
+        if (MSG91_AUTH_KEY && MSG91_TEMPLATE_ID) {
+            const mobile = phone.startsWith('91') ? phone : '91' + phone.replace(/^\+91/, '');
+            const url = `https://control.msg91.com/api/v5/otp?template_id=${MSG91_TEMPLATE_ID}&mobile=${mobile}&authkey=${MSG91_AUTH_KEY}`;
+            const response = await fetch(url, { method: 'GET' });
+            const data = await response.json();
+            if (data.type === 'error') throw new Error(data.message);
+            return res.json({ success: true, message: 'OTP sent successfully via MSG91' });
+        } else {
+            const otp = Math.floor(1000 + Math.random() * 9000).toString();
+            OTP_STORE[phone] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 };
+            console.log(`\n========================================`);
+            console.log(`📱 MOCK SMS TO ${phone}`);
+            console.log(`Your FACÉLOOK OTP is: ${otp}`);
+            console.log(`========================================\n`);
+            return res.json({ success: true, message: 'Mock OTP sent successfully' });
+        }
     } catch (error) {
+        console.error('Send OTP Error:', error);
         res.status(500).json({ error: 'Server error sending OTP' });
     }
 });
@@ -111,12 +133,21 @@ app.post('/api/auth/verify-otp', async (req, res) => {
         const { phone, otp } = req.body;
         if (!phone || !otp) return res.status(400).json({ error: 'Phone and OTP required' });
         
-        const record = OTP_STORE[phone];
-        if (!record || record.otp !== otp || record.expiresAt < Date.now()) {
-            return res.status(400).json({ error: 'Invalid or expired OTP' });
+        if (MSG91_AUTH_KEY) {
+            const mobile = phone.startsWith('91') ? phone : '91' + phone.replace(/^\+91/, '');
+            const url = `https://control.msg91.com/api/v5/otp/verify?otp=${otp}&mobile=${mobile}&authkey=${MSG91_AUTH_KEY}`;
+            const response = await fetch(url, { method: 'GET' });
+            const data = await response.json();
+            if (data.type === 'error') {
+                return res.status(400).json({ error: 'Invalid or expired OTP' });
+            }
+        } else {
+            const record = OTP_STORE[phone];
+            if (!record || record.otp !== otp || record.expiresAt < Date.now()) {
+                return res.status(400).json({ error: 'Invalid or expired OTP' });
+            }
+            delete OTP_STORE[phone];
         }
-        
-        delete OTP_STORE[phone];
         
         let user = await User.findOne({ phone });
         if (!user) {
@@ -126,7 +157,7 @@ app.post('/api/auth/verify-otp', async (req, res) => {
             await user.save();
         }
         
-        const token = jwt.sign({ id: user.id, name: user.name, phone: user.phone }, SECRET_KEY);
+        const token = jwt.sign({ id: user.id, name: user.name, phone: user.phone }, SECRET_KEY, { expiresIn: '7d' });
         res.json({ token, user: { name: user.name, phone: user.phone } });
     } catch (error) {
         res.status(500).json({ error: 'Server error verifying OTP' });
@@ -155,7 +186,7 @@ app.post('/api/auth/google', async (req, res) => {
             await user.save();
         }
         
-        const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, SECRET_KEY);
+        const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, SECRET_KEY, { expiresIn: '7d' });
         res.json({ token, user: { name: user.name, email: user.email } });
     } catch (error) {
         res.status(500).json({ error: 'Server error decoding Google credential' });
@@ -375,7 +406,8 @@ app.post('/api/payment/verify', authenticateToken, async (req, res) => {
     if (generated_signature === razorpay_signature) {
         const order = await Order.findOne({ id: order_id });
         if (order) {
-            order.status = 'Paid';
+            order.status = 'confirmed';
+            order.paymentStatus = 'paid';
             order.razorpay_payment_id = razorpay_payment_id;
             order.razorpay_order_id = razorpay_order_id;
             await order.save();
@@ -429,19 +461,112 @@ app.get('/api/track/:orderId', async (req, res) => {
     }
 });
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/index.html.html'));
+// --- REVIEWS API ---
+app.post('/api/reviews', async (req, res) => {
+    try {
+        const { productId, name, rating, title, body } = req.body;
+        if (!productId || !name || !rating || !title || !body) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+        
+        const nextId = await Review.countDocuments() + 1;
+        const review = new Review({
+            id: nextId,
+            productId: parseInt(productId),
+            name,
+            rating: parseInt(rating),
+            title,
+            body
+        });
+        
+        await review.save();
+        res.json({ success: true, message: 'Review submitted successfully', review });
+    } catch (error) {
+        console.error("Error submitting review:", error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/admin.html'));
+app.get('/api/reviews/:productId', async (req, res) => {
+    try {
+        const productId = parseInt(req.params.productId);
+        const reviews = await Review.find({ productId }).sort({ createdAt: -1 });
+        res.json({ success: true, reviews });
+    } catch (error) {
+        console.error("Error fetching reviews:", error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+// --- CONTACT FORM ---
+app.post('/api/contact', async (req, res) => {
+    try {
+        const { name, email, subject, message } = req.body;
+        if (!name || !email || !message) return res.status(400).json({ error: 'Name, email, and message are required' });
+        // Store in a simple JSON log file (replace with DB or email service in production)
+        const entry = { name, email, subject: subject || '', message, timestamp: new Date().toISOString() };
+        const logPath = path.join(__dirname, 'contact-messages.json');
+        let messages = [];
+        try { messages = JSON.parse(fs.readFileSync(logPath, 'utf-8')); } catch(e) {}
+        messages.push(entry);
+        fs.writeFileSync(logPath, JSON.stringify(messages, null, 2));
+        console.log(`\n========================================`);
+        console.log(`📩 NEW CONTACT MESSAGE from ${name} (${email})`);
+        console.log(`Subject: ${subject || 'N/A'}`);
+        console.log(`Message: ${message}`);
+        console.log(`========================================\n`);
+        res.json({ success: true, message: 'Message received! We will get back to you within 24 hours.' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error saving message' });
+    }
 });
 
+// --- NEWSLETTER ---
+app.post('/api/newsletter', async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ error: 'Email is required' });
+        const logPath = path.join(__dirname, 'newsletter-subscribers.json');
+        let subs = [];
+        try { subs = JSON.parse(fs.readFileSync(logPath, 'utf-8')); } catch(e) {}
+        if (subs.find(s => s.email === email)) return res.json({ success: true, message: 'You are already subscribed!' });
+        subs.push({ email, subscribedAt: new Date().toISOString() });
+        fs.writeFileSync(logPath, JSON.stringify(subs, null, 2));
+        console.log(`📧 New newsletter subscriber: ${email}`);
+        res.json({ success: true, message: 'Subscribed successfully!' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error subscribing' });
+    }
+});
 
+// --- COUPON VALIDATION (for customers at checkout) ---
+app.post('/api/coupons/validate', authenticateToken, async (req, res) => {
+    try {
+        const { code, cartTotal } = req.body;
+        if (!code) return res.status(400).json({ error: 'Coupon code is required' });
+        const coupon = await Coupon.findOne({ code: code.toUpperCase(), isActive: true });
+        if (!coupon) return res.status(400).json({ error: 'Invalid or expired coupon code' });
+        const now = new Date();
+        if (coupon.validTo && now > coupon.validTo) return res.status(400).json({ error: 'This coupon has expired' });
+        if (coupon.validFrom && now < coupon.validFrom) return res.status(400).json({ error: 'This coupon is not yet active' });
+        if (coupon.usageLimit > 0 && coupon.usedCount >= coupon.usageLimit) return res.status(400).json({ error: 'This coupon has reached its usage limit' });
+        if (coupon.minOrder > 0 && cartTotal < coupon.minOrder) return res.status(400).json({ error: `Minimum order of ₹${coupon.minOrder} required for this coupon` });
+        
+        let discount = 0;
+        if (coupon.type === 'flat') {
+            discount = coupon.value;
+        } else {
+            discount = Math.round((cartTotal * coupon.value) / 100);
+            if (coupon.maxDiscount > 0) discount = Math.min(discount, coupon.maxDiscount);
+        }
+        
+        res.json({ success: true, discount, coupon: { code: coupon.code, type: coupon.type, value: coupon.value } });
+    } catch (error) {
+        res.status(500).json({ error: 'Error validating coupon' });
+    }
+});
+
+// --- SITEMAP (must be BEFORE catch-all) ---
 function slugify(text) {
     return text.toString().toLowerCase()
     .replace(/\s+/g, '-')
@@ -466,28 +591,7 @@ app.get('/sitemap.xml', async (req, res) => {
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://www.facelookcosmetics.in/category/face</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.facelookcosmetics.in/category/lips</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.facelookcosmetics.in/category/eyes</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.facelookcosmetics.in/category/nails</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
 `;
-
         products.forEach(p => {
             const slug = slugify(p.name);
             xml += `  <url>
@@ -498,12 +602,28 @@ app.get('/sitemap.xml', async (req, res) => {
   </url>
 `;
         });
-
         xml += `</urlset>`;
-        
         res.header('Content-Type', 'application/xml');
         res.send(xml);
     } catch (err) {
         res.status(500).send('Error generating sitemap');
     }
+});
+
+// --- ROBOTS.TXT ---
+app.get('/robots.txt', (req, res) => {
+    res.sendFile(path.join(__dirname, '../robots.txt'));
+});
+
+// --- ADMIN & CATCH-ALL (must be LAST) ---
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/admin.html'));
+});
+
+app.get('{*path}', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/index.html.html'));
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
 });

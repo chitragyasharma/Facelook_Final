@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/business/commercial-communication/revamp/airtel.jpg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://assets.airtel.in; img-src 'self' data: blob: https: http:; font-src 'self' data: https://assets.airtel.in; connect-src 'self' https: http: ws: wss:; frame-src 'self' https://www.airtel.in; media-src 'self' blob: data: https: http:; object-src 'none'; base-uri 'self'; form-action 'self' https: http:; frame-ancestors 'self'"
+    />
+    <title>Commercial Communication Platform</title>
+    <script type="text/javascript" src="/ruxitagentjs_ICA15789NPRTUVXfgqrux_10341260622154106.js" data-dtconfig="rid=RID_-48886705|rpid=1287537731|domain=airtel.in|reportUrl=/rb_bf72626coy|app=3c786e78e97e7679|owasp=1|featureHash=ICA15789NPRTUVXfgqrux|srsr=50000|rdnt=1|uxrgce=1|cuc=q3pij05x|mel=100000|expw=1|dpvc=1|lastModification=1783558592748|postfix=q3pij05x|tp=500,50,0|srbbv=2|agentUri=/ruxitagentjs_ICA15789NPRTUVXfgqrux_10341260622154106.js" data-config='{"revision":1783558592748,"beaconUri":"/rb_bf72626coy","agentUri":"/ruxitagentjs_ICA15789NPRTUVXfgqrux_10341260622154106.js","environmentId":"q3pij05x","modules":"ICA15789NPRTUVXfgqrux"}' data-envconfig='{"tracestateKeyPrefix":"f05d2157-6cd88521"}' data-appconfig='{"app":"3c786e78e97e7679","enableMetadataCapturing":false}'></script><script type="module" crossorigin src="/business/commercial-communication/revamp/assets/index-BoJ8DXKY.js"></script>
+    <link rel="modulepreload" crossorigin href="/business/commercial-communication/revamp/assets/vendor-C8UOknV_.js">
+    <link rel="stylesheet" crossorigin href="/business/commercial-communication/revamp/assets/vendor-JUn9G2ci.css">
+    <link rel="stylesheet" crossorigin href="/business/commercial-communication/revamp/assets/index-C3zPfQW0.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
