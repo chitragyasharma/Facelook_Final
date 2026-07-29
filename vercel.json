@@ -33,7 +33,7 @@
   "rewrites": [
     {
       "source": "/sitemap.xml",
-      "destination": "/server/server.js"
+      "destination": "https://facelook-backend.onrender.com/sitemap.xml"
     },
     {
       "source": "/robots.txt",
@@ -41,7 +41,7 @@
     },
     {
       "source": "/api/(.*)",
-      "destination": "/server/server.js"
+      "destination": "https://facelook-backend.onrender.com/api/$1"
     },
     {
       "source": "/admin",
