@@ -17,17 +17,17 @@ const connectDB = async () => {
 
 const seedAdmin = async () => {
     try {
-        const count = await AdminUser.countDocuments();
-        if (count === 0) {
+        const existingAdmin = await AdminUser.findOne({ email: 'facelook.cs51@gmail.com' });
+        if (!existingAdmin) {
             await AdminUser.create({
-                id: 1,
+                id: Date.now(), // Generate a unique ID
                 name: 'Super Admin',
-                email: 'admin@facelook.com',
-                password: bcrypt.hashSync('Admin@123', 10),
+                email: 'facelook.cs51@gmail.com',
+                password: bcrypt.hashSync('Facelook@4411', 10),
                 role: 'super_admin',
                 twoFactorEnabled: true
             });
-            console.log('Admin seeded: admin@facelook.com / Admin@123');
+            console.log('Admin seeded: facelook.cs51@gmail.com / Facelook@4411');
         }
 
         // Seed demo coupons

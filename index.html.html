@@ -1855,20 +1855,6 @@
       display: flex;
     }
 
-    /* ══════════════════════════════════════
-       ACCOUNT DASHBOARD
-    ══════════════════════════════════════ */
-    .acc-header {
-      background: linear-gradient(160deg, var(--nude-mid), var(--nude));
-      padding: 30px 20px;
-      text-align: center;
-      font-family: 'Bebas Neue', cursive;
-      font-size: 32px;
-      color: var(--rose-d);
-      letter-spacing: 2px;
-      border-bottom: 1px solid var(--border);
-    }
-
     .acc-wrapper {
       display: flex;
       flex-direction: column;
@@ -2526,9 +2512,11 @@
     .acc-header {
       padding: 24px 20px 16px;
       font-family: 'Playfair Display', serif;
-      font-size: 24px;
+      font-style: italic;
+      font-size: 28px;
       color: var(--td);
       background: var(--nude-mid);
+      text-align: center;
     }
     
     .acc-wrapper {
@@ -2781,7 +2769,7 @@
         <span>🛒</span>
         <span class="badge" id="cart-badge" style="top:-6px; right:-12px;">0</span>
       </a>
-      <a href="/profile" onclick="event.preventDefault(); goTo('profile')" style="cursor:pointer; text-decoration:none; color:inherit;"
+      <a href="/account" onclick="event.preventDefault(); goTo('account')" style="cursor:pointer; text-decoration:none; color:inherit;"
         title="Account">👤</a>
     </div>
   </nav>
@@ -3404,8 +3392,21 @@
   </div>
 
 
+
+  <!-- ═══════════════════════════════════
+     PAGE: ORDER DETAILS
+════════════════════════════════════ -->
+  <div class="page" id="page-order-details" style="padding-bottom:100px;">
+    <div class="acc-header" style="position:relative;">
+      <div style="position:absolute; left:20px; top:50%; transform:translateY(-50%); font-size:24px; cursor:pointer; color:var(--td);" onclick="goTo('account')">←</div>
+      Order Details
+    </div>
+    <div id="order-details-content" style="padding: 20px; max-width: 600px; margin: 0 auto;"></div>
+  </div>
+
   <!-- ═══════════════════════════════════
      PAGE: PRIVACY POLICY
+
 ════════════════════════════════════ -->
   <div class="page" id="page-privacy" style="padding: 100px 20px 40px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
     <h1 style="font-family:'Bebas Neue',cursive; font-size:40px; color:var(--td); margin-bottom:20px;">Privacy Policy</h1>
@@ -3586,7 +3587,7 @@
       <span class="bnav-icon">🛒</span><span class="bnav-label">Cart</span>
       <span class="bnav-badge" id="bn-cart-badge">0</span>
     </a>
-    <a href="/profile" onclick="event.preventDefault(); goTo('profile')" class="bnav-btn" id="bn-auth" style="text-decoration:none;">
+    <a href="/account" onclick="event.preventDefault(); goTo('account')" class="bnav-btn" id="bn-auth" style="text-decoration:none;">
       <span class="bnav-icon">👤</span><span class="bnav-label">Account</span>
     </a>
   </div>
@@ -3722,6 +3723,9 @@
       if (page === 'cart') renderCart();
       if (page === 'wishlist') renderWishlist();
       if (page === 'checkout') { state.checkoutStep = 1; renderCheckout(); }
+      if (page === 'auth') {
+         if(state.token) { goTo('account'); return; }
+      }
       if (page === 'account') {
          if(!state.token) { goTo('auth'); return; }
          renderAccount();
@@ -3826,6 +3830,10 @@
         clearJSONLD();
       } else {
         let page = path.replace('/', '') || 'home';
+        if (page === 'order-details' && !state.orders) {
+          navigate('/account');
+          return;
+        }
         // Handle old hash paths if they exist
         if (page === 'shop') state.shopFilter = 'All';
         renderPage(page);
@@ -3834,7 +3842,7 @@
           'home': 'Home',
           'shop': 'Shop All',
           'cart': 'Shopping Cart',
-          'profile': 'My Account',
+          'account': 'My Account',
           'contact': 'Contact Us',
           'privacy': 'Privacy Policy',
           'terms': 'Terms & Conditions',
@@ -4579,7 +4587,7 @@
       const total = Math.max(0, sub + ship - (state.couponDiscount || 0));
 
       try {
-        const payloadDetails = { ...state.checkoutData, coupon: state.coupon ? state.coupon.code : null, discount: state.couponDiscount || 0 };
+        const payloadDetails = { ...state.checkoutData, coupon: state.coupon ? state.coupon.code : null, discount: state.couponDiscount || 0, cart: state.cart, subtotal: sub, shipping: ship };
         const res = await api('/api/checkout', 'POST', { total, details: payloadDetails });
         const order_id = res.order_id;
 
@@ -4844,16 +4852,18 @@
       if (!state.token) return;
       try {
         const orders = await api('/api/orders');
+        state.orders = orders;
         let html = '';
         if (orders.length === 0) {
           html = `<div class="empty-state" style="padding:40px 20px;"><div class="empty-icon">📦</div><div class="empty-title">No orders yet</div><p class="empty-sub">When you place orders, they will appear here.</p><button class="btn btn-primary" onclick="goTo('shop')">Start Shopping</button></div>`;
         } else {
           orders.forEach(o => {
             const isPaid = o.status === 'Paid' || o.payment_status === 'Paid' || o.details?.pay === 'cod';
-            html += `<div class="order-card">
+            const orderIdStr = o.id || o._id.toString().slice(-6);
+            html += `<div class="order-card" style="cursor:pointer;" onclick="viewOrderDetails('${orderIdStr}')">
               <div class="order-head">
                 <div>
-                  <div class="order-id">Order #${o.id || o._id.toString().slice(-6)}</div>
+                  <div class="order-id">Order #${orderIdStr}</div>
                   <div class="order-date">Placed on ${new Date(o.createdAt || Date.now()).toLocaleDateString()}</div>
                 </div>
                 <div class="order-total">₹${o.total}</div>
@@ -4863,10 +4873,11 @@
                   Method: ${o.details?.pay?.toUpperCase() || 'Digital'}
                 </div>
                 <div style="display:flex; gap:12px; align-items:center;">
-                  <button class="btn-track" onclick="prefillAndTrack('${o.id || o._id.toString().slice(-6)}')">Track Order</button>
+                  <button class="btn-track" onclick="event.stopPropagation(); prefillAndTrack('${orderIdStr}')">Track Order</button>
                   <span class="order-status ${isPaid ? 'status-paid' : 'status-pending'}">
                     ${isPaid ? 'Paid' : 'Pending'}
-                </span>
+                  </span>
+                </div>
               </div>
             </div>`;
           });
@@ -4876,6 +4887,93 @@
         document.getElementById('acc-orders-content').innerHTML = `<div class="empty-state"><p style="color:var(--tl)">${e.message}</p></div>`;
       }
     }
+    function viewOrderDetails(orderId) {
+      if (!state.orders) return;
+      const order = state.orders.find(o => (o.id || o._id.toString().slice(-6)) == orderId);
+      if (!order) return;
+
+      const isPaid = order.status === 'Paid' || order.payment_status === 'Paid' || order.details?.pay === 'cod';
+      const orderDate = new Date(order.createdAt || Date.now()).toLocaleDateString();
+      
+      let html = `
+        <div style="background: white; border-radius: 8px; border: 1px solid var(--border); padding: 20px; margin-bottom: 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+            <div>
+              <div style="font-size:18px; font-weight:600; font-family:'Playfair Display',serif; color:var(--td);">Order #${orderId}</div>
+              <div style="font-size:12px; color:var(--tm); margin-top:4px;">Placed on ${orderDate}</div>
+            </div>
+            <span class="order-status ${isPaid ? 'status-paid' : 'status-pending'}">${isPaid ? 'Paid' : 'Pending'}</span>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-size:13px; color:var(--tm);">
+            <div style="flex:1;">
+              <strong>Delivery Address</strong><br>
+              ${order.details?.name || ''}<br>
+              ${order.details?.address || ''}<br>
+              ${order.details?.city || ''} - ${order.details?.pincode || ''}<br>
+              ${order.details?.phone || ''}
+            </div>
+            <div style="flex:1; text-align:right;">
+              <strong>Payment Method</strong><br>
+              ${(order.details?.pay || 'digital').toUpperCase()}
+            </div>
+          </div>
+          
+          <h4 style="font-family:'Playfair Display',serif; color:var(--td); margin-bottom:12px;">Order Items</h4>
+      `;
+
+      if (order.details && order.details.cart && order.details.cart.length > 0) {
+        html += `<div style="border: 1px solid var(--border); border-radius: 6px; overflow:hidden;">`;
+        order.details.cart.forEach(item => {
+          html += `
+            <div style="display:flex; padding:12px; border-bottom: 1px solid var(--border); align-items:center; gap:12px;">
+              <img src="${item.image}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;">
+              <div style="flex:1;">
+                <div style="font-weight:600; font-size:14px;">${item.name}</div>
+                <div style="font-size:12px; color:var(--tm);">Qty: ${item.qty} &times; ₹${item.price}</div>
+              </div>
+              <div style="font-weight:600;">₹${item.price * item.qty}</div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      } else {
+        html += `<div class="empty-state" style="padding:20px;"><p style="font-size:13px; color:var(--tl);">Product details are unavailable for this legacy order.</p></div>`;
+      }
+
+      const subtotal = order.details?.subtotal || order.total;
+      const shipping = order.details?.shipping || 0;
+      const discount = order.details?.discount || 0;
+
+      html += `
+          <div style="margin-top:20px; border-top: 1px solid var(--border); padding-top:16px;">
+            <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px; color:var(--tm);">
+              <span>Subtotal</span>
+              <span>₹${subtotal}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px; color:var(--tm);">
+              <span>Shipping</span>
+              <span>${shipping === 0 ? 'Free' : '₹' + shipping}</span>
+            </div>
+            ${discount > 0 ? `
+            <div style="display:flex; justify-content:space-between; font-size:14px; margin-bottom:8px; color:#28a745;">
+              <span>Discount</span>
+              <span>-₹${discount}</span>
+            </div>` : ''}
+            <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:600; margin-top:12px; color:var(--td); border-top: 1px dashed var(--border); padding-top:12px;">
+              <span>Total Amount</span>
+              <span>₹${order.total}</span>
+            </div>
+            <div style="font-size:11px; color:var(--tl); margin-top:4px; text-align:right;">Inclusive of all taxes</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-bottom:20px;" onclick="prefillAndTrack('${orderId}')">Track This Order</button>
+      `;
+
+      document.getElementById('order-details-content').innerHTML = html;
+      goTo('order-details');
+    }
+
 
     // ─── SIDEBAR ─────────────────────────────────
     function openSidebar() {
