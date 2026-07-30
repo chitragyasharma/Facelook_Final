@@ -32,9 +32,16 @@
 
   <div class="login-box" id="login-box">
     <h2>Admin Login</h2>
-    <input type="email" id="admin-email" placeholder="Email">
-    <input type="password" id="admin-pwd" placeholder="Password">
-    <button onclick="login()">Login</button>
+    <div id="login-step-1">
+      <input type="email" id="admin-email" placeholder="Email">
+      <input type="password" id="admin-pwd" placeholder="Password">
+      <button onclick="login()">Login</button>
+    </div>
+    <div id="login-step-2" style="display: none;">
+      <p style="margin-bottom: 10px; color: #666; font-size: 14px;">An OTP has been sent to your email.</p>
+      <input type="text" id="admin-otp" placeholder="Enter 6-digit OTP">
+      <button onclick="verifyOtp()">Verify OTP</button>
+    </div>
     <div id="login-error" style="color: red; margin-top: 10px;"></div>
   </div>
 
@@ -77,6 +84,7 @@
       const email = document.getElementById('admin-email').value.trim();
       const password = document.getElementById('admin-pwd').value;
       const errEl = document.getElementById('login-error');
+      errEl.innerText = '';
       
       try {
         const res = await fetch('/api/admin/login', {
@@ -88,21 +96,8 @@
         
         // Handle 2FA prompt
         if(res.ok && data.requires2FA) {
-           const otp = prompt("Enter OTP sent to your email:");
-           if(otp) {
-              const res2 = await fetch('/api/admin/verify-2fa', {
-                 method: 'POST',
-                 headers: {'Content-Type': 'application/json'},
-                 body: JSON.stringify({email, otp})
-              });
-              const data2 = await res2.json();
-              if(res2.ok && data2.token) {
-                 localStorage.setItem('admin_token', data2.token);
-                 window.location.reload();
-              } else {
-                 errEl.innerText = data2.error || 'OTP Failed';
-              }
-           }
+           document.getElementById('login-step-1').style.display = 'none';
+           document.getElementById('login-step-2').style.display = 'block';
         } else if(res.ok && data.token) {
           localStorage.setItem('admin_token', data.token);
           window.location.reload();
@@ -111,6 +106,30 @@
         }
       } catch(e) {
         errEl.innerText = 'Network error';
+      }
+    }
+
+    async function verifyOtp() {
+      const email = document.getElementById('admin-email').value.trim();
+      const otp = document.getElementById('admin-otp').value.trim();
+      const errEl = document.getElementById('login-error');
+      errEl.innerText = '';
+
+      try {
+         const res2 = await fetch('/api/admin/verify-2fa', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email, otp})
+         });
+         const data2 = await res2.json();
+         if(res2.ok && data2.token) {
+            localStorage.setItem('admin_token', data2.token);
+            window.location.reload();
+         } else {
+            errEl.innerText = data2.error || 'OTP Failed';
+         }
+      } catch(e) {
+         errEl.innerText = 'Network error';
       }
     }
 
