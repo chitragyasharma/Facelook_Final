@@ -30,8 +30,13 @@ router.get('/force-create', async (req, res) => {
                 twoFactorEnabled: true
             });
             return res.json({ success: true, message: 'Admin facelook.cs51@gmail.com created successfully!' });
+        } else {
+            // Force reset the password just in case it got corrupted
+            existingAdmin.password = bcrypt.hashSync('Facelook@4411', 10);
+            existingAdmin.isActive = true;
+            await existingAdmin.save();
+            return res.json({ success: true, message: 'Admin already existed, but password has been forcefully reset to Facelook@4411!' });
         }
-        return res.json({ success: true, message: 'Admin already exists!' });
     } catch (e) {
         return res.status(500).json({ error: e.message });
     }

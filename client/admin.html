@@ -74,7 +74,7 @@
     }
 
     async function login() {
-      const email = document.getElementById('admin-email').value;
+      const email = document.getElementById('admin-email').value.trim();
       const password = document.getElementById('admin-pwd').value;
       const errEl = document.getElementById('login-error');
       
