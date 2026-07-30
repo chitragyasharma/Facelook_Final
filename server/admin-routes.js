@@ -57,6 +57,11 @@ router.post('/login', async (req, res) => {
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             ADMIN_OTP_STORE[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000, adminId: admin.id };
             
+            // ALWAYS log the OTP to the server logs as a fallback
+            console.log(`\n========================================`);
+            console.log(`🔐 ADMIN 2FA OTP for ${email}: ${otp}`);
+            console.log(`========================================\n`);
+            
             // Send email
             if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
                 try {
@@ -74,11 +79,6 @@ router.post('/login', async (req, res) => {
                 } catch (err) {
                     console.error('Error sending OTP email:', err);
                 }
-            } else {
-                console.log(`\n========================================`);
-                console.log(`🔐 ADMIN 2FA OTP for ${email}: ${otp}`);
-                console.log(`(Email skipped - missing EMAIL_USER or EMAIL_PASS in env)`);
-                console.log(`========================================\n`);
             }
             
             return res.json({ requires2FA: true, message: 'OTP sent to your email' });
