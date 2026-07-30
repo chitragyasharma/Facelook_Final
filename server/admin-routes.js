@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const router = express.Router();
 const { AdminUser, User, Product, Order, Cart, Wishlist, ActivityLog, Coupon, Return, Influencer, Setting } = require('./models');
 const { authenticateAdmin, requireRole, logActivity, getClientIP, ADMIN_SECRET } = require('./admin-middleware');
@@ -29,9 +30,30 @@ router.post('/login', async (req, res) => {
             // Generate OTP
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             ADMIN_OTP_STORE[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000, adminId: admin.id };
-            console.log(`\n========================================`);
-            console.log(`🔐 ADMIN 2FA OTP for ${email}: ${otp}`);
-            console.log(`========================================\n`);
+            
+            // Send email
+            if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+                try {
+                    const transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+                    });
+                    await transporter.sendMail({
+                        from: '"Facelook Admin" <' + process.env.EMAIL_USER + '>',
+                        to: admin.email,
+                        subject: 'Your Admin Login OTP',
+                        text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
+                    });
+                } catch (err) {
+                    console.error('Error sending OTP email:', err);
+                }
+            } else {
+                console.log(`\n========================================`);
+                console.log(`🔐 ADMIN 2FA OTP for ${email}: ${otp}`);
+                console.log(`(Email skipped - missing EMAIL_USER or EMAIL_PASS in env)`);
+                console.log(`========================================\n`);
+            }
+            
             return res.json({ requires2FA: true, message: 'OTP sent to your email' });
         }
 
