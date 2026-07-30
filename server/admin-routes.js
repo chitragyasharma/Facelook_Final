@@ -64,12 +64,13 @@ router.post('/login', async (req, res) => {
                         service: 'gmail',
                         auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
                     });
-                    await transporter.sendMail({
+                    // Fire and forget - don't await so it doesn't hang the API response!
+                    transporter.sendMail({
                         from: '"Facelook Admin" <' + process.env.EMAIL_USER + '>',
                         to: admin.email,
                         subject: 'Your Admin Login OTP',
                         text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
-                    });
+                    }).catch(err => console.error('Background OTP email error:', err.message));
                 } catch (err) {
                     console.error('Error sending OTP email:', err);
                 }
