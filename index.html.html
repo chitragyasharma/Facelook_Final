@@ -3694,9 +3694,10 @@
     let PRODUCTS = [];
 
     // Connect to localhost backend when developing locally, otherwise use Render production URL
-    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'http://localhost:3000'
-      : 'https://facelpro.onrender.com';
+    const isLocal = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' || 
+                    window.location.protocol === 'file:';
+    const API_BASE = isLocal ? 'http://localhost:3000' : 'https://facelook-backend.onrender.com';
 
     async function api(url, method = 'GET', body = null) {
       const headers = { 'Content-Type': 'application/json' };

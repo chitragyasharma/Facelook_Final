@@ -377,7 +377,7 @@ app.post('/api/payment/create-order', authenticateToken, async (req, res) => {
     const { amount } = req.body;
     try {
         const options = {
-            amount: amount * 100,
+            amount: Math.round(amount * 100),
             currency: "INR",
             receipt: `receipt_${Date.now()}`
         };
@@ -388,9 +388,15 @@ app.post('/api/payment/create-order', authenticateToken, async (req, res) => {
         
         // Extract stringified error to send to client for debugging
         let errDesc = 'Unknown error';
-        try {
-            errDesc = typeof error === 'object' ? JSON.stringify(error) : String(error);
-        } catch(e) {}
+        if (error && error.error && error.error.description) {
+            errDesc = error.error.description;
+        } else if (error && error.message) {
+            errDesc = error.message;
+        } else {
+            try {
+                errDesc = typeof error === 'object' ? JSON.stringify(error) : String(error);
+            } catch(e) {}
+        }
 
         res.status(500).json({ error: "Could not create Razorpay order: " + errDesc });
     }
