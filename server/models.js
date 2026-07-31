@@ -177,6 +177,16 @@ const ReviewSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
+const NotificationSchema = new mongoose.Schema({
+    id: { type: Number, required: true, unique: true },
+    user_id: { type: Number, required: true },
+    title: { type: String, required: true },
+    message: { type: String, required: true },
+    type: { type: String, enum: ['order', 'promo', 'system'], default: 'order' },
+    isRead: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now }
+});
+
 module.exports = {
     User: mongoose.model('User', UserSchema),
     Product: mongoose.model('Product', ProductSchema),
@@ -190,4 +200,5 @@ module.exports = {
     Influencer: mongoose.model('Influencer', InfluencerSchema),
     Setting: mongoose.model('Setting', SettingSchema),
     Review: mongoose.model('Review', ReviewSchema),
+    Notification: mongoose.model('Notification', NotificationSchema),
 };

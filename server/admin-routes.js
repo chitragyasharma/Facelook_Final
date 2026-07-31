@@ -3,8 +3,26 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const router = express.Router();
-const { AdminUser, User, Product, Order, Cart, Wishlist, ActivityLog, Coupon, Return, Influencer, Setting } = require('./models');
+const { AdminUser, User, Product, Order, Cart, Wishlist, ActivityLog, Coupon, Return, Influencer, Setting, Notification } = require('./models');
 const { authenticateAdmin, requireRole, logActivity, getClientIP, ADMIN_SECRET } = require('./admin-middleware');
+
+const sendCustomerEmail = async (to, subject, text) => {
+    if (!to || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) return;
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+        });
+        transporter.sendMail({
+            from: '"Facelook Cosmetics" <' + process.env.EMAIL_USER + '>',
+            to,
+            subject,
+            text
+        }).catch(err => console.error('Background email error:', err.message));
+    } catch (err) {
+        console.error('Error sending customer email:', err.message);
+    }
+};
 
 // ═══════════════════════════════════════
 //  OTP STORE (In-memory for admin 2FA)
@@ -258,6 +276,17 @@ router.put('/orders/:id/status', authenticateAdmin, async (req, res) => {
     try {
         const { status } = req.body;
         const order = await Order.findOneAndUpdate({ id: parseInt(req.params.id) }, { status }, { new: true });
+        
+        // Notify customer
+        if (order) {
+            const customer = await User.findOne({ id: order.user_id });
+            if (customer) {
+                const notifId = Date.now();
+                await Notification.create({ id: notifId, user_id: customer.id, title: 'Order Status Updated', message: `Your order #${order.id} is now ${status}.`, type: 'order' });
+                sendCustomerEmail(customer.email, `Facelook Order Update #${order.id}`, `Hi ${customer.name || 'Customer'},\n\nYour order #${order.id} has been updated to: ${status.toUpperCase()}.\n\nTrack your order here: https://facelookcosmetics.in/track\n\nThank you for shopping with Facelook!`);
+            }
+        }
+        
         await logActivity(req.admin.id, req.admin.name, `Order #${req.params.id} status → ${status}`, 'orders', '', req);
         res.json(order);
     } catch (error) {
@@ -273,6 +302,108 @@ router.post('/orders/bulk-action', authenticateAdmin, async (req, res) => {
         res.json({ success: true, updated: orderIds.length });
     } catch (error) {
         res.status(500).json({ error: 'Error performing bulk action' });
+    }
+});
+
+router.post('/shiprocket/create-order', authenticateAdmin, async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        const order = await Order.findOne({ id: parseInt(orderId) });
+        if (!order) return res.status(404).json({ error: 'Order not found' });
+        
+        let awbCode = '';
+        let isMock = false;
+
+        if (process.env.SHIPROCKET_EMAIL && process.env.SHIPROCKET_PASSWORD) {
+            // Real Shiprocket API
+            const authRes = await fetch('https://apiv2.shiprocket.in/v1/external/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: process.env.SHIPROCKET_EMAIL,
+                    password: process.env.SHIPROCKET_PASSWORD
+                })
+            });
+            const authData = await authRes.json();
+            if (!authRes.ok || !authData.token) {
+                console.error("Shiprocket Auth Failed:", authData);
+                return res.status(500).json({ error: 'Shiprocket authentication failed. Check credentials.' });
+            }
+
+            const token = authData.token;
+
+            // Prepare Order items
+            const orderItems = order.details.cart.map(item => ({
+                name: item.name,
+                sku: item.sku || 'SKU-' + item.id,
+                units: item.qty,
+                selling_price: item.price,
+                discount: 0,
+                tax: 0,
+                hsn: 3304
+            }));
+
+            // Create Order in Shiprocket
+            const createOrderRes = await fetch('https://apiv2.shiprocket.in/v1/external/orders/create/adhoc', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({
+                    order_id: `FL-${order.id}-${Date.now().toString().slice(-4)}`, // Ensure uniqueness
+                    order_date: new Date(order.created_at || Date.now()).toISOString().substring(0, 19).replace('T', ' '),
+                    pickup_location: process.env.SHIPROCKET_PICKUP_LOCATION || "Primary",
+                    billing_customer_name: (order.details.name || 'Customer').split(' ')[0],
+                    billing_last_name: (order.details.name || '').split(' ').slice(1).join(' ') || '.',
+                    billing_address: order.details.address || 'N/A',
+                    billing_city: order.details.city || 'Delhi',
+                    billing_pincode: order.details.pincode || '110001',
+                    billing_state: "Delhi",
+                    billing_country: "India",
+                    billing_email: order.details.email || "customer@example.com",
+                    billing_phone: order.details.phone || "9999999999",
+                    shipping_is_billing: true,
+                    order_items: orderItems,
+                    payment_method: (order.details.pay === 'cod') ? "COD" : "Prepaid",
+                    sub_total: order.total,
+                    length: 10,
+                    breadth: 10,
+                    height: 10,
+                    weight: 1
+                })
+            });
+
+            const createOrderData = await createOrderRes.json();
+            if (!createOrderRes.ok) {
+                console.error("Shiprocket Create Failed:", createOrderData);
+                return res.status(500).json({ error: 'Shiprocket order creation failed: ' + (createOrderData.message || 'Unknown error') });
+            }
+
+            awbCode = createOrderData.awb_code || createOrderData.shipment_id || `SR-${createOrderData.order_id}`;
+        } else {
+            // Fallback to Mock if no keys provided yet
+            awbCode = 'AWB' + Math.floor(100000000 + Math.random() * 900000000);
+            isMock = true;
+        }
+        
+        order.status = 'shipped';
+        order.trackingId = awbCode;
+        order.deliveryPartner = isMock ? 'Shiprocket (Mock)' : 'Shiprocket';
+        await order.save();
+        
+        const customer = await User.findOne({ id: order.user_id });
+        if (customer) {
+            const notifId = Date.now();
+            await Notification.create({ id: notifId, user_id: customer.id, title: 'Order Shipped', message: `Your order #${order.id} has been shipped! Tracking: ${awbCode}`, type: 'order' });
+            sendCustomerEmail(customer.email, `Facelook Order Shipped #${order.id}`, `Hi ${customer.name || 'Customer'},\n\nYour order #${order.id} has been shipped via ${order.deliveryPartner}!\nTracking ID: ${awbCode}\n\nTrack your order here: https://facelookcosmetics.in/track\n\nThank you for shopping with Facelook!`);
+        }
+        
+        await logActivity(req.admin.id, req.admin.name, `Generated ${isMock ? 'mock ' : ''}Shiprocket AWB for Order #${orderId}`, 'orders', '', req);
+        res.json({ success: true, trackingId: awbCode, message: isMock ? 'Mock AWB generated (No API Keys)' : 'Shiprocket AWB generated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error syncing with Shiprocket' });
     }
 });
 

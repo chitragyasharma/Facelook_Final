@@ -459,6 +459,41 @@
       text-align: center;
     }
 
+    .hero-carousel {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+    }
+    .hero-slide {
+      min-width: 100%;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0 16px;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-dots {
+      display: flex;
+      gap: 8px;
+      margin-top: 24px;
+      z-index: 10;
+    }
+    .hero-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(183, 110, 121, 0.3);
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .hero-dot.active {
+      background: var(--rose);
+    }
+
     .hero-blob {
       position: absolute;
       border-radius: 50%;
@@ -544,11 +579,12 @@
 
     .hero-title {
       font-family: 'Bebas Neue', cursive;
-      font-size: 88px;
+      font-size: clamp(52px, 16vw, 88px);
       line-height: .88;
       color: var(--rose-d);
       letter-spacing: 2px;
       margin-bottom: 4px;
+      word-wrap: break-word;
     }
 
     .hero-sub {
@@ -2221,7 +2257,7 @@
       }
 
       .hero-title {
-        font-size: 130px;
+        font-size: clamp(88px, 12vw, 130px);
       }
 
       /* Product detail split layout */
@@ -2769,6 +2805,21 @@
         <span>🛒</span>
         <span class="badge" id="cart-badge" style="top:-6px; right:-12px;">0</span>
       </a>
+      <div class="dropdown" style="display:inline-block; position:relative;">
+        <a href="#" style="position:relative; display:flex; align-items:center; cursor:pointer; text-decoration:none; color:inherit;" title="Notifications">
+          <span>🔔</span>
+          <span class="badge" id="notif-badge" style="top:-6px; right:-12px; display:none;">0</span>
+        </a>
+        <div class="dropdown-content" id="notif-dropdown" style="right:-50px; left:auto; width:280px; max-height:400px; overflow-y:auto; padding:12px; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.12); display:none;">
+          <div style="font-weight:600; font-size:14px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;">
+            <span>Notifications</span>
+            <span style="font-size:11px; color:var(--rose); cursor:pointer;" onclick="markAllNotificationsRead()">Mark all read</span>
+          </div>
+          <div id="notif-list" style="font-size:13px; color:var(--tl); display:flex; flex-direction:column; gap:8px;">
+            <div style="text-align:center; padding:10px 0;">No new notifications</div>
+          </div>
+        </div>
+      </div>
       <a href="/account" onclick="event.preventDefault(); goTo('account')" style="cursor:pointer; text-decoration:none; color:inherit;"
         title="Account">👤</a>
     </div>
@@ -2786,6 +2837,16 @@
     <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🛍️ Shop All</a>
     <a href="/wishlist" onclick="event.preventDefault(); goTo('wishlist')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">♡ Wishlist</a>
     <a href="/cart" onclick="event.preventDefault(); goTo('cart')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🛒 Cart</a>
+    
+    <a href="#" onclick="event.preventDefault(); toggleMobileNotifications()" class="sidebar-link" style="text-decoration:none;display:block;position:relative;">
+      🔔 Notifications
+      <span class="badge" id="mobile-notif-badge" style="top:10px; right:20px; display:none;">0</span>
+    </a>
+    <div id="mobile-notif-container" style="display:none; padding:10px 20px; background:#f9f9f9; max-height:300px; overflow-y:auto; border-radius:12px; margin:0 20px;">
+       <div style="font-size:11px; color:var(--rose); cursor:pointer; text-align:right; margin-bottom:8px;" onclick="markAllNotificationsRead()">Mark all read</div>
+       <div id="mobile-notif-list" style="font-size:13px; color:var(--tl); display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+    
     <a href="/about" onclick="event.preventDefault(); goTo('about')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📖 About Us</a>
     <a href="/contact" onclick="event.preventDefault(); goTo('contact')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📬 Contact</a>
     <div style="margin-top:22px; display:none;" id="sidebar-auth-btn">
@@ -2837,13 +2898,42 @@
       <div class="hero-blob blob1"></div>
       <div class="hero-blob blob2"></div>
       <div class="hero-blob blob3"></div>
-      <div class="hero-tag">✦ New Collection 2026 ✦</div>
-      <div class="hero-eyebrow">Where Beauty Meets</div>
-      <div class="hero-title">CONFIDENCE</div>
-      <p class="hero-sub">Lips that Rule Hearts</p>
-      <div class="hero-btns">
-        <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Shop Now</a>
-        <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn btn-secondary" style="text-decoration:none; display:inline-block;">Explore</a>
+      
+      <div class="hero-carousel" id="heroCarousel">
+        <div class="hero-slide">
+          <div class="hero-tag">✦ New Collection 2026 ✦</div>
+          <div class="hero-eyebrow">Where Beauty Meets</div>
+          <div class="hero-title">CONFIDENCE</div>
+          <p class="hero-sub">Lips that Rule Hearts</p>
+          <div class="hero-btns">
+            <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn btn-primary" style="text-decoration:none; display:inline-block;">Shop Now</a>
+            <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn btn-secondary" style="text-decoration:none; display:inline-block;">Explore</a>
+          </div>
+        </div>
+        <div class="hero-slide">
+          <div class="hero-tag">✦ Best Sellers ✦</div>
+          <div class="hero-eyebrow">Glow All Day</div>
+          <div class="hero-title">RADIANCE</div>
+          <p class="hero-sub">Flawless Skin, Endless Compliments</p>
+          <div class="hero-btns">
+            <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn btn-primary" style="text-decoration:none; display:inline-block;">View Products</a>
+          </div>
+        </div>
+        <div class="hero-slide">
+          <div class="hero-tag">✦ Cruelty-Free ✦</div>
+          <div class="hero-eyebrow">Guilt-Free Glamour</div>
+          <div class="hero-title">ETHICAL</div>
+          <p class="hero-sub">Kind to Animals, Kind to You</p>
+          <div class="hero-btns">
+            <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn btn-secondary" style="text-decoration:none; display:inline-block;">Our Values</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="hero-dots" id="heroDots">
+        <div class="hero-dot active" onclick="setSlide(0)"></div>
+        <div class="hero-dot" onclick="setSlide(1)"></div>
+        <div class="hero-dot" onclick="setSlide(2)"></div>
       </div>
     </div>
 
@@ -3007,6 +3097,7 @@
           <span id="detail-stars" style="color:var(--rose);font-size:14px;"></span>
           <span id="detail-reviews" style="font-size:12px;color:var(--tm);"></span>
         </div>
+        <div id="detail-stock-warning" style="color:var(--danger, #ea5455);font-size:13px;font-weight:700;margin-top:8px;display:none;"></div>
         <p class="detail-desc" id="detail-desc"></p>
         <div class="qty-row">
           <span style="font-size:13px;font-weight:600;color:var(--td);">Qty:</span>
@@ -3023,8 +3114,8 @@
           <span class="feature-badge">✓ Paraben-Free</span>
         </div>
         <div class="detail-actions">
-          <button class="btn btn-primary btn-full" onclick="addDetailToCart()">Add to Cart</button>
-          <button class="btn btn-secondary btn-full" onclick="buyNow()">Buy Now</button>
+          <button class="btn btn-primary btn-full" id="main-add-btn" onclick="addDetailToCart()">Add to Cart</button>
+          <button class="btn btn-secondary btn-full" id="main-buy-btn" onclick="buyNow()">Buy Now</button>
         </div>
 
       </div>
@@ -4065,15 +4156,20 @@
         ${p.tag ? `<span class="product-tag">${p.tag}</span>` : ''}
         <button class="product-wish ${inWish ? 'active' : ''}" onclick="event.preventDefault();event.stopPropagation();toggleWish(${p.id})">${inWish ? '♥' : '♡'}</button>
         <span class="product-discount">${disc}% OFF</span>
+        ${p.stock === 0 ? `<div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.6);display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;"><span style="background:var(--danger, #ea5455);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px;box-shadow:var(--shadow-sm);">Out of Stock</span></div>` : ''}
       </div>
       <div class="product-info">
         <div class="product-stars">${stars(p.rating)}</div>
         <div class="product-name">${p.name}</div>
         <div class="product-shade">${p.shade}</div>
+        ${p.stock > 0 && p.stock <= 10 ? `<div style="color:var(--danger, #ea5455);font-size:11px;font-weight:700;margin-top:2px;letter-spacing:0.5px;">Only ${p.stock} left in stock!</div>` : ''}
         ${swatchesHTML}
         <div class="product-row" style="margin-top: 8px;">
           <div><span class="product-price">₹${p.price}</span><span class="product-orig">₹${p.orig}</span></div>
-          <button class="add-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart(${p.id})">+</button>
+          ${p.stock === 0 ? 
+            `<button class="add-cart-btn" style="background:#e0e0e0;color:#999;cursor:not-allowed;" onclick="event.preventDefault();event.stopPropagation();">Sold</button>` :
+            `<button class="add-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart(${p.id})">+</button>`
+          }
         </div>
       </div>
     </a>`;
@@ -4246,9 +4342,57 @@
       document.getElementById('detail-reviews').textContent = '(' + p.reviews + ' reviews)';
       document.getElementById('detail-desc').textContent = p.desc;
       document.getElementById('detail-qty').textContent = state.detailQty;
+      
+      const stockWarning = document.getElementById('detail-stock-warning');
+      if (p.stock > 0 && p.stock <= 10) {
+        stockWarning.textContent = `Only ${p.stock} left in stock!`;
+        stockWarning.style.display = 'block';
+      } else {
+        stockWarning.style.display = 'none';
+      }
       document.getElementById('detail-tag-badge').innerHTML = p.tag ? `<span style="background:var(--rose);color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;">${p.tag}</span>` : '';
       document.getElementById('detail-tag-label').innerHTML = p.tag ? `<span style="background:var(--pale);color:var(--rose);font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;">${p.tag}</span>` : '';
-      document.getElementById('sticky-add-btn').textContent = '🛒 Add to Cart — ₹' + p.price;
+      const stickyBtn = document.getElementById('sticky-add-btn');
+      const mainAddBtn = document.getElementById('main-add-btn');
+      const mainBuyBtn = document.getElementById('main-buy-btn');
+
+      if (p.stock === 0) {
+        if (stickyBtn) {
+          stickyBtn.textContent = 'Out of Stock';
+          stickyBtn.style.background = '#e0e0e0';
+          stickyBtn.style.color = '#999';
+          stickyBtn.style.cursor = 'not-allowed';
+          stickyBtn.onclick = (e) => { e.preventDefault(); };
+        }
+        if (mainAddBtn) {
+          mainAddBtn.textContent = 'Out of Stock';
+          mainAddBtn.style.background = '#e0e0e0';
+          mainAddBtn.style.color = '#999';
+          mainAddBtn.style.cursor = 'not-allowed';
+          mainAddBtn.onclick = (e) => { e.preventDefault(); };
+        }
+        if (mainBuyBtn) {
+          mainBuyBtn.style.display = 'none';
+        }
+      } else {
+        if (stickyBtn) {
+          stickyBtn.textContent = '🛒 Add to Cart — ₹' + p.price;
+          stickyBtn.style.background = '';
+          stickyBtn.style.color = '';
+          stickyBtn.style.cursor = 'pointer';
+          stickyBtn.onclick = () => addDetailToCart();
+        }
+        if (mainAddBtn) {
+          mainAddBtn.textContent = 'Add to Cart';
+          mainAddBtn.style.background = '';
+          mainAddBtn.style.color = '';
+          mainAddBtn.style.cursor = 'pointer';
+          mainAddBtn.onclick = () => addDetailToCart();
+        }
+        if (mainBuyBtn) {
+          mainBuyBtn.style.display = 'block';
+        }
+      }
 
       const wishBtn = document.getElementById('detail-wish-btn');
       wishBtn.textContent = inW ? '♥' : '♡';
@@ -4263,7 +4407,14 @@
     }
 
     function changeQty(delta) {
-      state.detailQty = Math.max(1, state.detailQty + delta);
+      if (!state.currentProduct) return;
+      let newQty = state.detailQty + delta;
+      if (newQty < 1) newQty = 1;
+      if (newQty > state.currentProduct.stock) {
+        showToast(`Only ${state.currentProduct.stock} units available.`);
+        newQty = state.currentProduct.stock;
+      }
+      state.detailQty = newQty;
       document.getElementById('detail-qty').textContent = state.detailQty;
     }
 
@@ -4919,6 +5070,8 @@
             </div>
           </div>
           
+          ${generateTrackingTimeline(order.status)}
+          
           <h4 style="font-family:'Playfair Display',serif; color:var(--td); margin-bottom:12px;">Order Items</h4>
       `;
 
@@ -5039,6 +5192,135 @@
 
 
     // ─── INIT ────────────────────────────────────
+    // ─── CAROUSEL ─────────────────────────────────
+    let currentSlide = 0;
+    let slideInterval;
+
+    function setSlide(index) {
+      const slides = document.querySelectorAll('.hero-slide');
+      const dots = document.querySelectorAll('.hero-dot');
+      if (!slides.length) return;
+      currentSlide = index;
+      slides.forEach((slide) => {
+        slide.style.transform = `translateX(-${currentSlide * 100}%)`;
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentSlide);
+      });
+      resetInterval();
+    }
+
+    function nextSlide() {
+      const slides = document.querySelectorAll('.hero-slide');
+      if (!slides.length) return;
+      currentSlide = (currentSlide + 1) % slides.length;
+      setSlide(currentSlide);
+    }
+
+    function resetInterval() {
+      clearInterval(slideInterval);
+      slideInterval = setInterval(nextSlide, 4000);
+    }
+
+    async function fetchNotifications() {
+        if (!state.token) return;
+        try {
+            const notifs = await api('/api/notifications');
+            state.notifications = notifs;
+            updateNotificationUI();
+        } catch (e) { console.error('Error fetching notifications:', e); }
+    }
+
+    function updateNotificationUI() {
+        const notifs = state.notifications || [];
+        const unread = notifs.filter(n => !n.read).length;
+        
+        const desktopBadge = document.getElementById('notif-badge');
+        const mobileBadge = document.getElementById('mobile-notif-badge');
+        
+        if (unread > 0) {
+            if(desktopBadge) { desktopBadge.style.display = 'block'; desktopBadge.innerText = unread; }
+            if(mobileBadge) { mobileBadge.style.display = 'block'; mobileBadge.innerText = unread; }
+        } else {
+            if(desktopBadge) desktopBadge.style.display = 'none';
+            if(mobileBadge) mobileBadge.style.display = 'none';
+        }
+        
+        let html = '';
+        if (notifs.length === 0) {
+            html = '<div style="text-align:center; padding:10px 0;">No new notifications</div>';
+        } else {
+            notifs.forEach(n => {
+                html += `<div style="padding:12px; margin-bottom:8px; border-radius:8px; background:${n.read ? 'transparent' : 'rgba(219,39,119,0.05)'}; border:1px solid ${n.read ? 'var(--border)' : 'rgba(219,39,119,0.2)'}; cursor:pointer;" onclick="markNotificationRead('${n.id || n._id}')">
+                    <div style="font-weight:600; color:var(--td); display:flex; justify-content:space-between;">
+                        <span>${n.title}</span>
+                        ${!n.read ? '<span style="width:8px;height:8px;border-radius:50%;background:var(--rose);display:inline-block;"></span>' : ''}
+                    </div>
+                    <div style="margin-top:4px;">${n.message}</div>
+                    <div style="font-size:11px; color:var(--tl); margin-top:6px;">${new Date(n.createdAt).toLocaleString()}</div>
+                </div>`;
+            });
+        }
+        
+        const desktopList = document.getElementById('notif-list');
+        const mobileList = document.getElementById('mobile-notif-list');
+        if(desktopList) desktopList.innerHTML = html;
+        if(mobileList) mobileList.innerHTML = html;
+    }
+
+    async function markNotificationRead(id) {
+        try {
+            await api('/api/notifications/' + id + '/read', 'PUT');
+            fetchNotifications();
+        } catch(e) {}
+    }
+
+    async function markAllNotificationsRead() {
+        const notifs = state.notifications || [];
+        for (const n of notifs) {
+            if (!n.read) await markNotificationRead(n.id || n._id);
+        }
+    }
+
+    function toggleMobileNotifications() {
+        const el = document.getElementById('mobile-notif-container');
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function generateTrackingTimeline(status) {
+        status = (status || 'pending').toLowerCase();
+        let statuses = ['pending', 'processing', 'shipped', 'delivered'];
+        
+        if (status === 'cancelled') {
+            return `
+            <div class="timeline" style="margin:20px 0; padding:10px;">
+              <div class="timeline-step active">
+                <div class="timeline-title">Order Cancelled</div>
+                <div class="timeline-date">Order has been cancelled</div>
+              </div>
+            </div>`;
+        }
+        
+        let idx = statuses.indexOf(status);
+        if (idx === -1) idx = 0;
+        
+        let timelineHTML = '';
+        statuses.forEach((s, i) => {
+            let className = '';
+            if (i < idx) className = 'completed';
+            else if (i === idx) className = 'active';
+            
+            let displayTitle = s.charAt(0).toUpperCase() + s.slice(1);
+            timelineHTML += `
+            <div class="timeline-step ${className}">
+              <div class="timeline-title">${displayTitle}</div>
+              <div class="timeline-date">${className ? 'Completed' : (i===idx ? 'Current' : 'Pending')}</div>
+            </div>`;
+        });
+        
+        return `<div class="timeline" style="margin:20px 0; padding:10px;">${timelineHTML}</div>`;
+    }
+
     async function initApp() {
       // Instantly switch to the correct page skeleton to avoid waiting on the homepage
       const path = window.location.pathname;
@@ -5059,6 +5341,7 @@
         if (state.token) {
           state.cart = await api('/api/cart');
           state.wishlist = await api('/api/wishlist');
+          fetchNotifications();
         }
       } catch (err) {
         console.error("Init Error:", err);
@@ -5069,6 +5352,7 @@
       
       updateAuthUI();
       updateBadges();
+      resetInterval();
     }
     initApp();
   </script>

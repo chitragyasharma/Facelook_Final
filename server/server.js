@@ -8,10 +8,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const connectDB = require('./db');
-const { User, Product, Cart, Wishlist, Order, Review, Coupon } = require('./models');
+const { User, Product, Cart, Wishlist, Order, Review, Coupon, Notification } = require('./models');
 const fs = require('fs');
 const adminRoutes = require('./admin-routes');
 const Razorpay = require('razorpay');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -48,6 +49,43 @@ function authenticateToken(req, res, next) {
         next();
     });
 }
+
+// --- EMAIL & NOTIFICATIONS UTILITY ---
+const sendCustomerEmail = async (to, subject, text) => {
+    if (!to || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) return;
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+        });
+        transporter.sendMail({
+            from: '"Facelook Cosmetics" <' + process.env.EMAIL_USER + '>',
+            to,
+            subject,
+            text
+        }).catch(err => console.error('Background email error:', err.message));
+    } catch (err) {
+        console.error('Error sending customer email:', err.message);
+    }
+};
+
+app.get('/api/notifications', authenticateToken, async (req, res) => {
+    try {
+        const notifications = await Notification.find({ user_id: req.user.id }).sort({ createdAt: -1 }).limit(50);
+        res.json(notifications);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching notifications' });
+    }
+});
+
+app.put('/api/notifications/:id/read', authenticateToken, async (req, res) => {
+    try {
+        await Notification.findOneAndUpdate({ id: parseInt(req.params.id), user_id: req.user.id }, { isRead: true });
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Error marking notification read' });
+    }
+});
 
 // --- AUTH ROUTES ---
 app.post('/api/auth/register', async (req, res) => {
@@ -336,6 +374,11 @@ app.post('/api/checkout', authenticateToken, async (req, res) => {
         // Clear cart
         await Cart.deleteMany({ user_id: req.user.id });
         
+        // Notifications
+        const notifId = Date.now();
+        await Notification.create({ id: notifId, user_id: req.user.id, title: 'Order Placed Successfully', message: `Your order #${order_id} has been confirmed!`, type: 'order' });
+        sendCustomerEmail(req.user.email, `Facelook Order Confirmed #${order_id}`, `Hi ${req.user.name || 'Customer'},\n\nYour order #${order_id} for ₹${total} has been placed successfully!\n\nTrack your order here: https://facelookcosmetics.in/track\n\nThank you for shopping with Facelook!`);
+        
         console.log(`\n========================================`);
         console.log(`📱 MOCK SMS TO ${req.user.phone || 'Customer'}`);
         console.log(`Hi ${req.user.name}, your FACÉLOOK order #${order_id} is confirmed! Track here: https://facelookcosmetics.in/track`);
@@ -360,6 +403,11 @@ app.post('/api/checkout/upi', authenticateToken, async (req, res) => {
             order.details.utr_number = utr;
             order.markModified('details');
             await order.save();
+            
+            const notifId = Date.now();
+            await Notification.create({ id: notifId, user_id: req.user.id, title: 'UPI Payment Pending', message: `Your UPI payment for order #${order_id} is pending verification.`, type: 'order' });
+            sendCustomerEmail(req.user.email, `Facelook Order Pending Verification #${order_id}`, `Hi ${req.user.name || 'Customer'},\n\nYour order #${order_id} has been placed and is pending UPI verification with UTR ${utr}.\n\nThank you for shopping with Facelook!`);
+            
             res.json({ success: true, message: "UPI Payment pending verification" });
         } else {
             res.status(400).json({ error: 'Order not found' });
@@ -417,6 +465,10 @@ app.post('/api/payment/verify', authenticateToken, async (req, res) => {
             order.razorpay_payment_id = razorpay_payment_id;
             order.razorpay_order_id = razorpay_order_id;
             await order.save();
+            
+            const notifId = Date.now();
+            await Notification.create({ id: notifId, user_id: req.user.id, title: 'Payment Successful', message: `Payment for order #${order_id} was successful!`, type: 'order' });
+            sendCustomerEmail(req.user.email, `Facelook Payment Received #${order_id}`, `Hi ${req.user.name || 'Customer'},\n\nWe have received your payment for order #${order_id}!\n\nTrack your order here: https://facelookcosmetics.in/track\n\nThank you for shopping with Facelook!`);
         }
         await Cart.deleteMany({ user_id: req.user.id });
         res.json({ success: true });
@@ -444,21 +496,70 @@ app.get('/api/track/:orderId', async (req, res) => {
         const order = await Order.findOne({ id: order_id });
         if (!order) return res.status(404).json({ error: 'Order not found' });
 
-        // Mock tracking response based on order status
         let tracking = [];
         const date = new Date(order._id.getTimestamp());
         const placedStr = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
         
-        tracking.push({ title: 'Order Placed', date: placedStr, status: 'completed' });
+        let hasRealTracking = false;
+        if (order.trackingId && process.env.SHIPROCKET_EMAIL && process.env.SHIPROCKET_PASSWORD && order.deliveryPartner === 'Shiprocket') {
+            try {
+                // Auth to Shiprocket
+                const authRes = await fetch('https://apiv2.shiprocket.in/v1/external/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: process.env.SHIPROCKET_EMAIL, password: process.env.SHIPROCKET_PASSWORD })
+                });
+                const authData = await authRes.json();
+                
+                if (authRes.ok && authData.token) {
+                    // Fetch Tracking
+                    const trackRes = await fetch(`https://apiv2.shiprocket.in/v1/external/courier/track/awb/${order.trackingId}`, {
+                        headers: { 'Authorization': 'Bearer ' + authData.token }
+                    });
+                    const trackData = await trackRes.json();
+                    
+                    if (trackRes.ok && trackData && trackData.tracking_data && trackData.tracking_data.track_status) {
+                        hasRealTracking = true;
+                        const td = trackData.tracking_data;
+                        
+                        tracking.push({ title: 'Order Placed', date: placedStr, status: 'completed' });
+                        
+                        // Parse Shiprocket status
+                        let sStatus = td.track_status === 1 ? 'completed' : 'active';
+                        tracking.push({ title: 'Shipped', date: td.shipment_track?.[0]?.date || 'Recent', status: sStatus });
+                        
+                        if (td.track_status === 7) {
+                            tracking.push({ title: 'Delivered', date: td.shipment_track?.[0]?.date || 'Today', status: 'completed' });
+                        } else {
+                            tracking.push({ title: 'In Transit', date: td.shipment_track?.[0]?.current_status || 'Moving', status: 'active' });
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Shiprocket Tracking Error:', err.message);
+            }
+        }
         
-        if (order.status === 'Paid' || order.status === 'pending') {
-            tracking.push({ title: 'Processing', date: 'In Progress', status: 'active' });
-            tracking.push({ title: 'Shipped', date: 'Pending', status: 'pending' });
-            tracking.push({ title: 'Delivered', date: 'Pending', status: 'pending' });
-        } else if (order.status === 'Shipped') {
-            tracking.push({ title: 'Processing', date: 'Completed', status: 'completed' });
-            tracking.push({ title: 'Shipped', date: 'Today', status: 'active' });
-            tracking.push({ title: 'Delivered', date: 'Pending', status: 'pending' });
+        if (!hasRealTracking) {
+            // Mock tracking response fallback
+            tracking.push({ title: 'Order Placed', date: placedStr, status: 'completed' });
+            
+            const statusLower = (order.status || '').toLowerCase();
+            if (statusLower === 'paid' || statusLower === 'pending') {
+                tracking.push({ title: 'Processing', date: 'In Progress', status: 'active' });
+                tracking.push({ title: 'Shipped', date: 'Pending', status: 'pending' });
+                tracking.push({ title: 'Delivered', date: 'Pending', status: 'pending' });
+            } else if (statusLower === 'shipped') {
+                tracking.push({ title: 'Processing', date: 'Completed', status: 'completed' });
+                tracking.push({ title: 'Shipped', date: 'Today', status: 'active' });
+                tracking.push({ title: 'Delivered', date: 'Pending', status: 'pending' });
+            } else if (statusLower === 'delivered') {
+                tracking.push({ title: 'Processing', date: 'Completed', status: 'completed' });
+                tracking.push({ title: 'Shipped', date: 'Completed', status: 'completed' });
+                tracking.push({ title: 'Delivered', date: 'Completed', status: 'completed' });
+            } else {
+                tracking.push({ title: order.status || 'Processing', date: 'Current', status: 'active' });
+            }
         }
         
         res.json({ order_id: order.id, total: order.total, tracking });

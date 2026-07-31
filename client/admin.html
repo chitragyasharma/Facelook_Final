@@ -3,199 +3,1289 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Facelook Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Facelook Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js for Dashboard Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Main Styles -->
   <style>
-    body { font-family: 'Jost', sans-serif; background: #f4f7f6; margin: 0; padding: 0; color: #333; }
-    .header { background: #fff; padding: 16px 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
-    .header h1 { margin: 0; font-size: 20px; color: #B76E79; }
-    .container { max-width: 1200px; margin: 24px auto; padding: 0 16px; }
-    
-    .login-box { max-width: 400px; margin: 100px auto; background: #fff; padding: 32px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .login-box h2 { margin-top: 0; color: #B76E79; }
-    input, button { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
-    button { background: #B76E79; color: #fff; border: none; font-weight: 600; cursor: pointer; }
-    button:hover { background: #8B4A52; }
-    
-    .dashboard { display: none; }
-    table { width: 100%; background: #fff; border-collapse: collapse; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    th, td { padding: 16px; text-align: left; border-bottom: 1px solid #eee; }
-    th { background: #fafafa; font-weight: 600; color: #666; }
-    .badge { padding: 4px 8px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-    .badge-pending { background: #fff3cd; color: #856404; }
-    .badge-shipped { background: #d4edda; color: #155724; }
-    .action-btn { background: #4a90e2; padding: 8px 12px; border-radius: 4px; color: #fff; text-decoration: none; font-size: 13px; display: inline-block; cursor: pointer; }
-    .action-btn:hover { background: #357abd; }
+/* ==========================================================================
+   Admin Panel Styles (Professional & Modern)
+   ========================================================================== */
+
+:root {
+  --primary: #B76E79; /* Rose Gold */
+  --primary-hover: #9c5c66;
+  --secondary: #2A2A3C; /* Dark Slate */
+  --bg-color: #f5f6fa;
+  --surface: #ffffff;
+  --text-main: #333333;
+  --text-muted: #6c757d;
+  --border: #eaedf2;
+  
+  --success: #28c76f;
+  --success-bg: #dcf6e8;
+  --warning: #ff9f43;
+  --warning-bg: #fff1e3;
+  --danger: #ea5455;
+  --danger-bg: #fce4e4;
+  --info: #00cfe8;
+  --info-bg: #d6f7fb;
+
+  --font-family: 'Jost', sans-serif;
+  --shadow-sm: 0 2px 4px rgba(16, 24, 40, 0.05);
+  --shadow-md: 0 4px 12px rgba(16, 24, 40, 0.08);
+  --shadow-lg: 0 10px 25px rgba(16, 24, 40, 0.1);
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* -----------------------------------------
+   Utility Classes
+----------------------------------------- */
+.text-center { text-align: center; }
+.text-muted { color: var(--text-muted); }
+.col-4 { width: 33.33%; padding: 0 8px; }
+.col-6 { width: 50%; padding: 0 8px; }
+.form-row { display: flex; margin: 0 -8px; }
+
+/* -----------------------------------------
+   Buttons & Inputs
+----------------------------------------- */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #fff;
+  padding: 10px 18px;
+}
+.btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+
+.btn-secondary {
+  background-color: #f1f1f1;
+  color: var(--text-main);
+  padding: 10px 18px;
+}
+.btn-secondary:hover { background-color: #e2e2e2; }
+
+.btn-danger {
+  background-color: var(--danger);
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.btn-danger:hover { background-color: #d84546; }
+
+.btn-info {
+  background-color: var(--info);
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.btn-info:hover { background-color: #00b8ce; }
+
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--secondary);
+}
+input[type="email"], input[type="password"], input[type="text"], input[type="number"], select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  outline: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary);
+}
+.help-text { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+.error-msg { color: var(--danger); font-size: 14px; margin-top: 10px; text-align: center; }
+
+/* -----------------------------------------
+   Login Screen
+----------------------------------------- */
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+.login-box {
+  background: var(--surface);
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+}
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.login-header h2 { color: var(--primary); font-size: 24px; margin-bottom: 8px; }
+.login-header p { color: var(--text-muted); font-size: 14px; }
+.login-box .btn-primary { width: 100%; padding: 12px; font-size: 15px; margin-top: 10px; }
+
+
+/* -----------------------------------------
+   App Layout & Sidebar
+----------------------------------------- */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: var(--secondary);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: width 0.3s;
+}
+.sidebar-brand {
+  padding: 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.sidebar-brand h2 {
+  color: var(--primary);
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 0;
+  overflow-y: auto;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  color: #aeb2b9;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+.nav-item .icon {
+  margin-right: 12px;
+  font-size: 18px;
+}
+.nav-item:hover, .nav-item.active {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  border-left-color: var(--primary);
+}
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.btn-logout {
+  width: 100%;
+  background: transparent;
+  color: #aeb2b9;
+  text-align: left;
+  padding: 10px 16px;
+}
+.btn-logout:hover { color: #fff; background: rgba(255,255,255,0.05); }
+
+/* -----------------------------------------
+   Main Content & Header
+----------------------------------------- */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.top-header {
+  height: 70px;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+}
+.header-title h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--secondary);
+}
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+.user-info span { font-weight: 600; font-size: 14px; }
+.user-info small { color: var(--text-muted); font-size: 12px; }
+.avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.views-wrapper {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+/* -----------------------------------------
+   Dashboard Stats & Cards
+----------------------------------------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--surface);
+  padding: 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.2s;
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.stat-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: var(--info-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+.stat-card:nth-child(1) .stat-icon { background: var(--success-bg); }
+.stat-card:nth-child(2) .stat-icon { background: var(--info-bg); }
+.stat-card:nth-child(3) .stat-icon { background: rgba(183, 110, 121, 0.1); }
+.stat-card.warning .stat-icon { background: var(--warning-bg); }
+
+.stat-details p { color: var(--text-muted); font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.stat-details h3 { font-size: 24px; font-weight: 600; color: var(--secondary); }
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+.chart-card {
+  background: var(--surface);
+  padding: 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.chart-card h3 {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: var(--secondary);
+}
+
+/* -----------------------------------------
+   Tables & Data Cards
+----------------------------------------- */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card-header h3 { font-size: 18px; color: var(--secondary); }
+.card-header .actions { display: flex; gap: 12px; }
+
+.table-responsive {
+  overflow-x: auto;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.data-table th, .data-table td {
+  padding: 14px 24px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.data-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+.data-table tbody tr:hover {
+  background-color: #fafbfd;
+}
+.data-table img {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+/* Badges */
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+}
+.badge.pending { background: var(--warning-bg); color: #d97706; }
+.badge.shipped { background: var(--info-bg); color: #0284c7; }
+.badge.delivered { background: var(--success-bg); color: #166534; }
+.badge.cancelled { background: var(--danger-bg); color: #991b1b; }
+
+.badge.active { background: var(--success-bg); color: #166534; }
+.badge.inactive { background: var(--danger-bg); color: #991b1b; }
+
+/* Pagination */
+.pagination {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+}
+.page-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 4px;
+  font-size: 13px;
+}
+.page-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+/* -----------------------------------------
+   Modals
+----------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+.modal {
+  background: var(--surface);
+  width: 100%;
+  max-width: 600px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-header h3 { font-size: 18px; color: var(--secondary); }
+.close-btn {
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 24px;
+  padding: 0;
+  line-height: 1;
+}
+.close-btn:hover { color: var(--danger); }
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+}
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: #f8f9fa;
+  border-radius: 0 0 12px 12px;
+}
+
+/* -----------------------------------------
+   Responsive & Mobile (Admin Panel)
+----------------------------------------- */
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    order: 2;
+    z-index: 100;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .sidebar-brand { display: none; }
+  .sidebar-nav {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    overflow-x: auto;
+    width: 100%;
+  }
+  .nav-item {
+    flex: 1;
+    flex-direction: column;
+    padding: 10px 4px;
+    border-left: none !important;
+    border-top: 3px solid transparent;
+    font-size: 11px;
+    text-align: center;
+    justify-content: center;
+    min-width: 75px;
+  }
+  .nav-item .icon {
+    margin: 0 0 4px 0;
+    font-size: 20px;
+  }
+  .nav-item:hover, .nav-item.active {
+    background: rgba(255,255,255,0.1);
+    border-top-color: var(--primary) !important;
+  }
+  .sidebar-footer { display: none; }
+  
+  .main-content { order: 1; }
+  
+  .top-header { padding: 0 16px; }
+  .header-user { gap: 8px; }
+  .user-info { display: none; }
+  .mobile-logout { display: block !important; }
+  
+  .views-wrapper { padding: 16px; }
+  .stats-grid { grid-template-columns: 1fr; gap: 16px; }
+  
+  .form-row { flex-direction: column; margin: 0; }
+  .col-4, .col-6 { width: 100%; padding: 0; margin-bottom: 12px; }
+  .card-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .card-header .actions { width: 100%; justify-content: flex-start; }
+  
+  .modal { margin: 16px; max-height: calc(100vh - 32px); }
+  .modal-body { padding: 16px; }
+}
   </style>
 </head>
 <body>
 
-  <div class="login-box" id="login-box">
-    <h2>Admin Login</h2>
-    <div id="login-step-1">
-      <input type="email" id="admin-email" placeholder="Email">
-      <input type="password" id="admin-pwd" placeholder="Password">
-      <button onclick="login()">Login</button>
-    </div>
-    <div id="login-step-2" style="display: none;">
-      <p style="margin-bottom: 10px; color: #666; font-size: 14px;">An OTP has been sent to your email.</p>
-      <input type="text" id="admin-otp" placeholder="Enter 6-digit OTP">
-      <button onclick="verifyOtp()">Verify OTP</button>
-    </div>
-    <div id="login-error" style="color: red; margin-top: 10px;"></div>
-  </div>
-
-  <div class="dashboard" id="dashboard">
-    <div class="header">
-      <h1>Facelook Admin Panel</h1>
-      <button onclick="logout()" style="width: auto; margin: 0; padding: 8px 16px;">Logout</button>
-    </div>
-    
-    <div class="container">
-      <h2>Recent Orders</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Date</th>
-            <th>Customer</th>
-            <th>Total</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="orders-tbody">
-          <tr><td colspan="6" style="text-align: center;">Loading orders...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <script>
-    let token = localStorage.getItem('admin_token');
-
-    if(token) {
-      document.getElementById('login-box').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'block';
-      fetchOrders();
-    }
-
-    async function login() {
-      const email = document.getElementById('admin-email').value.trim();
-      const password = document.getElementById('admin-pwd').value;
-      const errEl = document.getElementById('login-error');
-      errEl.innerText = '';
+  <!-- LOGIN CONTAINER -->
+  <div id="login-container" class="login-wrapper">
+    <div class="login-box">
+      <div class="login-header">
+        <h2>Admin Portal</h2>
+        <p>Sign in to manage Facelook</p>
+      </div>
       
-      try {
-        const res = await fetch('/api/admin/login', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({email, password})
-        });
-        const data = await res.json();
+      <div id="login-step-1">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="admin-email" placeholder="admin@facelook.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="admin-pwd" placeholder="••••••••">
+        </div>
+        <button class="btn-primary" onclick="login()">Sign In</button>
+      </div>
+
+      <div id="login-step-2" style="display: none;">
+        <div class="form-group">
+          <label>Verification Code</label>
+          <p class="help-text">An OTP has been sent to your email.</p>
+          <input type="text" id="admin-otp" placeholder="6-digit code">
+        </div>
+        <button class="btn-primary" onclick="verifyOtp()">Verify OTP</button>
+      </div>
+      
+      <div id="login-error" class="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- APP CONTAINER (Dashboard Shell) -->
+  <div id="app-container" class="app-layout" style="display: none;">
+    
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <h2>Facelook Admin</h2>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-item active" data-view="dashboard">
+          <span class="icon">📊</span> Dashboard
+        </a>
+        <a href="#orders" class="nav-item" data-view="orders">
+          <span class="icon">📦</span> Orders
+        </a>
+        <a href="#products" class="nav-item" data-view="products">
+          <span class="icon">🛍️</span> Products
+        </a>
+        <a href="#customers" class="nav-item" data-view="customers">
+          <span class="icon">👥</span> Customers
+        </a>
+        <!-- Coming soon / other modules -->
+        <!-- <a href="#settings" class="nav-item" data-view="settings"><span class="icon">⚙️</span> Settings</a> -->
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="logout()">
+          <span class="icon">🚪</span> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      
+      <!-- TOP HEADER -->
+      <header class="top-header">
+        <div class="header-title">
+          <h1 id="page-title">Dashboard</h1>
+        </div>
+        <div class="header-user">
+          <div class="user-info">
+            <span id="admin-name">Admin</span>
+            <small id="admin-role">Super Admin</small>
+          </div>
+          <div class="avatar">A</div>
+          <button class="mobile-logout" onclick="logout()" style="display:none; background:none; border:none; font-size: 20px; cursor: pointer; padding-left: 8px;" title="Logout">🚪</button>
+        </div>
+      </header>
+
+      <!-- VIEWS CONTAINER -->
+      <div class="views-wrapper">
         
-        // Handle 2FA prompt
-        if(res.ok && data.requires2FA) {
-           document.getElementById('login-step-1').style.display = 'none';
-           document.getElementById('login-step-2').style.display = 'block';
-        } else if(res.ok && data.token) {
-          localStorage.setItem('admin_token', data.token);
-          window.location.reload();
-        } else {
-          errEl.innerText = data.error || 'Login failed';
-        }
-      } catch(e) {
-        errEl.innerText = 'Network error';
-      }
-    }
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboard-view" class="view-section active">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">💰</div>
+              <div class="stat-details">
+                <p>Total Revenue (Year)</p>
+                <h3 id="stat-revenue">₹0</h3>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">📦</div>
+              <div class="stat-details">
+                <p>Total Orders (Month)</p>
+                <h3 id="stat-orders">0</h3>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">👥</div>
+              <div class="stat-details">
+                <p>Total Customers</p>
+                <h3 id="stat-customers">0</h3>
+              </div>
+            </div>
+            <div class="stat-card warning">
+              <div class="stat-icon">⚠️</div>
+              <div class="stat-details">
+                <p>Low Stock Products</p>
+                <h3 id="stat-low-stock">0</h3>
+              </div>
+            </div>
+          </div>
 
-    async function verifyOtp() {
-      const email = document.getElementById('admin-email').value.trim();
-      const otp = document.getElementById('admin-otp').value.trim();
-      const errEl = document.getElementById('login-error');
-      errEl.innerText = '';
+          <div class="charts-grid">
+            <div class="chart-card">
+              <h3>Revenue (Last 30 Days)</h3>
+              <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="chart-card">
+              <h3>Top Selling Products</h3>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr><th>Product</th><th>Price</th><th>Sales</th></tr>
+                  </thead>
+                  <tbody id="top-products-body">
+                    <tr><td colspan="3">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      try {
-         const res2 = await fetch('/api/admin/verify-2fa', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({email, otp})
-         });
-         const data2 = await res2.json();
-         if(res2.ok && data2.token) {
-            localStorage.setItem('admin_token', data2.token);
-            window.location.reload();
-         } else {
-            errEl.innerText = data2.error || 'OTP Failed';
-         }
-      } catch(e) {
-         errEl.innerText = 'Network error';
-      }
-    }
+        <!-- ORDERS VIEW -->
+        <div id="orders-view" class="view-section" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h3>Recent Orders</h3>
+              <div class="actions">
+                <select id="order-status-filter" onchange="fetchOrders()">
+                  <option value="all">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <button class="btn-secondary" onclick="fetchOrders()">↻ Refresh</button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Customer ID</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-tbody">
+                  <tr><td colspan="6" class="text-center">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination" id="orders-pagination"></div>
+          </div>
+        </div>
 
-    function logout() {
-      localStorage.removeItem('admin_token');
+        <!-- PRODUCTS VIEW -->
+        <div id="products-view" class="view-section" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h3>Products Inventory</h3>
+              <div class="actions">
+                <input type="text" id="product-search" placeholder="Search..." oninput="debounceSearchProducts()">
+                <button class="btn-primary" onclick="openProductModal()">+ Add Product</button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="products-tbody">
+                  <tr><td colspan="8" class="text-center">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination" id="products-pagination"></div>
+          </div>
+        </div>
+
+        <!-- CUSTOMERS VIEW -->
+        <div id="customers-view" class="view-section" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h3>Customer List</h3>
+              <div class="actions">
+                <input type="text" id="customer-search" placeholder="Search..." oninput="debounceSearchCustomers()">
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Segment</th>
+                    <th>Orders</th>
+                    <th>Total Spent</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="customers-tbody">
+                  <tr><td colspan="8" class="text-center">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination" id="customers-pagination"></div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Product Modal (Hidden by default) -->
+  <div id="product-modal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Add/Edit Product</h3>
+        <button class="close-btn" onclick="closeProductModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="product-form">
+          <input type="hidden" id="prod-id">
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label>Name</label>
+              <input type="text" id="prod-name" required>
+            </div>
+            <div class="form-group col-6">
+              <label>Category</label>
+              <select id="prod-cat" required>
+                <option value="lips">Lips</option>
+                <option value="eyes">Eyes</option>
+                <option value="face">Face</option>
+                <option value="nails">Nails</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-4">
+              <label>Price (₹)</label>
+              <input type="number" id="prod-price" required>
+            </div>
+            <div class="form-group col-4">
+              <label>Discounted Price (₹)</label>
+              <input type="number" id="prod-discountPrice">
+            </div>
+            <div class="form-group col-4">
+              <label>Stock</label>
+              <input type="number" id="prod-stock" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Image URL (e.g. /velvet bloome - 01.png)</label>
+            <input type="text" id="prod-img" required>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="prod-desc" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeProductModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveProduct()">Save Product</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Logic -->
+  <script>
+// ============================================================================
+// Admin Panel Logic
+// ============================================================================
+
+let token = localStorage.getItem('admin_token');
+let adminProfile = null;
+let currentView = 'dashboard';
+
+let revenueChartInstance = null;
+
+// Initialization
+document.addEventListener('DOMContentLoaded', () => {
+  if (token) {
+    document.getElementById('login-container').style.display = 'none';
+    document.getElementById('app-container').style.display = 'flex';
+    fetchProfile();
+    initNavigation();
+    loadView('dashboard');
+  } else {
+    document.getElementById('login-container').style.display = 'flex';
+    document.getElementById('app-container').style.display = 'none';
+  }
+});
+
+// ----------------------------------------------------------------------------
+// Authentication
+// ----------------------------------------------------------------------------
+async function login() {
+  const email = document.getElementById('admin-email').value.trim();
+  const password = document.getElementById('admin-pwd').value;
+  const errEl = document.getElementById('login-error');
+  errEl.innerText = '';
+  
+  if(!email || !password) {
+      errEl.innerText = 'Please enter email and password';
+      return;
+  }
+  
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email, password})
+    });
+    const data = await res.json();
+    
+    if (res.ok && data.requires2FA) {
+       document.getElementById('login-step-1').style.display = 'none';
+       document.getElementById('login-step-2').style.display = 'block';
+    } else if (res.ok && data.token) {
+      localStorage.setItem('admin_token', data.token);
       window.location.reload();
+    } else {
+      errEl.innerText = data.error || 'Login failed';
     }
+  } catch(e) {
+    errEl.innerText = 'Network error. Is server running?';
+  }
+}
 
-    async function fetchOrders() {
-      try {
-        const res = await fetch('/api/admin/orders', {
-          headers: {'Authorization': 'Bearer ' + token}
+async function verifyOtp() {
+  const email = document.getElementById('admin-email').value.trim();
+  const otp = document.getElementById('admin-otp').value.trim();
+  const errEl = document.getElementById('login-error');
+  errEl.innerText = '';
+
+  try {
+     const res = await fetch('/api/admin/verify-2fa', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email, otp})
+     });
+     const data = await res.json();
+     if(res.ok && data.token) {
+        localStorage.setItem('admin_token', data.token);
+        window.location.reload();
+     } else {
+        errEl.innerText = data.error || 'OTP Verification Failed';
+     }
+  } catch(e) {
+     errEl.innerText = 'Network error';
+  }
+}
+
+function logout() {
+  localStorage.removeItem('admin_token');
+  window.location.reload();
+}
+
+async function fetchProfile() {
+    try {
+        const res = await fetch('/api/admin/me', {
+            headers: {'Authorization': 'Bearer ' + token}
         });
+        if(res.status === 401 || res.status === 403) return logout();
         const data = await res.json();
-        
-        if(res.status === 401 || res.status === 403) {
-           logout();
-           return;
-        }
-
-        const tbody = document.getElementById('orders-tbody');
-        if(data.orders.length === 0) {
-           tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No orders found</td></tr>';
-           return;
-        }
-
-        tbody.innerHTML = data.orders.map(o => `
-          <tr>
-            <td>#${o.id}</td>
-            <td>${new Date(o.created_at).toLocaleDateString()}</td>
-            <td>User ID: ${o.user_id}</td>
-            <td>₹${o.total}</td>
-            <td><span class="badge badge-${o.status === 'pending' ? 'pending' : 'shipped'}">${o.status.toUpperCase()}</span></td>
-            <td>
-              ${o.status === 'pending' ? `<button class="action-btn" onclick="syncShiprocket(${o.id})">Sync to Shiprocket</button>` : `<a href="${o.trackingUrl || '#'}" target="_blank" class="action-btn" style="background:#B76E79">Track AWB</a>`}
-            </td>
-          </tr>
-        `).join('');
-
-      } catch(e) {
-        console.error(e);
-      }
+        adminProfile = data;
+        document.getElementById('admin-name').innerText = data.name;
+        document.getElementById('admin-role').innerText = data.role.replace('_', ' ').toUpperCase();
+        document.querySelector('.avatar').innerText = data.name.charAt(0).toUpperCase();
+    } catch(e) {
+        console.error("Failed to load profile", e);
     }
+}
 
-    async function syncShiprocket(orderId) {
-      if(!confirm("Are you sure you want to generate a Shiprocket AWB for this order?")) return;
-      try {
-        const res = await fetch('/api/shiprocket/create-order', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-          },
-          body: JSON.stringify({ orderId })
+// ----------------------------------------------------------------------------
+// Navigation & Routing
+// ----------------------------------------------------------------------------
+function initNavigation() {
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const view = item.getAttribute('data-view');
+            
+            // Update active states
+            navItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+            
+            loadView(view);
         });
-        const data = await res.json();
-        if(res.ok) {
-           alert("Shiprocket AWB Generated Successfully! AWB: " + data.awb);
-           fetchOrders();
+    });
+}
+
+function loadView(view) {
+    currentView = view;
+    // Hide all views
+    document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+    // Show target view
+    document.getElementById(`${view}-view`).style.display = 'block';
+    // Update title
+    document.getElementById('page-title').innerText = view.charAt(0).toUpperCase() + view.slice(1);
+
+    // Fetch data based on view
+    if (view === 'dashboard') fetchDashboardData();
+    if (view === 'orders') fetchOrders();
+    if (view === 'products') fetchProducts();
+    if (view === 'customers') fetchCustomers();
+}
+
+// ----------------------------------------------------------------------------
+// API Fetch Helpers (with generic auth handling)
+// ----------------------------------------------------------------------------
+async function apiGet(url) {
+    const res = await fetch(url, { headers: {'Authorization': 'Bearer ' + token} });
+    if (res.status === 401 || res.status === 403) { logout(); throw new Error("Unauthorized"); }
+    return res.json();
+}
+async function apiPost(url, body, method = 'POST') {
+    const res = await fetch(url, {
+        method: method,
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
+        body: JSON.stringify(body)
+    });
+    if (res.status === 401 || res.status === 403) { logout(); throw new Error("Unauthorized"); }
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'API Error');
+    return data;
+}
+
+
+// ----------------------------------------------------------------------------
+// Dashboard View
+// ----------------------------------------------------------------------------
+async function fetchDashboardData() {
+    try {
+        const stats = await apiGet('/api/admin/dashboard/stats');
+        document.getElementById('stat-revenue').innerText = `₹${stats.revenue.year.toLocaleString()}`;
+        document.getElementById('stat-orders').innerText = stats.orders.month.toLocaleString();
+        document.getElementById('stat-customers').innerText = stats.customers.toLocaleString();
+        document.getElementById('stat-low-stock').innerText = stats.lowStock.toLocaleString();
+
+        const topProducts = await apiGet('/api/admin/dashboard/top-products');
+        const tpBody = document.getElementById('top-products-body');
+        if(topProducts.length === 0) {
+            tpBody.innerHTML = '<tr><td colspan="3">No products</td></tr>';
         } else {
-           alert("Error: " + data.error);
+            tpBody.innerHTML = topProducts.map(p => `
+                <tr>
+                    <td style="display:flex; align-items:center; gap:10px;">
+                        <img src="${p.image}" alt="">
+                        <span>${p.name.substring(0,25)}...</span>
+                    </td>
+                    <td>₹${p.price}</td>
+                    <td>${p.reviews || 0} sold</td>
+                </tr>
+            `).join('');
         }
-      } catch(e) {
-        alert("Failed to sync order.");
-      }
+
+        // Render Chart
+        const chartData = await apiGet('/api/admin/dashboard/revenue-chart');
+        renderChart(chartData);
+
+    } catch (e) { console.error(e); }
+}
+
+function renderChart(data) {
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    if (revenueChartInstance) revenueChartInstance.destroy();
+
+    const labels = data.map(d => d._id); // YYYY-MM-DD
+    const values = data.map(d => d.revenue);
+
+    revenueChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Revenue (₹)',
+                data: values,
+                borderColor: '#B76E79',
+                backgroundColor: 'rgba(183, 110, 121, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#eaedf2' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+}
+
+// ----------------------------------------------------------------------------
+// Orders View
+// ----------------------------------------------------------------------------
+let currentOrderPage = 1;
+async function fetchOrders(page = 1) {
+    currentOrderPage = page;
+    const status = document.getElementById('order-status-filter').value;
+    try {
+        const data = await apiGet(`/api/admin/orders?page=${page}&limit=10&status=${status}`);
+        const tbody = document.getElementById('orders-tbody');
+        
+        if (data.orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No orders found</td></tr>';
+        } else {
+            tbody.innerHTML = data.orders.map(o => `
+                <tr>
+                    <td><strong>#${o.id}</strong></td>
+                    <td>${new Date(o.created_at).toLocaleDateString()}</td>
+                    <td>User #${o.user_id}</td>
+                    <td>₹${o.total}</td>
+                    <td><span class="badge ${o.status}">${o.status}</span></td>
+                    <td>
+                        ${o.status === 'pending' 
+                            ? `<button class="btn-info" onclick="syncShiprocket(${o.id})">Ship</button>` 
+                            : `<a href="${o.trackingUrl || '#'}" target="_blank" class="btn-primary" style="text-decoration:none; display:inline-block; padding: 6px 12px; font-size:12px;">Track</a>`}
+                    </td>
+                </tr>
+            `).join('');
+        }
+        renderPagination('orders-pagination', data.page, data.pages, 'fetchOrders');
+    } catch (e) { console.error(e); }
+}
+
+async function syncShiprocket(orderId) {
+    if(!confirm("Generate Shiprocket AWB for Order #" + orderId + "?")) return;
+    try {
+        const data = await apiPost('/api/shiprocket/create-order', { orderId });
+        alert("AWB Generated: " + data.awb);
+        fetchOrders(currentOrderPage);
+    } catch(e) {
+        alert("Sync failed: " + e.message);
     }
+}
+
+// ----------------------------------------------------------------------------
+// Products View
+// ----------------------------------------------------------------------------
+let currentProductPage = 1;
+let productSearchTimer = null;
+
+function debounceSearchProducts() {
+    clearTimeout(productSearchTimer);
+    productSearchTimer = setTimeout(() => fetchProducts(1), 500);
+}
+
+async function fetchProducts(page = 1) {
+    currentProductPage = page;
+    const search = document.getElementById('product-search').value;
+    try {
+        const data = await apiGet(`/api/admin/products?page=${page}&limit=10&search=${search}`);
+        const tbody = document.getElementById('products-tbody');
+        
+        if (data.products.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center">No products found</td></tr>';
+        } else {
+            tbody.innerHTML = data.products.map(p => `
+                <tr>
+                    <td>${p.id}</td>
+                    <td><img src="${p.image}" alt="${p.name}"></td>
+                    <td><strong>${p.name}</strong><br><small class="text-muted">SKU: ${p.sku}</small></td>
+                    <td style="text-transform: capitalize;">${p.cat}</td>
+                    <td>₹${p.price}</td>
+                    <td>${p.stock}</td>
+                    <td><span class="badge ${p.isActive !== false ? 'active' : 'inactive'}">${p.isActive !== false ? 'Active' : 'Archived'}</span></td>
+                    <td>
+                        <button class="btn-info" onclick='openProductModal(${JSON.stringify(p).replace(/'/g, "\\'")})'>Edit</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        renderPagination('products-pagination', page, Math.ceil(data.total/10), 'fetchProducts');
+    } catch (e) { console.error(e); }
+}
+
+function openProductModal(product = null) {
+    const modal = document.getElementById('product-modal');
+    document.getElementById('modal-title').innerText = product ? 'Edit Product' : 'Add New Product';
+    
+    if (product) {
+        document.getElementById('prod-id').value = product.id;
+        document.getElementById('prod-name').value = product.name;
+        document.getElementById('prod-cat').value = product.cat;
+        document.getElementById('prod-price').value = product.price;
+        document.getElementById('prod-discountPrice').value = product.discountPrice || '';
+        document.getElementById('prod-stock').value = product.stock;
+        document.getElementById('prod-img').value = product.image;
+        document.getElementById('prod-desc').value = product.description || '';
+    } else {
+        document.getElementById('product-form').reset();
+        document.getElementById('prod-id').value = '';
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeProductModal() {
+    document.getElementById('product-modal').style.display = 'none';
+}
+
+async function saveProduct() {
+    const id = document.getElementById('prod-id').value;
+    const body = {
+        name: document.getElementById('prod-name').value,
+        cat: document.getElementById('prod-cat').value,
+        price: parseFloat(document.getElementById('prod-price').value),
+        discountPrice: document.getElementById('prod-discountPrice').value ? parseFloat(document.getElementById('prod-discountPrice').value) : null,
+        stock: parseInt(document.getElementById('prod-stock').value),
+        image: document.getElementById('prod-img').value,
+        description: document.getElementById('prod-desc').value
+    };
+
+    try {
+        if (id) {
+            await apiPost(`/api/admin/products/${id}`, body, 'PUT');
+            alert("Product updated");
+        } else {
+            await apiPost(`/api/admin/products`, body, 'POST');
+            alert("Product added");
+        }
+        closeProductModal();
+        fetchProducts(currentProductPage);
+    } catch (e) {
+        alert("Error saving product: " + e.message);
+    }
+}
+
+// ----------------------------------------------------------------------------
+// Customers View
+// ----------------------------------------------------------------------------
+let currentCustomerPage = 1;
+let customerSearchTimer = null;
+
+function debounceSearchCustomers() {
+    clearTimeout(customerSearchTimer);
+    customerSearchTimer = setTimeout(() => fetchCustomers(1), 500);
+}
+
+async function fetchCustomers(page = 1) {
+    currentCustomerPage = page;
+    const search = document.getElementById('customer-search').value;
+    try {
+        const data = await apiGet(`/api/admin/customers?page=${page}&limit=10&search=${search}`);
+        const tbody = document.getElementById('customers-tbody');
+        
+        if (data.customers.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center">No customers found</td></tr>';
+        } else {
+            tbody.innerHTML = data.customers.map(c => `
+                <tr>
+                    <td>${c.id}</td>
+                    <td><strong>${c.name}</strong></td>
+                    <td>${c.email}</td>
+                    <td><span class="badge" style="background:#e0e0e0; color:#333;">${c.segment || 'None'}</span></td>
+                    <td>${c.orderCount || 0}</td>
+                    <td>₹${c.totalSpent || 0}</td>
+                    <td><span class="badge ${c.isBlocked ? 'inactive' : 'active'}">${c.isBlocked ? 'Blocked' : 'Active'}</span></td>
+                    <td>
+                        <button class="btn-${c.isBlocked ? 'success' : 'danger'}" onclick="toggleCustomerBlock(${c.id})">${c.isBlocked ? 'Unblock' : 'Block'}</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        renderPagination('customers-pagination', page, Math.ceil(data.total/10), 'fetchCustomers');
+    } catch (e) { console.error(e); }
+}
+
+async function toggleCustomerBlock(id) {
+    if(!confirm("Are you sure you want to toggle block status for this customer?")) return;
+    try {
+        await apiPost(`/api/admin/customers/${id}/block`, {}, 'PUT');
+        fetchCustomers(currentCustomerPage);
+    } catch(e) {
+        alert("Failed to update status: " + e.message);
+    }
+}
+
+// ----------------------------------------------------------------------------
+// Utilities
+// ----------------------------------------------------------------------------
+function renderPagination(containerId, currentPage, totalPages, functionName) {
+    const container = document.getElementById(containerId);
+    if(totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    let html = '';
+    // Prev
+    if (currentPage > 1) {
+        html += `<button class="page-btn" onclick="${functionName}(${currentPage - 1})">&laquo;</button>`;
+    }
+    
+    // Pages (Simplified, just showing current/total or a few numbers)
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, currentPage + 2);
+    
+    for (let i = start; i <= end; i++) {
+        html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="${functionName}(${i})">${i}</button>`;
+    }
+    
+    // Next
+    if (currentPage < totalPages) {
+        html += `<button class="page-btn" onclick="${functionName}(${currentPage + 1})">&raquo;</button>`;
+    }
+    
+    container.innerHTML = html;
+}
   </script>
 </body>
 </html>
