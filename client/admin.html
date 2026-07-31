@@ -1106,7 +1106,7 @@ async function syncShiprocket(orderId) {
     if(!confirm("Generate Shiprocket AWB for Order #" + orderId + "?")) return;
     try {
         const data = await apiPost('/api/admin/shiprocket/create-order', { orderId });
-        alert("AWB Generated: " + data.awb);
+        alert("AWB Generated: " + data.trackingId);
         fetchOrders(currentOrderPage);
     } catch(e) {
         alert("Sync failed: " + e.message);
