@@ -381,7 +381,27 @@ router.post('/shiprocket/create-order', authenticateAdmin, async (req, res) => {
                 return res.status(500).json({ error: 'Shiprocket order creation failed: ' + errMsg });
             }
 
-            awbCode = createOrderData.awb_code || createOrderData.shipment_id || `SR-${createOrderData.order_id}`;
+            let finalAwb = createOrderData.awb_code;
+            
+            // If Shiprocket didn't auto-assign an AWB, manually assign one (Step 5 from PDF)
+            if (!finalAwb && createOrderData.shipment_id) {
+                try {
+                    const assignRes = await fetch('https://apiv2.shiprocket.in/v1/external/courier/assign/awb', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                        body: JSON.stringify({ shipment_id: createOrderData.shipment_id })
+                    });
+                    const assignData = await assignRes.json();
+                    
+                    if (assignRes.ok && assignData.response && assignData.response.data && assignData.response.data.awb_code) {
+                        finalAwb = assignData.response.data.awb_code;
+                    }
+                } catch(e) {
+                    console.error("AWB Assign Error:", e);
+                }
+            }
+
+            awbCode = finalAwb || createOrderData.shipment_id || `SR-${createOrderData.order_id}`;
         } else {
             // Fallback to Mock if no keys provided yet
             awbCode = 'AWB' + Math.floor(100000000 + Math.random() * 900000000);
