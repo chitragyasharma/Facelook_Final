@@ -375,9 +375,10 @@ router.post('/shiprocket/create-order', authenticateAdmin, async (req, res) => {
             });
 
             const createOrderData = await createOrderRes.json();
-            if (!createOrderRes.ok) {
+            if (!createOrderRes.ok || !createOrderData.order_id) {
                 console.error("Shiprocket Create Failed:", createOrderData);
-                return res.status(500).json({ error: 'Shiprocket order creation failed: ' + (createOrderData.message || 'Unknown error') });
+                const errMsg = createOrderData.message || (createOrderData.errors && Object.values(createOrderData.errors).join(', ')) || JSON.stringify(createOrderData);
+                return res.status(500).json({ error: 'Shiprocket order creation failed: ' + errMsg });
             }
 
             awbCode = createOrderData.awb_code || createOrderData.shipment_id || `SR-${createOrderData.order_id}`;
