@@ -5332,6 +5332,61 @@
       slideInterval = setInterval(nextSlide, 4000);
     }
 
+    function renderHeroSlider(slides) {
+      const carousel = document.querySelector('.hero-carousel');
+      const dotsContainer = document.querySelector('.hero-dots');
+      if (!carousel || !dotsContainer) return;
+      
+      carousel.innerHTML = '';
+      dotsContainer.innerHTML = '';
+      
+      slides.forEach((slide, index) => {
+        let mediaHtml = '';
+        if (slide.media) {
+            const isVideo = slide.media.startsWith('data:video');
+            if (isVideo) {
+                mediaHtml = `<video src="${slide.media}" autoplay loop muted playsinline style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none;"></video>`;
+            } else {
+                mediaHtml = `<img src="${slide.media}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none;">`;
+            }
+        }
+        
+        const overlayHtml = `<div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7)); z-index:1; pointer-events:none;"></div>`;
+        
+        const contentHtml = `
+          <div style="position:relative; z-index:2; text-align:center; color:white; padding: 20px;">
+            ${slide.tag ? `<div class="hero-tag" style="background:var(--primary); color:white; border:none; margin-bottom:12px;">${slide.tag}</div>` : ''}
+            ${slide.eyebrow ? `<div class="hero-eyebrow" style="color:#ffdce0; font-weight:700; font-size:1.1rem; text-shadow:0 1px 3px rgba(0,0,0,0.5);">${slide.eyebrow}</div>` : ''}
+            ${slide.title ? `<h1 class="hero-title" style="color:white; text-shadow: 0 2px 4px rgba(0,0,0,0.6); font-size:3rem; margin:10px 0;">${slide.title}</h1>` : ''}
+            ${slide.subtitle ? `<p class="hero-subtitle" style="color:#f0f0f0; text-shadow: 0 1px 3px rgba(0,0,0,0.6); font-size:1.1rem; max-width:600px; margin:0 auto; margin-bottom: 24px;">${slide.subtitle}</p>` : ''}
+            <div class="hero-btns">
+              <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn btn-primary" style="text-decoration:none; display:inline-block; border-color:white; color:white;">Shop Now</a>
+              <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn btn-secondary" style="text-decoration:none; display:inline-block; border-color:white; color:white;">Explore</a>
+            </div>
+          </div>
+        `;
+
+        const slideDiv = document.createElement('div');
+        slideDiv.className = 'hero-slide';
+        slideDiv.style.position = 'relative';
+        slideDiv.style.overflow = 'hidden';
+        slideDiv.style.height = '100%'; // Ensure it fills height if carousel has fixed height
+        slideDiv.style.minHeight = '450px'; // Fallback height
+        
+        slideDiv.innerHTML = mediaHtml + overlayHtml + contentHtml;
+        carousel.appendChild(slideDiv);
+        
+        const dot = document.createElement('div');
+        dot.className = 'hero-dot';
+        if (index === 0) dot.classList.add('active');
+        dot.onclick = () => setSlide(index);
+        dotsContainer.appendChild(dot);
+      });
+      
+      currentSlide = 0;
+      setSlide(0);
+    }
+
     async function fetchNotifications() {
         if (!state.token) return;
         try {
@@ -5495,9 +5550,16 @@
 
       try {
         PRODUCTS = await api('/api/products');
-        // Add slugs to all products
         PRODUCTS.forEach(p => p.slug = slugify(p.name));
         
+        api('/api/settings/hero_slides')
+          .then(slides => {
+             if (slides && slides.length > 0) {
+                 renderHeroSlider(slides);
+             }
+          })
+          .catch(err => console.error('Failed to load hero slides', err));
+          
         if (state.token) {
           state.cart = await api('/api/cart');
           state.wishlist = await api('/api/wishlist');

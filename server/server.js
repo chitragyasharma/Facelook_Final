@@ -255,7 +255,7 @@ app.get('/api/admin/force-sync-products', async (req, res) => {
 app.get('/api/products', async (req, res) => {
     try {
         const mongoose = require('mongoose');
-        const products = await Product.find({}, '-_id -__v').sort({ id: 1 });
+        const products = await Product.find({ isActive: { $ne: false } }, '-_id -__v').sort({ id: 1 });
         res.json(products);
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -488,6 +488,13 @@ app.get('/api/payment/key', (req, res) => {
     res.json({ key: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder' });
 });
 
+app.get('/api/settings/hero_slides', async (req, res) => {
+    try {
+        const setting = await Setting.findOne({ key: 'hero_slides' });
+        res.json(setting ? setting.value : null);
+    } catch (e) { res.status(500).json({ error: 'Server Error' }); }
+});
+
 app.get('/api/orders', authenticateToken, async (req, res) => {
     try {
         const orders = await Order.find({ user_id: req.user.id }).sort({ id: -1 });
@@ -709,7 +716,7 @@ function slugify(text) {
 
 app.get('/sitemap.xml', async (req, res) => {
     try {
-        const products = await Product.find({}, 'name updatedAt');
+        const products = await Product.find({ isActive: { $ne: false } }, 'name updatedAt');
         let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
