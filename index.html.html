@@ -448,33 +448,36 @@
 ══════════════════════════════════════ */
     .hero {
       position: relative;
-      min-height: 400px;
+      height: 100svh; /* Better for mobile */
+      min-height: 500px;
       background: linear-gradient(160deg, var(--nude-mid) 0%, var(--nude) 60%, #fff 100%);
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 52px 28px 44px;
-      text-align: center;
+      /* Remove padding and align-items center so it fills */
     }
 
     .hero-carousel {
       width: 100%;
+      height: 100%;
+      flex: 1;
       position: relative;
       overflow: hidden;
       display: flex;
     }
+    
     .hero-slide {
       min-width: 100%;
       width: 100%;
+      height: 100%;
       box-sizing: border-box;
-      padding: 0 16px;
+      padding: 0;
       transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
+      padding-bottom: 12vh;
     }
     .hero-dots {
       display: flex;
@@ -598,6 +601,28 @@
     .hero-btns {
       display: flex;
       gap: 12px;
+    }
+
+    /* CUSTOM HERO SLIDER STYLES */
+    .hero-content-custom { position: relative; z-index: 2; text-align: center; color: white; padding: 15px; width: 100%; box-sizing: border-box; }
+    .hero-tag-custom { font-family: 'Jost', sans-serif; font-size: clamp(11px, 3vw, 13px); font-weight: 600; letter-spacing: 3px; color: #fff; text-transform: uppercase; margin-bottom: 10px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+    .hero-eyebrow-custom { color: #ffdce0; font-family: 'Jost', sans-serif; font-size: clamp(12px, 3.5vw, 16px); letter-spacing: 4px; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 5px; }
+    .hero-eyebrow-custom::before, .hero-eyebrow-custom::after { content: ''; width: 20px; height: 1px; background: #ffdce0; }
+    .hero-title-custom { color: white; font-family: 'Bebas Neue', cursive; letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.6); font-size: clamp(45px, 12vw, 90px); margin: 0 0 5px; line-height: 1; }
+    .hero-subtitle-custom { color: #f0f0f0; font-family: 'Jost', sans-serif; text-shadow: 0 1px 3px rgba(0,0,0,0.6); font-size: clamp(14px, 4vw, 18px); max-width: 600px; margin: 0 auto 20px; line-height: 1.4; }
+    .hero-btns-custom { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .btn-hero-primary { background: #b76e79; color: #fff; font-family: 'Bebas Neue', cursive; font-size: clamp(15px, 4vw, 18px); letter-spacing: 2px; text-decoration: none; padding: 10px 24px; border-radius: 50px; box-shadow: 0 4px 15px rgba(183,110,121,.35); transition: all .2s; border: none; display: inline-block; cursor: pointer; }
+    .btn-hero-secondary { background: rgba(0,0,0,0.2); color: #fff; border: 1px solid #fff; font-family: 'Bebas Neue', cursive; font-size: clamp(15px, 4vw, 18px); letter-spacing: 2px; text-decoration: none; padding: 10px 24px; border-radius: 50px; transition: all .2s; display: inline-block; cursor: pointer; }
+
+    @media (min-width: 768px) {
+      .hero-content-custom { padding: 20px; }
+      .hero-tag-custom { font-size: 13px; letter-spacing: 4px; margin-bottom: 15px; }
+      .hero-eyebrow-custom { font-size: 16px; letter-spacing: 6px; gap: 10px; }
+      .hero-eyebrow-custom::before, .hero-eyebrow-custom::after { width: 30px; }
+      .hero-title-custom { letter-spacing: 3px; margin: 5px 0 10px; }
+      .hero-subtitle-custom { margin: 0 auto 25px; }
+      .hero-btns-custom { gap: 16px; }
+      .btn-hero-primary, .btn-hero-secondary { padding: 12px 32px; }
     }
 
     /* ══════════════════════════════════════
@@ -5354,14 +5379,14 @@
         const overlayHtml = `<div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7)); z-index:1; pointer-events:none;"></div>`;
         
         const contentHtml = `
-          <div style="position:relative; z-index:2; text-align:center; color:white; padding: 20px;">
-            ${slide.tag ? `<div class="hero-tag" style="font-family:'Jost', sans-serif; font-size:13px; font-weight:600; letter-spacing:4px; color:#fff; text-transform:uppercase; margin-bottom:15px; text-shadow:0 1px 2px rgba(0,0,0,0.5);">${slide.tag}</div>` : ''}
-            ${slide.eyebrow ? `<div class="hero-eyebrow" style="color:#ffdce0; font-family:'Jost', sans-serif; font-size:16px; letter-spacing:6px; font-weight:500; text-shadow:0 1px 3px rgba(0,0,0,0.5); justify-content:center;">${slide.eyebrow}</div>` : ''}
-            ${slide.title ? `<h1 class="hero-title" style="color:white; font-family:'Bebas Neue', cursive; letter-spacing:3px; text-shadow:0 2px 4px rgba(0,0,0,0.6); font-size:clamp(50px, 10vw, 90px); margin:10px 0;">${slide.title}</h1>` : ''}
-            ${slide.subtitle ? `<p class="hero-subtitle" style="color:#f0f0f0; font-family:'Jost', sans-serif; text-shadow:0 1px 3px rgba(0,0,0,0.6); font-size:1.1rem; max-width:600px; margin:0 auto 30px;">${slide.subtitle}</p>` : ''}
-            <div class="hero-btns" style="justify-content:center; display:flex; gap:16px;">
-              <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn" style="background:#b76e79; color:#fff; font-family:'Bebas Neue', cursive; font-size:18px; letter-spacing:3px; text-decoration:none; padding:12px 36px; border-radius:50px; box-shadow:0 4px 18px rgba(183,110,121,.35); transition:all .2s;">SHOP NOW</a>
-              <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn" style="background:transparent; color:#fff; border:1px solid #fff; font-family:'Bebas Neue', cursive; font-size:18px; letter-spacing:3px; text-decoration:none; padding:12px 36px; border-radius:50px; transition:all .2s;">EXPLORE</a>
+          <div class="hero-content-custom">
+            ${slide.tag ? `<div class="hero-tag-custom">${slide.tag}</div>` : ''}
+            ${slide.eyebrow ? `<div class="hero-eyebrow-custom">${slide.eyebrow}</div>` : ''}
+            ${slide.title ? `<h1 class="hero-title-custom">${slide.title}</h1>` : ''}
+            ${slide.subtitle ? `<p class="hero-subtitle-custom">${slide.subtitle}</p>` : ''}
+            <div class="hero-btns-custom">
+              <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn-hero-primary">SHOP NOW</a>
+              <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn-hero-secondary">EXPLORE</a>
             </div>
           </div>
         `;
@@ -5370,10 +5395,6 @@
         slideDiv.className = 'hero-slide';
         slideDiv.style.position = 'relative';
         slideDiv.style.overflow = 'hidden';
-        slideDiv.style.height = '100%'; // Ensure it fills height if carousel has fixed height
-        slideDiv.style.minHeight = '450px'; // Fallback height
-        slideDiv.style.justifyContent = 'flex-end';
-        slideDiv.style.paddingBottom = '120px';
         
         slideDiv.innerHTML = mediaHtml + overlayHtml + contentHtml;
         carousel.appendChild(slideDiv);
