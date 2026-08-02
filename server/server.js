@@ -80,7 +80,14 @@ app.get('/api/notifications', authenticateToken, async (req, res) => {
 
 app.put('/api/notifications/:id/read', authenticateToken, async (req, res) => {
     try {
-        await Notification.findOneAndUpdate({ id: parseInt(req.params.id), user_id: req.user.id }, { isRead: true });
+        const queryId = req.params.id;
+        const query = { user_id: req.user.id };
+        if (queryId.length === 24) {
+            query.$or = [{ id: parseInt(queryId) || 0 }, { _id: queryId }];
+        } else {
+            query.id = parseInt(queryId);
+        }
+        await Notification.findOneAndUpdate(query, { isRead: true });
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: 'Error marking notification read' });
@@ -97,7 +104,7 @@ app.post('/api/auth/register', async (req, res) => {
         if (existingUser) return res.status(400).json({ error: 'Email already exists' });
 
         const hash = bcrypt.hashSync(password, 10);
-        
+
         // Auto-increment logic
         const lastUser = await User.findOne().sort({ id: -1 });
         const id = lastUser ? lastUser.id + 1 : 1;
@@ -116,11 +123,11 @@ app.post('/api/auth/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
-        
+
         if (!user || !user.password || !bcrypt.compareSync(password, user.password)) {
             return res.status(400).json({ error: "Invalid credentials (did you sign up with Google?)" });
         }
-        
+
         const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, SECRET_KEY, { expiresIn: '7d' });
         res.json({ token, user: { name: user.name, email: user.email } });
     } catch (error) {
@@ -143,7 +150,7 @@ app.post('/api/auth/send-otp', otpLimiter, async (req, res) => {
     try {
         const { phone } = req.body;
         if (!phone) return res.status(400).json({ error: 'Phone number required' });
-        
+
         if (MSG91_AUTH_KEY && MSG91_TEMPLATE_ID) {
             const mobile = phone.startsWith('91') ? phone : '91' + phone.replace(/^\+91/, '');
             const url = `https://control.msg91.com/api/v5/otp?template_id=${MSG91_TEMPLATE_ID}&mobile=${mobile}&authkey=${MSG91_AUTH_KEY}`;
@@ -170,7 +177,7 @@ app.post('/api/auth/verify-otp', async (req, res) => {
     try {
         const { phone, otp } = req.body;
         if (!phone || !otp) return res.status(400).json({ error: 'Phone and OTP required' });
-        
+
         if (MSG91_AUTH_KEY) {
             const mobile = phone.startsWith('91') ? phone : '91' + phone.replace(/^\+91/, '');
             const url = `https://control.msg91.com/api/v5/otp/verify?otp=${otp}&mobile=${mobile}&authkey=${MSG91_AUTH_KEY}`;
@@ -186,7 +193,7 @@ app.post('/api/auth/verify-otp', async (req, res) => {
             }
             delete OTP_STORE[phone];
         }
-        
+
         let user = await User.findOne({ phone });
         if (!user) {
             const lastUser = await User.findOne().sort({ id: -1 });
@@ -194,7 +201,7 @@ app.post('/api/auth/verify-otp', async (req, res) => {
             user = new User({ id, name: phone, phone });
             await user.save();
         }
-        
+
         const token = jwt.sign({ id: user.id, name: user.name, phone: user.phone }, SECRET_KEY, { expiresIn: '7d' });
         res.json({ token, user: { name: user.name, phone: user.phone } });
     } catch (error) {
@@ -206,14 +213,14 @@ app.post('/api/auth/google', async (req, res) => {
     try {
         const { credential } = req.body;
         if (!credential) return res.status(400).json({ error: 'Google credential missing' });
-        
+
         const payloadBase64 = credential.split('.')[1];
         const payload = JSON.parse(Buffer.from(payloadBase64, 'base64').toString('ascii'));
         const { email, name, sub: googleId } = payload;
-        
+
         let user = await User.findOne({ email });
         if (!user) user = await User.findOne({ googleId });
-        
+
         if (!user) {
             const lastUser = await User.findOne().sort({ id: -1 });
             const id = lastUser ? lastUser.id + 1 : 1;
@@ -223,7 +230,7 @@ app.post('/api/auth/google', async (req, res) => {
             user.googleId = googleId;
             await user.save();
         }
-        
+
         const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, SECRET_KEY, { expiresIn: '7d' });
         res.json({ token, user: { name: user.name, email: user.email } });
     } catch (error) {
@@ -267,7 +274,7 @@ app.get('/api/cart', authenticateToken, async (req, res) => {
     try {
         const cartItems = await Cart.find({ user_id: req.user.id });
         const products = await Product.find({ id: { $in: cartItems.map(c => c.product_id) } });
-        
+
         const result = cartItems.map(c => {
             const product = products.find(p => p.id === c.product_id);
             if (!product) return null;
@@ -276,10 +283,10 @@ app.get('/api/cart', authenticateToken, async (req, res) => {
                 qty: c.qty
             };
         }).filter(item => item !== null);
-        
+
         // Remove MongoDB specific fields before sending
         result.forEach(r => { delete r._id; delete r.__v; });
-        
+
         res.json(result);
     } catch (error) {
         res.status(500).json({ error: 'Error fetching cart' });
@@ -290,7 +297,7 @@ app.post('/api/cart', authenticateToken, async (req, res) => {
     try {
         const { product_id, qty = 1 } = req.body;
         const exItem = await Cart.findOne({ user_id: req.user.id, product_id });
-        
+
         if (exItem) {
             exItem.qty += qty;
             await exItem.save();
@@ -298,7 +305,7 @@ app.post('/api/cart', authenticateToken, async (req, res) => {
             const newItem = new Cart({ user_id: req.user.id, product_id, qty });
             await newItem.save();
         }
-        
+
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: 'Error updating cart' });
@@ -309,12 +316,12 @@ app.put('/api/cart/:product_id', authenticateToken, async (req, res) => {
     try {
         const product_id = parseInt(req.params.product_id);
         const { qty } = req.body;
-        
+
         await Cart.findOneAndUpdate(
             { user_id: req.user.id, product_id },
             { qty }
         );
-        
+
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: 'Error updating cart item' });
@@ -346,7 +353,7 @@ app.post('/api/wishlist/toggle', authenticateToken, async (req, res) => {
     try {
         const { product_id } = req.body;
         const exItem = await Wishlist.findOne({ user_id: req.user.id, product_id });
-        
+
         if (exItem) {
             await Wishlist.deleteOne({ _id: exItem._id });
             res.json({ status: 'removed' });
@@ -364,21 +371,21 @@ app.post('/api/wishlist/toggle', authenticateToken, async (req, res) => {
 app.post('/api/checkout', authenticateToken, async (req, res) => {
     try {
         const { total, details } = req.body;
-        
+
         const lastOrder = await Order.findOne().sort({ id: -1 });
         const order_id = lastOrder ? lastOrder.id + 1 : 1;
-        
+
         const newOrder = new Order({ id: order_id, user_id: req.user.id, total, details });
         await newOrder.save();
-        
+
         // Clear cart
         await Cart.deleteMany({ user_id: req.user.id });
-        
+
         // Notifications
         const notifId = Date.now();
         await Notification.create({ id: notifId, user_id: req.user.id, title: 'Order Placed Successfully', message: `Your order #${order_id} has been confirmed!`, type: 'order' });
         sendCustomerEmail(req.user.email, `Facelook Order Confirmed #${order_id}`, `Hi ${req.user.name || 'Customer'},\n\nYour order #${order_id} for ₹${total} has been placed successfully!\n\nTrack your order here: https://facelookcosmetics.in/track\n\nThank you for shopping with Facelook!`);
-        
+
         console.log(`\n========================================`);
         console.log(`📱 MOCK SMS TO ${req.user.phone || 'Customer'}`);
         console.log(`Hi ${req.user.name}, your FACÉLOOK order #${order_id} is confirmed! Track here: https://facelookcosmetics.in/track`);
@@ -393,7 +400,7 @@ app.post('/api/checkout', authenticateToken, async (req, res) => {
 app.post('/api/checkout/upi', authenticateToken, async (req, res) => {
     try {
         const { order_id, utr } = req.body;
-        
+
         const order = await Order.findOne({ id: order_id });
         if (order) {
             order.status = 'pending';
@@ -403,11 +410,11 @@ app.post('/api/checkout/upi', authenticateToken, async (req, res) => {
             order.details.utr_number = utr;
             order.markModified('details');
             await order.save();
-            
+
             const notifId = Date.now();
             await Notification.create({ id: notifId, user_id: req.user.id, title: 'UPI Payment Pending', message: `Your UPI payment for order #${order_id} is pending verification.`, type: 'order' });
             sendCustomerEmail(req.user.email, `Facelook Order Pending Verification #${order_id}`, `Hi ${req.user.name || 'Customer'},\n\nYour order #${order_id} has been placed and is pending UPI verification with UTR ${utr}.\n\nThank you for shopping with Facelook!`);
-            
+
             res.json({ success: true, message: "UPI Payment pending verification" });
         } else {
             res.status(400).json({ error: 'Order not found' });
@@ -433,7 +440,7 @@ app.post('/api/payment/create-order', authenticateToken, async (req, res) => {
         res.json(order);
     } catch (error) {
         console.error('Razorpay Error:', error);
-        
+
         // Extract stringified error to send to client for debugging
         let errDesc = 'Unknown error';
         if (error && error.error && error.error.description) {
@@ -443,7 +450,7 @@ app.post('/api/payment/create-order', authenticateToken, async (req, res) => {
         } else {
             try {
                 errDesc = typeof error === 'object' ? JSON.stringify(error) : String(error);
-            } catch(e) {}
+            } catch (e) { }
         }
 
         res.status(500).json({ error: "Could not create Razorpay order: " + errDesc });
@@ -465,7 +472,7 @@ app.post('/api/payment/verify', authenticateToken, async (req, res) => {
             order.razorpay_payment_id = razorpay_payment_id;
             order.razorpay_order_id = razorpay_order_id;
             await order.save();
-            
+
             const notifId = Date.now();
             await Notification.create({ id: notifId, user_id: req.user.id, title: 'Payment Successful', message: `Payment for order #${order_id} was successful!`, type: 'order' });
             sendCustomerEmail(req.user.email, `Facelook Payment Received #${order_id}`, `Hi ${req.user.name || 'Customer'},\n\nWe have received your payment for order #${order_id}!\n\nTrack your order here: https://facelookcosmetics.in/track\n\nThank you for shopping with Facelook!`);
@@ -499,7 +506,7 @@ app.get('/api/track/:orderId', async (req, res) => {
         let tracking = [];
         const date = new Date(order._id.getTimestamp());
         const placedStr = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-        
+
         let hasRealTracking = false;
         if (order.trackingId && process.env.SHIPROCKET_EMAIL && process.env.SHIPROCKET_PASSWORD && order.deliveryPartner === 'Shiprocket') {
             try {
@@ -510,24 +517,24 @@ app.get('/api/track/:orderId', async (req, res) => {
                     body: JSON.stringify({ email: process.env.SHIPROCKET_EMAIL, password: process.env.SHIPROCKET_PASSWORD })
                 });
                 const authData = await authRes.json();
-                
+
                 if (authRes.ok && authData.token) {
                     // Fetch Tracking
                     const trackRes = await fetch(`https://apiv2.shiprocket.in/v1/external/courier/track/awb/${order.trackingId}`, {
                         headers: { 'Authorization': 'Bearer ' + authData.token }
                     });
                     const trackData = await trackRes.json();
-                    
+
                     if (trackRes.ok && trackData && trackData.tracking_data && trackData.tracking_data.track_status) {
                         hasRealTracking = true;
                         const td = trackData.tracking_data;
-                        
+
                         tracking.push({ title: 'Order Placed', date: placedStr, status: 'completed' });
-                        
+
                         // Parse Shiprocket status
                         let sStatus = td.track_status === 1 ? 'completed' : 'active';
                         tracking.push({ title: 'Shipped', date: td.shipment_track?.[0]?.date || 'Recent', status: sStatus });
-                        
+
                         if (td.track_status === 7) {
                             tracking.push({ title: 'Delivered', date: td.shipment_track?.[0]?.date || 'Today', status: 'completed' });
                         } else {
@@ -539,11 +546,11 @@ app.get('/api/track/:orderId', async (req, res) => {
                 console.error('Shiprocket Tracking Error:', err.message);
             }
         }
-        
+
         if (!hasRealTracking) {
             // Mock tracking response fallback
             tracking.push({ title: 'Order Placed', date: placedStr, status: 'completed' });
-            
+
             const statusLower = (order.status || '').toLowerCase();
             if (statusLower === 'paid' || statusLower === 'pending') {
                 tracking.push({ title: 'Processing', date: 'In Progress', status: 'active' });
@@ -561,7 +568,7 @@ app.get('/api/track/:orderId', async (req, res) => {
                 tracking.push({ title: order.status || 'Processing', date: 'Current', status: 'active' });
             }
         }
-        
+
         res.json({ order_id: order.id, total: order.total, tracking });
     } catch (error) {
         res.status(500).json({ error: 'Error fetching tracking' });
@@ -575,7 +582,7 @@ app.post('/api/reviews', async (req, res) => {
         if (!productId || !name || !rating || !title || !body) {
             return res.status(400).json({ error: 'All fields are required' });
         }
-        
+
         const nextId = await Review.countDocuments() + 1;
         const review = new Review({
             id: nextId,
@@ -585,7 +592,7 @@ app.post('/api/reviews', async (req, res) => {
             title,
             body
         });
-        
+
         await review.save();
         res.json({ success: true, message: 'Review submitted successfully', review });
     } catch (error) {
@@ -614,7 +621,7 @@ app.post('/api/contact', async (req, res) => {
         const entry = { name, email, subject: subject || '', message, timestamp: new Date().toISOString() };
         const logPath = path.join(__dirname, 'contact-messages.json');
         let messages = [];
-        try { messages = JSON.parse(fs.readFileSync(logPath, 'utf-8')); } catch(e) {}
+        try { messages = JSON.parse(fs.readFileSync(logPath, 'utf-8')); } catch (e) { }
         messages.push(entry);
         fs.writeFileSync(logPath, JSON.stringify(messages, null, 2));
         console.log(`\n========================================`);
@@ -635,7 +642,7 @@ app.post('/api/newsletter', async (req, res) => {
         if (!email) return res.status(400).json({ error: 'Email is required' });
         const logPath = path.join(__dirname, 'newsletter-subscribers.json');
         let subs = [];
-        try { subs = JSON.parse(fs.readFileSync(logPath, 'utf-8')); } catch(e) {}
+        try { subs = JSON.parse(fs.readFileSync(logPath, 'utf-8')); } catch (e) { }
         if (subs.find(s => s.email === email)) return res.json({ success: true, message: 'You are already subscribed!' });
         subs.push({ email, subscribedAt: new Date().toISOString() });
         fs.writeFileSync(logPath, JSON.stringify(subs, null, 2));
@@ -643,6 +650,23 @@ app.post('/api/newsletter', async (req, res) => {
         res.json({ success: true, message: 'Subscribed successfully!' });
     } catch (error) {
         res.status(500).json({ error: 'Error subscribing' });
+    }
+});
+
+// --- COUPONS ---
+app.get('/api/coupons/active', async (req, res) => {
+    try {
+        const activeCoupons = await Coupon.find({ isActive: true });
+        // Filter out expired coupons
+        const now = new Date();
+        const validCoupons = activeCoupons.filter(c => {
+            if (c.validTo && new Date(c.validTo) < now) return false;
+            if (c.validFrom && new Date(c.validFrom) > now) return false;
+            return true;
+        });
+        res.json(validCoupons);
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching active coupons' });
     }
 });
 
@@ -658,7 +682,7 @@ app.post('/api/coupons/validate', authenticateToken, async (req, res) => {
         if (coupon.validFrom && now < coupon.validFrom) return res.status(400).json({ error: 'This coupon is not yet active' });
         if (coupon.usageLimit > 0 && coupon.usedCount >= coupon.usageLimit) return res.status(400).json({ error: 'This coupon has reached its usage limit' });
         if (coupon.minOrder > 0 && cartTotal < coupon.minOrder) return res.status(400).json({ error: `Minimum order of ₹${coupon.minOrder} required for this coupon` });
-        
+
         let discount = 0;
         if (coupon.type === 'flat') {
             discount = coupon.value;
@@ -666,7 +690,7 @@ app.post('/api/coupons/validate', authenticateToken, async (req, res) => {
             discount = Math.round((cartTotal * coupon.value) / 100);
             if (coupon.maxDiscount > 0) discount = Math.min(discount, coupon.maxDiscount);
         }
-        
+
         res.json({ success: true, discount, coupon: { code: coupon.code, type: coupon.type, value: coupon.value } });
     } catch (error) {
         res.status(500).json({ error: 'Error validating coupon' });
@@ -676,11 +700,11 @@ app.post('/api/coupons/validate', authenticateToken, async (req, res) => {
 // --- SITEMAP (must be BEFORE catch-all) ---
 function slugify(text) {
     return text.toString().toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\-]+/g, '')
+        .replace(/\-\-+/g, '-')
+        .replace(/^-+/, '')
+        .replace(/-+$/, '');
 }
 
 app.get('/sitemap.xml', async (req, res) => {

@@ -830,6 +830,28 @@ input:focus, select:focus, textarea:focus {
             <label>Description</label>
             <textarea id="prod-desc" rows="3"></textarea>
           </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label>Country of Origin</label>
+              <input type="text" id="prod-countryOfOrigin">
+            </div>
+            <div class="form-group col-6">
+              <label>Delivery & Payment Info</label>
+              <input type="text" id="prod-deliveryInfo">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>How to Use</label>
+            <textarea id="prod-howToUse" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Ingredients</label>
+            <textarea id="prod-ingredients" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Other Information</label>
+            <textarea id="prod-otherInfo" rows="2"></textarea>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -1165,7 +1187,12 @@ function openProductModal(product = null) {
         document.getElementById('prod-discountPrice').value = product.discountPrice || '';
         document.getElementById('prod-stock').value = product.stock;
         document.getElementById('prod-img').value = product.image;
-        document.getElementById('prod-desc').value = product.description || '';
+        document.getElementById('prod-desc').value = product.desc || '';
+        document.getElementById('prod-countryOfOrigin').value = product.countryOfOrigin || '';
+        document.getElementById('prod-deliveryInfo').value = product.deliveryInfo || '';
+        document.getElementById('prod-howToUse').value = product.howToUse || '';
+        document.getElementById('prod-ingredients').value = product.ingredients || '';
+        document.getElementById('prod-otherInfo').value = product.otherInfo || '';
     } else {
         document.getElementById('product-form').reset();
         document.getElementById('prod-id').value = '';
@@ -1187,7 +1214,12 @@ async function saveProduct() {
         discountPrice: document.getElementById('prod-discountPrice').value ? parseFloat(document.getElementById('prod-discountPrice').value) : null,
         stock: parseInt(document.getElementById('prod-stock').value),
         image: document.getElementById('prod-img').value,
-        description: document.getElementById('prod-desc').value
+        desc: document.getElementById('prod-desc').value,
+        countryOfOrigin: document.getElementById('prod-countryOfOrigin').value,
+        deliveryInfo: document.getElementById('prod-deliveryInfo').value,
+        howToUse: document.getElementById('prod-howToUse').value,
+        ingredients: document.getElementById('prod-ingredients').value,
+        otherInfo: document.getElementById('prod-otherInfo').value
     };
 
     try {

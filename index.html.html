@@ -996,6 +996,49 @@
       font-family: 'Jost', sans-serif;
     }
 
+    /* Accordion styles */
+    .product-accordion {
+      margin-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .accordion-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .accordion-header {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--td);
+      cursor: pointer;
+      text-align: left;
+    }
+    .accordion-icon {
+      font-size: 20px;
+      font-weight: 400;
+      transition: transform 0.3s;
+    }
+    .accordion-item.active .accordion-icon {
+      transform: rotate(45deg);
+    }
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s ease;
+      font-size: 14px;
+      color: var(--tm);
+      line-height: 1.6;
+    }
+    .accordion-item.active .accordion-content {
+      max-height: 500px;
+      padding-bottom: 16px;
+    }
+
     /* ══════════════════════════════════════
    PRODUCT DETAIL
 ══════════════════════════════════════ */
@@ -2798,17 +2841,17 @@
       <a href="/wishlist" onclick="event.preventDefault(); goTo('wishlist')" style="position:relative; display:flex; align-items:center; cursor:pointer; text-decoration:none; color:inherit;"
         title="Wishlist">
         <span>♡</span>
-        <span class="badge" id="wish-badge" style="top:-6px; right:-12px;">0</span>
+        <span class="badge" id="wish-badge">0</span>
       </a>
       <a href="/cart" onclick="event.preventDefault(); goTo('cart')" style="position:relative; display:flex; align-items:center; cursor:pointer; text-decoration:none; color:inherit;"
         title="Cart">
         <span>🛒</span>
-        <span class="badge" id="cart-badge" style="top:-6px; right:-12px;">0</span>
+        <span class="badge" id="cart-badge">0</span>
       </a>
-      <div class="dropdown" style="display:inline-block; position:relative;">
-        <a href="#" style="position:relative; display:flex; align-items:center; cursor:pointer; text-decoration:none; color:inherit;" title="Notifications">
+      <div class="dropdown" style="display:flex; align-items:center; position:relative;">
+        <a href="#" style="position:relative; display:flex; align-items:center; cursor:pointer; text-decoration:none; color:inherit;" title="Notifications" onclick="toggleDesktopNotifications(event)">
           <span>🔔</span>
-          <span class="badge" id="notif-badge" style="top:-6px; right:-12px; display:none;">0</span>
+          <span class="badge" id="notif-badge" style="display:none;">0</span>
         </a>
         <div class="dropdown-content" id="notif-dropdown" style="right:-50px; left:auto; width:280px; max-height:400px; overflow-y:auto; padding:12px; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.12); display:none;">
           <div style="font-weight:600; font-size:14px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;">
@@ -2846,6 +2889,8 @@
        <div style="font-size:11px; color:var(--rose); cursor:pointer; text-align:right; margin-bottom:8px;" onclick="markAllNotificationsRead()">Mark all read</div>
        <div id="mobile-notif-list" style="font-size:13px; color:var(--tl); display:flex; flex-direction:column; gap:8px;"></div>
     </div>
+    
+    <a href="/account" onclick="event.preventDefault(); goTo('account'); closeSidebar();" class="sidebar-link" style="text-decoration:none;display:block;">👤 Account</a>
     
     <a href="/about" onclick="event.preventDefault(); goTo('about')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📖 About Us</a>
     <a href="/contact" onclick="event.preventDefault(); goTo('contact')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📬 Contact</a>
@@ -2941,7 +2986,7 @@
 
     <!-- Featured -->
     <div class="sec-header">
-      <span class="sec-title">Featured Picks</span>
+      <span class="sec-title">HOT SELLING</span>
       <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="sec-link" style="text-decoration:none; color:inherit;">View All →</a>
     </div>
     <div class="products-scroll" id="home-featured"></div>
@@ -3098,7 +3143,6 @@
           <span id="detail-reviews" style="font-size:12px;color:var(--tm);"></span>
         </div>
         <div id="detail-stock-warning" style="color:var(--danger, #ea5455);font-size:13px;font-weight:700;margin-top:8px;display:none;"></div>
-        <p class="detail-desc" id="detail-desc"></p>
         <div class="qty-row">
           <span style="font-size:13px;font-weight:600;color:var(--td);">Qty:</span>
           <div class="qty-box">
@@ -3116,6 +3160,63 @@
         <div class="detail-actions">
           <button class="btn btn-primary btn-full" id="main-add-btn" onclick="addDetailToCart()">Add to Cart</button>
           <button class="btn btn-secondary btn-full" id="main-buy-btn" onclick="buyNow()">Buy Now</button>
+        </div>
+
+        <div class="product-accordion">
+          <div class="accordion-item active">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              Product Description
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <p class="detail-desc" id="detail-desc" style="margin-top:0;"></p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              Country of Origin
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <p id="detail-country-of-origin" style="margin-top:0;">India</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              Delivery & payment info
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <p id="detail-delivery-info" style="margin-top:0;">Free standard shipping on all orders over ₹500. Cash on delivery is available for most locations.</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              How to Use
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <p id="detail-how-to-use" style="margin-top:0;">Apply directly from the bullet or use a brush for precision. Build coverage as desired.</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              Ingredients
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <p id="detail-ingredients" style="margin-top:0;">Enriched with essential oils and natural extracts to nourish your skin.</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-header" onclick="toggleAccordion(this)">
+              Other Information
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-content">
+              <p id="detail-other-info" style="margin-top:0;">Store in a cool, dry place away from direct sunlight.</p>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -3662,25 +3763,19 @@
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
-  <div class="bottom-nav">
-    <a href="/" onclick="event.preventDefault(); goTo('home')" class="bnav-btn" id="bn-home" style="text-decoration:none;">
-      <span class="bnav-icon">🏠</span><span class="bnav-label">Home</span>
-    </a>
-    <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="bnav-btn" id="bn-shop" style="text-decoration:none;">
-      <span class="bnav-icon">🛍️</span><span class="bnav-label">Shop</span>
-    </a>
-    <a href="/wishlist" onclick="event.preventDefault(); goTo('wishlist')" class="bnav-btn" id="bn-wishlist" style="text-decoration:none;">
-      <span class="bnav-icon">♡</span><span class="bnav-label">Wishlist</span>
-      <span class="bnav-badge" id="bn-wish-badge">0</span>
-    </a>
-    <a href="/cart" onclick="event.preventDefault(); goTo('cart')" class="bnav-btn" id="bn-cart" style="text-decoration:none;">
-      <span class="bnav-icon">🛒</span><span class="bnav-label">Cart</span>
-      <span class="bnav-badge" id="bn-cart-badge">0</span>
-    </a>
-    <a href="/account" onclick="event.preventDefault(); goTo('account')" class="bnav-btn" id="bn-auth" style="text-decoration:none;">
-      <span class="bnav-icon">👤</span><span class="bnav-label">Account</span>
-    </a>
+  <!-- BOTTOM NAV (OFFERS) -->
+  <div class="bottom-nav" style="justify-content: center; position: fixed;">
+    <div style="position: relative; width: 100%;">
+      <button onclick="toggleOffersDropup(event)" style="width: 100%; padding: 15px; background: var(--rose); color: white; border: none; font-size: 16px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 8px;">
+        <span>🎁</span> Currently Available Offers
+      </button>
+      <div id="offers-dropup" style="display: none; position: absolute; bottom: 100%; left: 0; width: 100%; background: white; border-top: 1px solid var(--border); box-shadow: 0 -4px 20px rgba(0,0,0,0.1); max-height: 60vh; overflow-y: auto; z-index: 100;">
+        <div id="offers-dropup-content" style="padding: 15px; display: flex; flex-direction: column; gap: 10px;">
+          <!-- Offers will be populated here -->
+          <div style="text-align: center; color: var(--tl);">Loading offers...</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ═══════════════════════════════════
@@ -3806,7 +3901,8 @@
       document.getElementById('page-' + page).classList.add('active');
       document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
       const bnMap = { home: 'bn-home', shop: 'bn-shop', wishlist: 'bn-wishlist', cart: 'bn-cart', auth: 'bn-auth', product: 'bn-shop' };
-      if (bnMap[page]) document.getElementById(bnMap[page]).classList.add('active');
+      const navEl = document.getElementById(bnMap[page]);
+      if (navEl) navEl.classList.add('active');
       state.page = page;
       window.scrollTo(0, 0);
       if (page === 'home') renderHome();
@@ -4340,7 +4436,12 @@
       document.getElementById('detail-discount').textContent = disc + '% OFF';
       document.getElementById('detail-stars').textContent = stars(p.rating);
       document.getElementById('detail-reviews').textContent = '(' + p.reviews + ' reviews)';
-      document.getElementById('detail-desc').textContent = p.desc;
+      document.getElementById('detail-desc').textContent = p.desc || 'No description available.';
+      document.getElementById('detail-country-of-origin').textContent = p.countryOfOrigin || 'India';
+      document.getElementById('detail-delivery-info').textContent = p.deliveryInfo || 'Free standard shipping on all orders over ₹500. Cash on delivery is available for most locations.';
+      document.getElementById('detail-how-to-use').textContent = p.howToUse || 'Apply directly from the bullet or use a brush for precision. Build coverage as desired.';
+      document.getElementById('detail-ingredients').textContent = p.ingredients || 'Enriched with essential oils and natural extracts to nourish your skin.';
+      document.getElementById('detail-other-info').textContent = p.otherInfo || 'Store in a cool, dry place away from direct sunlight.';
       document.getElementById('detail-qty').textContent = state.detailQty;
       
       const stockWarning = document.getElementById('detail-stock-warning');
@@ -4432,6 +4533,15 @@
     function buyNow() {
       if (!state.token) { showToast("Please log in first"); return goTo('auth'); }
       addDetailToCart().then(() => goTo('cart'));
+    }
+
+    function toggleAccordion(btn) {
+      const item = btn.parentElement;
+      if (item.classList.contains('active')) {
+        item.classList.remove('active');
+      } else {
+        item.classList.add('active');
+      }
     }
 
     async function toggleDetailWish() {
@@ -5233,7 +5343,7 @@
 
     function updateNotificationUI() {
         const notifs = state.notifications || [];
-        const unread = notifs.filter(n => !n.read).length;
+        const unread = notifs.filter(n => !n.isRead).length;
         
         const desktopBadge = document.getElementById('notif-badge');
         const mobileBadge = document.getElementById('mobile-notif-badge');
@@ -5251,10 +5361,10 @@
             html = '<div style="text-align:center; padding:10px 0;">No new notifications</div>';
         } else {
             notifs.forEach(n => {
-                html += `<div style="padding:12px; margin-bottom:8px; border-radius:8px; background:${n.read ? 'transparent' : 'rgba(219,39,119,0.05)'}; border:1px solid ${n.read ? 'var(--border)' : 'rgba(219,39,119,0.2)'}; cursor:pointer;" onclick="markNotificationRead('${n.id || n._id}')">
+                html += `<div style="padding:12px; margin-bottom:8px; border-radius:8px; background:${n.isRead ? 'transparent' : 'rgba(219,39,119,0.05)'}; border:1px solid ${n.isRead ? 'var(--border)' : 'rgba(219,39,119,0.2)'}; cursor:pointer;" onclick="markNotificationRead('${n.id || n._id}')">
                     <div style="font-weight:600; color:var(--td); display:flex; justify-content:space-between;">
                         <span>${n.title}</span>
-                        ${!n.read ? '<span style="width:8px;height:8px;border-radius:50%;background:var(--rose);display:inline-block;"></span>' : ''}
+                        ${!n.isRead ? '<span style="width:8px;height:8px;border-radius:50%;background:var(--rose);display:inline-block;"></span>' : ''}
                     </div>
                     <div style="margin-top:4px;">${n.message}</div>
                     <div style="font-size:11px; color:var(--tl); margin-top:6px;">${new Date(n.createdAt).toLocaleString()}</div>
@@ -5277,14 +5387,64 @@
 
     async function markAllNotificationsRead() {
         const notifs = state.notifications || [];
-        for (const n of notifs) {
-            if (!n.read) await markNotificationRead(n.id || n._id);
-        }
+        const unread = notifs.filter(n => !n.isRead);
+        if (unread.length === 0) return;
+        try {
+            await Promise.all(unread.map(n => api('/api/notifications/' + (n.id || n._id) + '/read', 'PUT')));
+            fetchNotifications();
+        } catch(e) { console.error(e); }
     }
 
     function toggleMobileNotifications() {
         const el = document.getElementById('mobile-notif-container');
         el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function toggleDesktopNotifications(e) {
+        if(e) e.preventDefault();
+        const el = document.getElementById('notif-dropdown');
+        if(el) {
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+    }
+
+    async function fetchOffers() {
+        try {
+            const offers = await api('/api/coupons/active');
+            let html = '';
+            if (!offers || offers.length === 0) {
+                html = '<div style="text-align:center; padding:20px; color:var(--tl);">No offers currently available.</div>';
+            } else {
+                offers.forEach(o => {
+                    const discount = o.type === 'percentage' ? `${o.value}% OFF` : `₹${o.value} OFF`;
+                    const maxDisc = o.maxDiscount ? ` (Up to ₹${o.maxDiscount})` : '';
+                    const minOrder = o.minOrder ? ` on orders above ₹${o.minOrder}` : '';
+                    html += `<div style="padding:15px; border:1px dashed var(--rose); border-radius:8px; background:rgba(219,39,119,0.02); display:flex; flex-direction:column; gap:5px;">
+                        <div style="font-weight:700; color:var(--rose); font-size:18px;">${o.code}</div>
+                        <div style="font-weight:600; color:var(--td);">${discount}${maxDisc}${minOrder}</div>
+                        ${o.campaignName ? `<div style="font-size:12px; color:var(--tl);">${o.campaignName}</div>` : ''}
+                    </div>`;
+                });
+            }
+            const dropupContent = document.getElementById('offers-dropup-content');
+            if (dropupContent) dropupContent.innerHTML = html;
+        } catch (e) {
+            console.error('Error fetching offers:', e);
+            const dropupContent = document.getElementById('offers-dropup-content');
+            if (dropupContent) dropupContent.innerHTML = '<div style="text-align:center; padding:20px; color:var(--rose);">Error loading offers.</div>';
+        }
+    }
+
+    function toggleOffersDropup(e) {
+        if(e) e.preventDefault();
+        const dropup = document.getElementById('offers-dropup');
+        if(dropup) {
+            const isHidden = dropup.style.display === 'none';
+            dropup.style.display = isHidden ? 'block' : 'none';
+            if(isHidden) {
+                fetchOffers();
+            }
+        }
     }
 
     function generateTrackingTimeline(status) {
@@ -5395,7 +5555,7 @@
       .whatsapp-float {
         width: 50px;
         height: 50px;
-        bottom: 20px;
+        bottom: 80px;
         right: 20px;
       }
       .whatsapp-icon {
