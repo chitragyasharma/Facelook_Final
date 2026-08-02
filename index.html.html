@@ -5372,6 +5372,8 @@
         slideDiv.style.overflow = 'hidden';
         slideDiv.style.height = '100%'; // Ensure it fills height if carousel has fixed height
         slideDiv.style.minHeight = '450px'; // Fallback height
+        slideDiv.style.justifyContent = 'flex-end';
+        slideDiv.style.paddingBottom = '120px';
         
         slideDiv.innerHTML = mediaHtml + overlayHtml + contentHtml;
         carousel.appendChild(slideDiv);
