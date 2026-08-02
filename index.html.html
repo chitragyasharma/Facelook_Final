@@ -5355,13 +5355,13 @@
         
         const contentHtml = `
           <div style="position:relative; z-index:2; text-align:center; color:white; padding: 20px;">
-            ${slide.tag ? `<div class="hero-tag" style="background:var(--primary); color:white; border:none; margin-bottom:12px;">${slide.tag}</div>` : ''}
-            ${slide.eyebrow ? `<div class="hero-eyebrow" style="color:#ffdce0; font-weight:700; font-size:1.1rem; text-shadow:0 1px 3px rgba(0,0,0,0.5);">${slide.eyebrow}</div>` : ''}
-            ${slide.title ? `<h1 class="hero-title" style="color:white; text-shadow: 0 2px 4px rgba(0,0,0,0.6); font-size:3rem; margin:10px 0;">${slide.title}</h1>` : ''}
-            ${slide.subtitle ? `<p class="hero-subtitle" style="color:#f0f0f0; text-shadow: 0 1px 3px rgba(0,0,0,0.6); font-size:1.1rem; max-width:600px; margin:0 auto; margin-bottom: 24px;">${slide.subtitle}</p>` : ''}
-            <div class="hero-btns">
-              <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn btn-primary" style="text-decoration:none; display:inline-block; border-color:white; color:white;">Shop Now</a>
-              <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn btn-secondary" style="text-decoration:none; display:inline-block; border-color:white; color:white;">Explore</a>
+            ${slide.tag ? `<div class="hero-tag" style="font-family:'Jost', sans-serif; font-size:13px; font-weight:600; letter-spacing:4px; color:#fff; text-transform:uppercase; margin-bottom:15px; text-shadow:0 1px 2px rgba(0,0,0,0.5);">${slide.tag}</div>` : ''}
+            ${slide.eyebrow ? `<div class="hero-eyebrow" style="color:#ffdce0; font-family:'Jost', sans-serif; font-size:16px; letter-spacing:6px; font-weight:500; text-shadow:0 1px 3px rgba(0,0,0,0.5); justify-content:center;">${slide.eyebrow}</div>` : ''}
+            ${slide.title ? `<h1 class="hero-title" style="color:white; font-family:'Bebas Neue', cursive; letter-spacing:3px; text-shadow:0 2px 4px rgba(0,0,0,0.6); font-size:clamp(50px, 10vw, 90px); margin:10px 0;">${slide.title}</h1>` : ''}
+            ${slide.subtitle ? `<p class="hero-subtitle" style="color:#f0f0f0; font-family:'Jost', sans-serif; text-shadow:0 1px 3px rgba(0,0,0,0.6); font-size:1.1rem; max-width:600px; margin:0 auto 30px;">${slide.subtitle}</p>` : ''}
+            <div class="hero-btns" style="justify-content:center; display:flex; gap:16px;">
+              <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn" style="background:#b76e79; color:#fff; font-family:'Bebas Neue', cursive; font-size:18px; letter-spacing:3px; text-decoration:none; padding:12px 36px; border-radius:50px; box-shadow:0 4px 18px rgba(183,110,121,.35); transition:all .2s;">SHOP NOW</a>
+              <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn" style="background:transparent; color:#fff; border:1px solid #fff; font-family:'Bebas Neue', cursive; font-size:18px; letter-spacing:3px; text-decoration:none; padding:12px 36px; border-radius:50px; transition:all .2s;">EXPLORE</a>
             </div>
           </div>
         `;
