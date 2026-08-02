@@ -550,13 +550,38 @@ input:focus, select:focus, textarea:focus {
       border-color: var(--primary);
       color: var(--primary);
     }
-    .drop-zone-img-preview {
-      max-width: 100%;
-      max-height: 200px;
+    .image-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 10px;
       margin-top: 15px;
-      border-radius: 8px;
-      display: none;
-      object-fit: contain;
+    }
+    .preview-item {
+      position: relative;
+      width: 100%;
+      padding-top: 100%;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: #fff;
+    }
+    .preview-item img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .remove-img-btn {
+      position: absolute;
+      top: 4px; right: 4px;
+      background: rgba(255,0,0,0.8);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
     }
   </style>
 </head>
@@ -847,12 +872,12 @@ input:focus, select:focus, textarea:focus {
             </div>
           </div>
           <div class="form-group">
-            <label>Product Image</label>
+          <div class="form-group">
+            <label>Product Images</label>
             <div class="drop-zone" id="image-drop-zone">
-              <span id="drop-zone-text">Drag and drop an image here or click to browse</span>
-              <input type="file" id="prod-img-file" accept="image/*" style="display: none;">
-              <input type="hidden" id="prod-img">
-              <img id="prod-img-preview" class="drop-zone-img-preview" src="" alt="Image Preview">
+              <span id="drop-zone-text">Drag and drop images here or click to browse</span>
+              <input type="file" id="prod-img-file" accept="image/*" multiple style="display: none;">
+              <div id="image-preview-grid" class="image-preview-grid"></div>
             </div>
           </div>
           <div class="form-group">
@@ -1215,15 +1240,8 @@ function openProductModal(product = null) {
         document.getElementById('prod-price').value = product.price;
         document.getElementById('prod-discountPrice').value = product.discountPrice || '';
         document.getElementById('prod-stock').value = product.stock;
-        document.getElementById('prod-img').value = product.image;
-        if (product.image) {
-            document.getElementById('prod-img-preview').src = product.image;
-            document.getElementById('prod-img-preview').style.display = 'block';
-            document.getElementById('drop-zone-text').style.display = 'none';
-        } else {
-            document.getElementById('prod-img-preview').style.display = 'none';
-            document.getElementById('drop-zone-text').style.display = 'block';
-        }
+        uploadedImages = product.images && product.images.length ? [...product.images] : (product.image ? [product.image] : []);
+        renderImagePreviews();
         document.getElementById('prod-desc').value = product.desc || '';
         document.getElementById('prod-countryOfOrigin').value = product.countryOfOrigin || '';
         document.getElementById('prod-deliveryInfo').value = product.deliveryInfo || '';
@@ -1233,35 +1251,36 @@ function openProductModal(product = null) {
     } else {
         document.getElementById('product-form').reset();
         document.getElementById('prod-id').value = '';
-        document.getElementById('prod-img-preview').style.display = 'none';
-        document.getElementById('drop-zone-text').style.display = 'block';
-        document.getElementById('prod-img').value = '';
+        uploadedImages = [];
+        renderImagePreviews();
     }
     
     modal.style.display = 'flex';
 }
 
 // Drag and Drop Logic
+let uploadedImages = [];
 const dropZone = document.getElementById('image-drop-zone');
 const fileInput = document.getElementById('prod-img-file');
-const imgPreview = document.getElementById('prod-img-preview');
+const previewGrid = document.getElementById('image-preview-grid');
 const dropZoneText = document.getElementById('drop-zone-text');
-const prodImgHidden = document.getElementById('prod-img');
 
-dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('click', (e) => {
+    if(!e.target.classList.contains('remove-img-btn')) fileInput.click();
+});
 dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
 dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     dropZone.classList.remove('dragover');
-    if (e.dataTransfer.files.length) processImageFile(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files.length) Array.from(e.dataTransfer.files).forEach(processImageFile);
 });
 fileInput.addEventListener('change', (e) => {
-    if (e.target.files.length) processImageFile(e.target.files[0]);
+    if (e.target.files.length) Array.from(e.target.files).forEach(processImageFile);
 });
 
 function processImageFile(file) {
-    if (!file.type.startsWith('image/')) return alert('Please select an image file.');
+    if (!file.type.startsWith('image/')) return;
     
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -1281,14 +1300,33 @@ function processImageFile(file) {
             ctx.drawImage(img, 0, 0, width, height);
             
             const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-            imgPreview.src = dataUrl;
-            imgPreview.style.display = 'block';
-            dropZoneText.style.display = 'none';
-            prodImgHidden.value = dataUrl;
+            uploadedImages.push(dataUrl);
+            renderImagePreviews();
         };
         img.src = e.target.result;
     };
     reader.readAsDataURL(file);
+}
+
+function renderImagePreviews() {
+    previewGrid.innerHTML = '';
+    if (uploadedImages.length === 0) {
+        dropZoneText.style.display = 'block';
+    } else {
+        dropZoneText.style.display = 'none';
+        uploadedImages.forEach((src, index) => {
+            const item = document.createElement('div');
+            item.className = 'preview-item';
+            item.innerHTML = `<img src="${src}"><button type="button" class="remove-img-btn" onclick="removeImage(event, ${index})">✕</button>`;
+            previewGrid.appendChild(item);
+        });
+    }
+}
+
+function removeImage(e, index) {
+    e.stopPropagation();
+    uploadedImages.splice(index, 1);
+    renderImagePreviews();
 }
 
 function closeProductModal() {
@@ -1303,7 +1341,8 @@ async function saveProduct() {
         price: parseFloat(document.getElementById('prod-price').value),
         discountPrice: document.getElementById('prod-discountPrice').value ? parseFloat(document.getElementById('prod-discountPrice').value) : null,
         stock: parseInt(document.getElementById('prod-stock').value),
-        image: document.getElementById('prod-img').value,
+        image: uploadedImages.length > 0 ? uploadedImages[0] : '',
+        images: uploadedImages,
         desc: document.getElementById('prod-desc').value,
         countryOfOrigin: document.getElementById('prod-countryOfOrigin').value,
         deliveryInfo: document.getElementById('prod-deliveryInfo').value,
