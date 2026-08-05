@@ -488,6 +488,15 @@ app.get('/api/payment/key', (req, res) => {
     res.json({ key: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder' });
 });
 
+app.get('/api/settings', async (req, res) => {
+    try {
+        const settings = await Setting.find();
+        const obj = {};
+        settings.forEach(s => obj[s.key] = s.value);
+        res.json(obj);
+    } catch (e) { res.status(500).json({ error: 'Server Error' }); }
+});
+
 app.get('/api/settings/hero_slides', async (req, res) => {
     try {
         const setting = await Setting.findOne({ key: 'hero_slides' });

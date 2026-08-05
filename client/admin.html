@@ -641,6 +641,9 @@ input:focus, select:focus, textarea:focus {
         <a href="#customers" class="nav-item" data-view="customers">
           <span class="icon">👥</span> Customers
         </a>
+        <a href="#coupons" class="nav-item" data-view="coupons">
+          <span class="icon">🎟️</span> Coupons
+        </a>
         <!-- Coming soon / other modules -->
         <a href="#settings" class="nav-item" data-view="settings">
           <span class="icon">⚙️</span> Site Settings
@@ -830,10 +833,55 @@ input:focus, select:focus, textarea:focus {
           </div>
         </div>
 
+        <!-- Coupons View -->
+        <div id="coupons-view" class="view-section" style="display: none;">
+          <div class="view-header">
+            <h2>Coupons & Discounts</h2>
+            <div class="actions">
+              <button class="btn btn-primary" onclick="openCouponModal()">+ Generate Coupon</button>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Min Order</th>
+                    <th>Valid To</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="coupons-tbody">
+                  <tr><td colspan="7" class="text-center">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- Settings View -->
         <div id="settings-view" class="view-section" style="display: none;">
           <div class="card">
-            <div class="card-header">
+            <!-- Announcement Banner Settings -->
+            <div class="card-header" style="margin-top: 20px;">
+              <h3>Announcement Banner</h3>
+              <div class="actions">
+                <button class="btn btn-primary" onclick="saveAnnouncement()">Save Banner</button>
+              </div>
+            </div>
+            <div style="padding: 20px;">
+              <div class="form-group">
+                <label>Banner Text (Displayed scrolling at the top of the site)</label>
+                <input type="text" id="announcement-banner" placeholder="e.g. ✦ FACÉLOOK 2026 Collection — Free Shipping on ₹599+ ✦">
+              </div>
+            </div>
+
+            <div class="card-header" style="margin-top: 20px;">
               <h3>Hero Slider Settings</h3>
               <div class="actions">
                 <button class="btn btn-primary" onclick="saveSettings()">Save Changes</button>
@@ -910,8 +958,36 @@ input:focus, select:focus, textarea:focus {
 
             </div>
           </div>
+          
+          <div class="card" style="margin-top: 20px;">
+            <div class="card-header">
+              <h3>Store Policies</h3>
+              <div class="actions">
+                <button class="btn btn-primary" onclick="savePolicies()">Save Policies</button>
+              </div>
+            </div>
+            <div style="padding: 20px;">
+              <p>Configure the text for the About, Refund, Shipping, and Return pages.</p>
+              
+              <div class="form-group" style="margin-bottom: 20px;">
+                <label>About Section</label>
+                <textarea id="policy-about" rows="6" placeholder="Enter HTML or plain text for the About page..."></textarea>
+              </div>
+              <div class="form-group" style="margin-bottom: 20px;">
+                <label>Refund Policy</label>
+                <textarea id="policy-refund" rows="6" placeholder="Enter HTML or plain text for the Refund Policy..."></textarea>
+              </div>
+              <div class="form-group" style="margin-bottom: 20px;">
+                <label>Shipping Policy</label>
+                <textarea id="policy-shipping" rows="6" placeholder="Enter HTML or plain text for the Shipping Policy..."></textarea>
+              </div>
+              <div class="form-group" style="margin-bottom: 20px;">
+                <label>Return Policy (Terms)</label>
+                <textarea id="policy-return" rows="6" placeholder="Enter HTML or plain text for the Return Policy / Terms..."></textarea>
+              </div>
+            </div>
+          </div>
         </div>
-
       </div>
     </main>
   </div>
@@ -987,6 +1063,11 @@ input:focus, select:focus, textarea:focus {
             <textarea id="prod-ingredients" rows="3"></textarea>
           </div>
           <div class="form-group">
+            <label>Colour Palette (Shades)</label>
+            <div id="palette-shades-container"></div>
+            <button type="button" class="btn-secondary" style="margin-top:5px; font-size:12px; padding:6px 12px;" onclick="addPaletteShade()">+ Add Shade</button>
+          </div>
+          <div class="form-group">
             <label>Other Information</label>
             <textarea id="prod-otherInfo" rows="2"></textarea>
           </div>
@@ -995,6 +1076,50 @@ input:focus, select:focus, textarea:focus {
       <div class="modal-footer">
         <button class="btn-secondary" onclick="closeProductModal()">Cancel</button>
         <button class="btn-primary" onclick="saveProduct()">Save Product</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coupon Modal -->
+  <div id="coupon-modal" class="modal-overlay" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="coupon-modal-title">Generate Coupon</h3>
+        <button class="close-btn" onclick="closeCouponModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="coupon-form" onsubmit="event.preventDefault()">
+          <input type="hidden" id="coupon-id">
+          <div class="form-group">
+            <label>Coupon Code</label>
+            <input type="text" id="coupon-code" required style="text-transform: uppercase">
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Discount Type</label>
+              <select id="coupon-type" required>
+                <option value="flat">Flat Amount (₹)</option>
+                <option value="percentage">Percentage (%)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Discount Value</label>
+              <input type="number" id="coupon-value" required>
+            </div>
+            <div class="form-group">
+              <label>Minimum Order (₹)</label>
+              <input type="number" id="coupon-minOrder" value="0">
+            </div>
+            <div class="form-group">
+              <label>Valid To (Date)</label>
+              <input type="date" id="coupon-validTo">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeCouponModal()">Cancel</button>
+        <button class="btn-primary" onclick="saveCoupon()">Save Coupon</button>
       </div>
     </div>
   </div>
@@ -1139,6 +1264,7 @@ function loadView(view) {
     if (view === 'orders') fetchOrders();
     if (view === 'products') fetchProducts();
     if (view === 'customers') fetchCustomers();
+    if (view === 'coupons') fetchCoupons();
     if (view === 'settings') fetchSettings();
 }
 
@@ -1348,12 +1474,21 @@ function openProductModal(product = null) {
         document.getElementById('prod-deliveryInfo').value = product.deliveryInfo || '';
         document.getElementById('prod-howToUse').value = product.howToUse || '';
         document.getElementById('prod-ingredients').value = product.ingredients || '';
+        
+        paletteShades = [];
+        if(product.palette && product.palette.length > 0) {
+            paletteShades = JSON.parse(JSON.stringify(product.palette));
+        }
+        renderPaletteShades();
+
         document.getElementById('prod-otherInfo').value = product.otherInfo || '';
     } else {
         document.getElementById('product-form').reset();
         document.getElementById('prod-id').value = '';
         uploadedImages = [];
+        paletteShades = [];
         renderImagePreviews();
+        renderPaletteShades();
     }
     
     modal.style.display = 'flex';
@@ -1409,6 +1544,45 @@ function processImageFile(file) {
     reader.readAsDataURL(file);
 }
 
+let paletteShades = [];
+
+function addPaletteShade(shade = {name: '', hex: '', image: ''}) {
+    paletteShades.push(shade);
+    renderPaletteShades();
+}
+
+function renderPaletteShades() {
+    const container = document.getElementById('palette-shades-container');
+    container.innerHTML = paletteShades.map((sh, idx) => `
+        <div class="shade-row" style="display:flex; gap:10px; margin-bottom:10px; align-items:center;">
+            <input type="text" placeholder="Shade Name" value="${sh.name.replace(/"/g, '&quot;')}" onchange="paletteShades[${idx}].name = this.value" style="flex:2; margin:0;">
+            <input type="text" placeholder="#HEX" value="${sh.hex.replace(/"/g, '&quot;')}" onchange="paletteShades[${idx}].hex = this.value" style="flex:1; margin:0;">
+            <div style="flex:1; display:flex; align-items:center;">
+                ${sh.image ? `<img src="${sh.image}" style="width:30px;height:30px;border-radius:4px;margin-right:5px;object-fit:cover;">` : ''}
+                <button type="button" class="btn-secondary" onclick="document.getElementById('shade-img-${idx}').click()" style="font-size:11px;padding:4px; margin:0;">Img</button>
+                <input type="file" id="shade-img-${idx}" accept="image/*" style="display:none;" onchange="uploadShadeImage(event, ${idx})">
+            </div>
+            <button type="button" class="btn-danger" style="padding:4px 8px; margin:0;" onclick="removePaletteShade(${idx})">X</button>
+        </div>
+    `).join('');
+}
+
+function removePaletteShade(idx) {
+    paletteShades.splice(idx, 1);
+    renderPaletteShades();
+}
+
+function uploadShadeImage(e, idx) {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        paletteShades[idx].image = ev.target.result;
+        renderPaletteShades();
+    };
+    reader.readAsDataURL(file);
+}
+
 function renderImagePreviews() {
     previewGrid.innerHTML = '';
     if (uploadedImages.length === 0) {
@@ -1436,6 +1610,12 @@ function closeProductModal() {
 
 async function saveProduct() {
     const id = document.getElementById('prod-id').value;
+    const palette = paletteShades.map(sh => ({
+        name: sh.name.trim(),
+        hex: sh.hex.trim(),
+        image: sh.image || ''
+    })).filter(sh => sh.name);
+
     const body = {
         name: document.getElementById('prod-name').value,
         cat: document.getElementById('prod-cat').value,
@@ -1444,6 +1624,7 @@ async function saveProduct() {
         stock: parseInt(document.getElementById('prod-stock').value),
         image: uploadedImages.length > 0 ? uploadedImages[0] : '',
         images: uploadedImages,
+        palette: palette,
         desc: document.getElementById('prod-desc').value,
         countryOfOrigin: document.getElementById('prod-countryOfOrigin').value,
         deliveryInfo: document.getElementById('prod-deliveryInfo').value,
@@ -1529,6 +1710,100 @@ async function toggleCustomerBlock(id) {
     }
 }
 
+// -----------------------------------------------------------------------------
+// Coupons View
+// -----------------------------------------------------------------------------
+async function fetchCoupons() {
+    try {
+        const coupons = await apiGet('/api/admin/coupons');
+        const tbody = document.getElementById('coupons-tbody');
+        
+        if (coupons.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center">No coupons found</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = coupons.map(c => `
+            <tr>
+                <td><strong>${c.code}</strong></td>
+                <td>${c.type.toUpperCase()}</td>
+                <td>${c.type === 'flat' ? '₹' + c.value : c.value + '%'}</td>
+                <td>₹${c.minOrder}</td>
+                <td>${c.validTo ? new Date(c.validTo).toLocaleDateString() : 'Never'}</td>
+                <td><span class="badge ${c.isActive ? 'badge-success' : 'badge-danger'}">${c.isActive ? 'Active' : 'Inactive'}</span></td>
+                <td>
+                    <button class="btn-info" onclick='toggleCouponStatus(${c.id}, ${!c.isActive})'>${c.isActive ? 'Disable' : 'Enable'}</button>
+                    <button class="btn-danger" onclick="deleteCoupon(${c.id})">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (e) {
+        showToast('Error loading coupons', 'error');
+    }
+}
+
+function openCouponModal() {
+    document.getElementById('coupon-form').reset();
+    document.getElementById('coupon-id').value = '';
+    document.getElementById('coupon-modal-title').innerText = 'Generate Coupon';
+    document.getElementById('coupon-modal').style.display = 'flex';
+}
+
+function closeCouponModal() {
+    document.getElementById('coupon-modal').style.display = 'none';
+}
+
+async function saveCoupon() {
+    const code = document.getElementById('coupon-code').value.trim().toUpperCase();
+    const type = document.getElementById('coupon-type').value;
+    const value = document.getElementById('coupon-value').value;
+    const minOrder = document.getElementById('coupon-minOrder').value;
+    const validTo = document.getElementById('coupon-validTo').value;
+    
+    if (!code || !value) {
+        showToast('Please fill required fields', 'error');
+        return;
+    }
+    
+    const data = {
+        code, type, value: Number(value), minOrder: Number(minOrder || 0), isActive: true
+    };
+    if (validTo) {
+        data.validTo = new Date(validTo).toISOString();
+    }
+    
+    try {
+        await apiPost('/api/admin/coupons', data);
+        showToast('Coupon generated successfully!', 'success');
+        closeCouponModal();
+        fetchCoupons();
+    } catch (e) {
+        showToast(e.message || 'Error generating coupon', 'error');
+    }
+}
+
+async function toggleCouponStatus(id, isActive) {
+    if (!confirm(`Are you sure you want to ${isActive ? 'enable' : 'disable'} this coupon?`)) return;
+    try {
+        await apiPost(`/api/admin/coupons/${id}`, { isActive }, 'PUT');
+        showToast('Coupon status updated', 'success');
+        fetchCoupons();
+    } catch (e) {
+        showToast('Error updating status', 'error');
+    }
+}
+
+async function deleteCoupon(id) {
+    if (!confirm('Are you sure you want to completely delete this coupon? This action cannot be undone.')) return;
+    try {
+        await apiPost(`/api/admin/coupons/${id}`, {}, 'DELETE');
+        showToast('Coupon deleted', 'success');
+        fetchCoupons();
+    } catch (e) {
+        showToast('Error deleting coupon', 'error');
+    }
+}
+
 // ----------------------------------------------------------------------------
 // Utilities
 // ----------------------------------------------------------------------------
@@ -1582,8 +1857,53 @@ async function fetchSettings() {
                 }
             }
         }
+        
+        if (data.announcement_banner) document.getElementById('announcement-banner').value = data.announcement_banner;
+        
+        if (data.policy_about) document.getElementById('policy-about').value = data.policy_about;
+        if (data.policy_refund) document.getElementById('policy-refund').value = data.policy_refund;
+        if (data.policy_shipping) document.getElementById('policy-shipping').value = data.policy_shipping;
+        if (data.policy_return) document.getElementById('policy-return').value = data.policy_return;
+        
     } catch (e) {
         console.error("Failed to fetch settings", e);
+    }
+}
+
+async function savePolicies() {
+    const payload = {
+        policy_about: document.getElementById('policy-about').value,
+        policy_refund: document.getElementById('policy-refund').value,
+        policy_shipping: document.getElementById('policy-shipping').value,
+        policy_return: document.getElementById('policy-return').value
+    };
+    try {
+        const btns = document.querySelectorAll('#settings-view .btn-primary');
+        const btn = btns[1]; // second primary button in settings view is savePolicies
+        const oldTxt = btn.innerText;
+        btn.innerText = 'Saving...';
+        await apiPost('/api/admin/settings', payload, 'POST');
+        btn.innerText = 'Saved!';
+        setTimeout(() => btn.innerText = oldTxt, 2000);
+    } catch (e) {
+        alert('Failed to save policies');
+    }
+}
+
+async function saveAnnouncement() {
+    const payload = {
+        announcement_banner: document.getElementById('announcement-banner').value
+    };
+    try {
+        // Find the specific save button
+        const btn = document.querySelector('button[onclick="saveAnnouncement()"]');
+        const oldTxt = btn.innerText;
+        btn.innerText = 'Saving...';
+        await apiPost('/api/admin/settings', payload, 'POST');
+        btn.innerText = 'Saved!';
+        setTimeout(() => btn.innerText = oldTxt, 2000);
+    } catch (e) {
+        alert('Failed to save announcement banner');
     }
 }
 
