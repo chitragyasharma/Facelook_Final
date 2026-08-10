@@ -1759,10 +1759,30 @@ async function fetchCoupons() {
 }
 
 function openCouponModal() {
-    document.getElementById('coupon-form').reset();
-    document.getElementById('coupon-id').value = '';
-    document.getElementById('coupon-modal-title').innerText = 'Create Coupon';
-    document.getElementById('coupon-modal').style.display = 'flex';
+    try {
+        const form = document.getElementById('coupon-form');
+        if (form && typeof form.reset === 'function') {
+            form.reset();
+        }
+        const idField = document.getElementById('coupon-id');
+        if (idField) idField.value = '';
+        
+        const titleField = document.getElementById('coupon-modal-title');
+        if (titleField) titleField.innerText = 'Create Coupon';
+        
+        const modal = document.getElementById('coupon-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+            modal.style.opacity = '1';
+            modal.style.visibility = 'visible';
+            modal.style.zIndex = '999999';
+        } else {
+            alert('Modal element not found in DOM!');
+        }
+    } catch (e) {
+        alert('Error opening modal: ' + e.message);
+        console.error(e);
+    }
 }
 
 function closeCouponModal() {
