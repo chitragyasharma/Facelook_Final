@@ -28,14 +28,15 @@ connectDB();
 
 app.use(helmet({ contentSecurityPolicy: false })); // Keep scripts/styles working for monolithic SPA
 app.use(compression());
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json({ limit: '10mb' }));
 
 // Admin routes
 app.use('/api/admin', adminRoutes);
-
-// Serve static files from the client directory
-app.use(express.static(path.join(__dirname, '../client')));
 
 // --- Middleware ---
 function authenticateToken(req, res, next) {
@@ -751,18 +752,9 @@ app.get('/sitemap.xml', async (req, res) => {
     }
 });
 
-// --- ROBOTS.TXT ---
-app.get('/robots.txt', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/robots.txt'));
-});
-
-// --- ADMIN & CATCH-ALL (must be LAST) ---
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/admin.html'));
-});
-
-app.get('{*path}', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/index.html'));
+// --- HEALTH CHECK ---
+app.get('/', (req, res) => {
+    res.json({ status: 'Facelook API is running' });
 });
 
 app.listen(PORT, () => {
