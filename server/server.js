@@ -15,6 +15,7 @@ const Razorpay = require('razorpay');
 const nodemailer = require('nodemailer');
 
 const app = express();
+app.set('trust proxy', 1); // Required for rate limiting behind proxies like Render
 const PORT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.SECRET_KEY || "facelook_super_secret_key";
 
