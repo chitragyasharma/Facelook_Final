@@ -673,14 +673,7 @@ app.post('/api/newsletter', async (req, res) => {
 app.get('/api/coupons/active', async (req, res) => {
     try {
         const activeCoupons = await Coupon.find({ isActive: true });
-        // Filter out expired coupons
-        const now = new Date();
-        const validCoupons = activeCoupons.filter(c => {
-            if (c.validTo && new Date(c.validTo) < now) return false;
-            if (c.validFrom && new Date(c.validFrom) > now) return false;
-            return true;
-        });
-        res.json(validCoupons);
+        res.json(activeCoupons);
     } catch (error) {
         res.status(500).json({ error: 'Error fetching active coupons' });
     }
@@ -691,7 +684,8 @@ app.post('/api/coupons/validate', authenticateToken, async (req, res) => {
     try {
         const { code, cartTotal } = req.body;
         if (!code) return res.status(400).json({ error: 'Coupon code is required' });
-        const coupon = await Coupon.findOne({ code: code.toUpperCase(), isActive: true });
+        const cleanCode = code.trim().toUpperCase();
+        const coupon = await Coupon.findOne({ code: cleanCode, isActive: true });
         if (!coupon) return res.status(400).json({ error: 'Invalid or expired coupon code' });
         const now = new Date();
         if (coupon.validTo && now > coupon.validTo) return res.status(400).json({ error: 'This coupon has expired' });
@@ -759,7 +753,7 @@ app.get('/sitemap.xml', async (req, res) => {
 
 // --- ROBOTS.TXT ---
 app.get('/robots.txt', (req, res) => {
-    res.sendFile(path.join(__dirname, '../robots.txt'));
+    res.sendFile(path.join(__dirname, '../client/robots.txt'));
 });
 
 // --- ADMIN & CATCH-ALL (must be LAST) ---
@@ -768,7 +762,7 @@ app.get('/admin', (req, res) => {
 });
 
 app.get('{*path}', (req, res) => {
-    res.sendFile(path.join(__dirname, '../index.html.html'));
+    res.sendFile(path.join(__dirname, '../client/index.html'));
 });
 
 app.listen(PORT, () => {

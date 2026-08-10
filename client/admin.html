@@ -838,7 +838,7 @@ input:focus, select:focus, textarea:focus {
           <div class="view-header">
             <h2>Coupons & Discounts</h2>
             <div class="actions">
-              <button class="btn btn-primary" onclick="openCouponModal()">+ Generate Coupon</button>
+              <button class="btn btn-primary" onclick="openCouponModal()">+ Create Coupon</button>
             </div>
           </div>
           
@@ -1031,6 +1031,16 @@ input:focus, select:focus, textarea:focus {
               <input type="number" id="prod-stock" required>
             </div>
           </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label>Section Tag</label>
+              <select id="prod-tag">
+                <option value="">None</option>
+                <option value="Bestseller">Best Seller</option>
+                <option value="Hot Selling">Hot Selling</option>
+              </select>
+            </div>
+          </div>
           <div class="form-group">
           <div class="form-group">
             <label>Product Images</label>
@@ -1084,15 +1094,18 @@ input:focus, select:focus, textarea:focus {
   <div id="coupon-modal" class="modal-overlay" style="display: none;">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="coupon-modal-title">Generate Coupon</h3>
+        <h3 id="coupon-modal-title">Create Coupon</h3>
         <button class="close-btn" onclick="closeCouponModal()">&times;</button>
       </div>
-      <div class="modal-body">
-        <form id="coupon-form" onsubmit="event.preventDefault()">
+      <form id="coupon-form" onsubmit="event.preventDefault(); saveCoupon();">
+        <div class="modal-body">
           <input type="hidden" id="coupon-id">
           <div class="form-group">
             <label>Coupon Code</label>
-            <input type="text" id="coupon-code" required style="text-transform: uppercase">
+            <div style="display:flex; gap:10px;">
+              <input type="text" id="coupon-code" required style="text-transform: uppercase; flex: 1;">
+              <button type="button" class="btn btn-secondary" onclick="document.getElementById('coupon-code').value = Math.random().toString(36).substring(2, 10).toUpperCase()">Generate</button>
+            </div>
           </div>
           <div class="form-grid">
             <div class="form-group">
@@ -1115,12 +1128,12 @@ input:focus, select:focus, textarea:focus {
               <input type="date" id="coupon-validTo">
             </div>
           </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" onclick="closeCouponModal()">Cancel</button>
-        <button class="btn-primary" onclick="saveCoupon()">Save Coupon</button>
-      </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeCouponModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Save Coupon</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1272,7 +1285,8 @@ function loadView(view) {
 // API Fetch Helpers (with generic auth handling)
 // ----------------------------------------------------------------------------
 async function apiGet(url) {
-    const res = await fetch(url, { headers: {'Authorization': 'Bearer ' + token} });
+    const urlWithCacheBuster = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+    const res = await fetch(urlWithCacheBuster, { headers: {'Authorization': 'Bearer ' + token} });
     if (res.status === 401 || res.status === 403) { logout(); throw new Error("Unauthorized"); }
     return res.json();
 }
@@ -1452,6 +1466,7 @@ function openProductModal(product = null) {
         document.getElementById('prod-price').value = product.price;
         document.getElementById('prod-discountPrice').value = product.discountPrice || '';
         document.getElementById('prod-stock').value = product.stock;
+        document.getElementById('prod-tag').value = product.tag || '';
         
         let allImages = [];
         if (product.images && product.images.length > 0) {
@@ -1622,6 +1637,7 @@ async function saveProduct() {
         price: parseFloat(document.getElementById('prod-price').value),
         discountPrice: document.getElementById('prod-discountPrice').value ? parseFloat(document.getElementById('prod-discountPrice').value) : null,
         stock: parseInt(document.getElementById('prod-stock').value),
+        tag: document.getElementById('prod-tag').value,
         image: uploadedImages.length > 0 ? uploadedImages[0] : '',
         images: uploadedImages,
         palette: palette,
@@ -1745,7 +1761,7 @@ async function fetchCoupons() {
 function openCouponModal() {
     document.getElementById('coupon-form').reset();
     document.getElementById('coupon-id').value = '';
-    document.getElementById('coupon-modal-title').innerText = 'Generate Coupon';
+    document.getElementById('coupon-modal-title').innerText = 'Create Coupon';
     document.getElementById('coupon-modal').style.display = 'flex';
 }
 
@@ -1769,12 +1785,14 @@ async function saveCoupon() {
         code, type, value: Number(value), minOrder: Number(minOrder || 0), isActive: true
     };
     if (validTo) {
-        data.validTo = new Date(validTo).toISOString();
+        const endDate = new Date(validTo);
+        endDate.setHours(23, 59, 59, 999);
+        data.validTo = endDate.toISOString();
     }
     
     try {
         await apiPost('/api/admin/coupons', data);
-        showToast('Coupon generated successfully!', 'success');
+        showToast('Coupon created successfully!', 'success');
         closeCouponModal();
         fetchCoupons();
     } catch (e) {
