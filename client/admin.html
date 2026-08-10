@@ -1097,7 +1097,7 @@ input:focus, select:focus, textarea:focus {
         <h3 id="coupon-modal-title">Create Coupon</h3>
         <button class="close-btn" onclick="closeCouponModal()">&times;</button>
       </div>
-      <form id="coupon-form" onsubmit="event.preventDefault(); saveCoupon();">
+      <form id="coupon-form">
         <div class="modal-body">
           <input type="hidden" id="coupon-id">
           <div class="form-group">
@@ -1131,7 +1131,7 @@ input:focus, select:focus, textarea:focus {
         </div>
         <div class="modal-footer">
           <button type="button" class="btn-secondary" onclick="closeCouponModal()">Cancel</button>
-          <button type="submit" class="btn-primary">Save Coupon</button>
+          <button type="button" class="btn-primary" onclick="if(document.getElementById('coupon-form').reportValidity()) { saveCoupon(); }">Save Coupon</button>
         </div>
       </form>
     </div>
