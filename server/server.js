@@ -154,10 +154,13 @@ app.post('/api/auth/send-otp', otpLimiter, async (req, res) => {
         if (!phone) return res.status(400).json({ error: 'Phone number required' });
 
         if (MSG91_AUTH_KEY && MSG91_TEMPLATE_ID) {
+            console.log(`[MSG91] Attempting to send OTP to ${phone}`);
             const mobile = phone.startsWith('91') ? phone : '91' + phone.replace(/^\+91/, '');
             const url = `https://control.msg91.com/api/v5/otp?template_id=${MSG91_TEMPLATE_ID}&mobile=${mobile}&authkey=${MSG91_AUTH_KEY}`;
+            console.log(`[MSG91] Request URL: ${url.replace(MSG91_AUTH_KEY, 'HIDDEN_KEY')}`);
             const response = await fetch(url, { method: 'GET' });
             const data = await response.json();
+            console.log(`[MSG91] Response:`, data);
             if (data.type === 'error') throw new Error(data.message);
             return res.json({ success: true, message: 'OTP sent successfully via MSG91' });
         } else {
