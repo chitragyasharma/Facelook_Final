@@ -1,43 +1,35 @@
 {
   "version": 2,
-  "builds": [
+  "headers": [
     {
-      "src": "server/server.js",
-      "use": "@vercel/node"
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "src": "index.html.html",
-      "use": "@vercel/static"
+      "source": "/(.*\\.png)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "src": "client/**",
-      "use": "@vercel/static"
+      "source": "/(.*\\.webp)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "src": "*.webp",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.png",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.svg",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "robots.txt",
-      "use": "@vercel/static"
+      "source": "/(.*\\.svg)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     }
   ],
   "rewrites": [
     {
       "source": "/sitemap.xml",
       "destination": "https://facelook-backend.onrender.com/sitemap.xml"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/robots.txt"
     },
     {
       "source": "/api/(.*)",
@@ -48,8 +40,52 @@
       "destination": "/client/admin.html"
     },
     {
+      "source": "/assets/(.*)",
+      "destination": "/client/assets/$1"
+    },
+    {
+      "source": "/(.*\\.png)",
+      "destination": "/client/$1"
+    },
+    {
+      "source": "/(.*\\.webp)",
+      "destination": "/client/$1"
+    },
+    {
+      "source": "/(.*\\.js)",
+      "destination": "/client/$1"
+    },
+    {
+      "source": "/(.*\\.css)",
+      "destination": "/client/$1"
+    },
+    {
+      "source": "/(.*\\.svg)",
+      "destination": "/client/$1"
+    },
+    {
+      "source": "/(.*\\.jpg)",
+      "destination": "/client/$1"
+    },
+    {
+      "source": "/(.*\\.jpeg)",
+      "destination": "/client/$1"
+    },
+    {
+      "source": "/(.*\\.gif)",
+      "destination": "/client/$1"
+    },
+    {
+      "source": "/(.*\\.ico)",
+      "destination": "/client/$1"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/client/robots.txt"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/index.html.html"
+      "destination": "/client/index.html"
     }
   ]
 }

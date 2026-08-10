@@ -540,7 +540,7 @@ router.get('/coupons', authenticateAdmin, async (req, res) => {
     }
 });
 
-router.post('/coupons', authenticateAdmin, requireRole('super_admin', 'manager'), async (req, res) => {
+router.post('/coupons', authenticateAdmin, requireRole('super_admin', 'manager', 'admin'), async (req, res) => {
     try {
         const lastCoupon = await Coupon.findOne().sort({ id: -1 });
         const id = lastCoupon ? lastCoupon.id + 1 : 1;
@@ -549,11 +549,14 @@ router.post('/coupons', authenticateAdmin, requireRole('super_admin', 'manager')
         await logActivity(req.admin.id, req.admin.name, `Coupon created: ${coupon.code}`, 'coupons', '', req);
         res.json(coupon);
     } catch (error) {
-        res.status(500).json({ error: 'Error creating coupon' });
+        if (error.code === 11000) {
+            return res.status(400).json({ error: 'A coupon with this code already exists' });
+        }
+        res.status(500).json({ error: error.message || 'Error creating coupon' });
     }
 });
 
-router.put('/coupons/:id', authenticateAdmin, requireRole('super_admin', 'manager'), async (req, res) => {
+router.put('/coupons/:id', authenticateAdmin, requireRole('super_admin', 'manager', 'admin'), async (req, res) => {
     try {
         const coupon = await Coupon.findOneAndUpdate({ id: parseInt(req.params.id) }, req.body, { new: true });
         await logActivity(req.admin.id, req.admin.name, `Coupon updated: ${coupon.code}`, 'coupons', '', req);
@@ -563,7 +566,7 @@ router.put('/coupons/:id', authenticateAdmin, requireRole('super_admin', 'manage
     }
 });
 
-router.delete('/coupons/:id', authenticateAdmin, requireRole('super_admin'), async (req, res) => {
+router.delete('/coupons/:id', authenticateAdmin, requireRole('super_admin', 'manager', 'admin'), async (req, res) => {
     try {
         await Coupon.deleteOne({ id: parseInt(req.params.id) });
         await logActivity(req.admin.id, req.admin.name, `Coupon deleted: #${req.params.id}`, 'coupons', '', req);

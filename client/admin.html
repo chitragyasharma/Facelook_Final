@@ -1770,6 +1770,7 @@ function closeCouponModal() {
 }
 
 async function saveCoupon() {
+    const id = document.getElementById('coupon-id').value;
     const code = document.getElementById('coupon-code').value.trim().toUpperCase();
     const type = document.getElementById('coupon-type').value;
     const value = document.getElementById('coupon-value').value;
@@ -1791,8 +1792,13 @@ async function saveCoupon() {
     }
     
     try {
-        await apiPost('/api/admin/coupons', data);
-        showToast('Coupon created successfully!', 'success');
+        if (id) {
+            await apiPost(`/api/admin/coupons/${id}`, data, 'PUT');
+            showToast('Coupon updated successfully!', 'success');
+        } else {
+            await apiPost('/api/admin/coupons', data);
+            showToast('Coupon created successfully!', 'success');
+        }
         closeCouponModal();
         fetchCoupons();
     } catch (e) {
