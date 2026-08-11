@@ -83,21 +83,41 @@ router.post('/login', async (req, res) => {
             // Send email
             if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
                 try {
-                    const transporter = nodemailer.createTransport({
-                        service: 'gmail',
-                        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-                    });
-                    console.log('Sending Admin OTP email...');
-                    transporter.sendMail({
-                        from: '"Facelook Admin" <' + process.env.EMAIL_USER + '>',
-                        to: email,
-                        subject: 'Your Admin Login OTP',
-                        text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
-                    }).then(() => {
-                        console.log('Admin OTP email sent successfully.');
-                    }).catch(err => {
-                        console.error('Background OTP email error (Render likely blocking SMTP):', err.message);
-                    });
+                    if (process.env.RESEND_API_KEY) {
+                        console.log('Sending Admin OTP email via Resend...');
+                        fetch('https://api.resend.com/emails', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                from: 'onboarding@resend.dev',
+                                to: email,
+                                subject: 'Your Admin Login OTP',
+                                text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
+                            })
+                        }).then(async (response) => {
+                            if (response.ok) console.log('Admin OTP email sent successfully via Resend.');
+                            else console.error('Resend error:', await response.text());
+                        }).catch(err => console.error('Background OTP email error (Resend):', err.message));
+                    } else {
+                        const transporter = nodemailer.createTransport({
+                            service: 'gmail',
+                            auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+                        });
+                        console.log('Sending Admin OTP email via Nodemailer...');
+                        transporter.sendMail({
+                            from: '"Facelook Admin" <' + process.env.EMAIL_USER + '>',
+                            to: email,
+                            subject: 'Your Admin Login OTP',
+                            text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
+                        }).then(() => {
+                            console.log('Admin OTP email sent successfully.');
+                        }).catch(err => {
+                            console.error('Background OTP email error (Render likely blocking SMTP):', err.message);
+                        });
+                    }
                 } catch (err) {
                     console.error('Error sending OTP email:', err.message);
                 }
@@ -143,21 +163,41 @@ router.post('/resend-otp', async (req, res) => {
         // Send email
         if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
             try {
-                const transporter = nodemailer.createTransport({
-                    service: 'gmail',
-                    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-                });
-                console.log('Sending Admin OTP email...');
-                transporter.sendMail({
-                    from: '"Facelook Admin" <' + process.env.EMAIL_USER + '>',
-                    to: email,
-                    subject: 'Your Admin Login OTP',
-                    text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
-                }).then(() => {
-                    console.log('Admin OTP email sent successfully.');
-                }).catch(err => {
-                    console.error('Background OTP email error (Render likely blocking SMTP):', err.message);
-                });
+                if (process.env.RESEND_API_KEY) {
+                    console.log('Sending Admin OTP email via Resend...');
+                    fetch('https://api.resend.com/emails', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            from: 'onboarding@resend.dev',
+                            to: email,
+                            subject: 'Your Admin Login OTP',
+                            text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
+                        })
+                    }).then(async (response) => {
+                        if (response.ok) console.log('Admin OTP email sent successfully via Resend.');
+                        else console.error('Resend error:', await response.text());
+                    }).catch(err => console.error('Background OTP email error (Resend):', err.message));
+                } else {
+                    const transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+                    });
+                    console.log('Sending Admin OTP email via Nodemailer...');
+                    transporter.sendMail({
+                        from: '"Facelook Admin" <' + process.env.EMAIL_USER + '>',
+                        to: email,
+                        subject: 'Your Admin Login OTP',
+                        text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
+                    }).then(() => {
+                        console.log('Admin OTP email sent successfully.');
+                    }).catch(err => {
+                        console.error('Background OTP email error (Render likely blocking SMTP):', err.message);
+                    });
+                }
             } catch (err) {
                 console.error('Error sending OTP email:', err.message);
             }
