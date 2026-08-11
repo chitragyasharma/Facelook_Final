@@ -7,9 +7,9 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
     id: { type: Number, required: true, unique: true },
     name: { type: String, required: true },
-    email: { type: String, unique: true, sparse: true },
-    phone: { type: String, unique: true, sparse: true },
-    googleId: { type: String, unique: true, sparse: true },
+    email: { type: String, index: { unique: true, partialFilterExpression: { email: { $type: 'string' } } } },
+    phone: { type: String, index: { unique: true, partialFilterExpression: { phone: { $type: 'string' } } } },
+    googleId: { type: String, index: { unique: true, partialFilterExpression: { googleId: { $type: 'string' } } } },
     password: { type: String },
     isBlocked: { type: Boolean, default: false },
     loyaltyPoints: { type: Number, default: 0 },

@@ -25,7 +25,22 @@ const razorpay = new Razorpay({
 });
 
 // Connect to MongoDB
-connectDB();
+connectDB().then(async () => {
+    try {
+        await User.collection.dropIndex('email_1');
+        await User.collection.dropIndex('phone_1');
+        await User.collection.dropIndex('googleId_1');
+        console.log('Dropped old sparse indexes');
+    } catch(e) {
+        // ignore if they don't exist
+    }
+    try {
+        await User.syncIndexes();
+        console.log('Synced new partial indexes');
+    } catch(e) {
+        console.error('Error syncing indexes:', e.message);
+    }
+});
 
 app.use(helmet({ contentSecurityPolicy: false })); // Keep scripts/styles working for monolithic SPA
 app.use(compression());
