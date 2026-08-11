@@ -88,13 +88,16 @@ router.post('/login', async (req, res) => {
                         auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
                     });
                     console.log('Sending Admin OTP email...');
-                    await transporter.sendMail({
+                    transporter.sendMail({
                         from: '"Facelook Admin" <' + process.env.EMAIL_USER + '>',
                         to: email,
                         subject: 'Your Admin Login OTP',
                         text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
+                    }).then(() => {
+                        console.log('Admin OTP email sent successfully.');
+                    }).catch(err => {
+                        console.error('Background OTP email error (Render likely blocking SMTP):', err.message);
                     });
-                    console.log('Admin OTP email sent successfully.');
                 } catch (err) {
                     console.error('Error sending OTP email:', err.message);
                 }
@@ -145,13 +148,16 @@ router.post('/resend-otp', async (req, res) => {
                     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
                 });
                 console.log('Sending Admin OTP email...');
-                await transporter.sendMail({
+                transporter.sendMail({
                     from: '"Facelook Admin" <' + process.env.EMAIL_USER + '>',
                     to: email,
                     subject: 'Your Admin Login OTP',
                     text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
+                }).then(() => {
+                    console.log('Admin OTP email sent successfully.');
+                }).catch(err => {
+                    console.error('Background OTP email error (Render likely blocking SMTP):', err.message);
                 });
-                console.log('Admin OTP email sent successfully.');
             } catch (err) {
                 console.error('Error sending OTP email:', err.message);
             }
