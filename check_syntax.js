@@ -667,7 +667,7 @@ async function fetchCoupons() {
             </tr>
         `).join('');
     } catch (e) {
-        showToast('Error loading coupons', 'error');
+        alert('Error loading coupons');
     }
 }
 
@@ -711,7 +711,7 @@ async function saveCoupon() {
     const validTo = document.getElementById('offer-validTo').value;
     
     if (!code || !value) {
-        showToast('Please fill required fields', 'error');
+        alert('Please fill required fields');
         return;
     }
     
@@ -727,15 +727,15 @@ async function saveCoupon() {
     try {
         if (id) {
             await apiPost(`/api/admin/coupons/${id}`, data, 'PUT');
-            showToast('Coupon updated successfully!', 'success');
+            alert('Coupon updated successfully!');
         } else {
             await apiPost('/api/admin/coupons', data);
-            showToast('Coupon created successfully!', 'success');
+            alert('Coupon created successfully!');
         }
         closeCouponModal();
         fetchCoupons();
     } catch (e) {
-        showToast(e.message || 'Error generating coupon', 'error');
+        alert(e.message || 'Error generating coupon');
     }
 }
 
@@ -743,10 +743,10 @@ async function toggleCouponStatus(id, isActive) {
     if (!confirm(`Are you sure you want to ${isActive ? 'enable' : 'disable'} this coupon?`)) return;
     try {
         await apiPost(`/api/admin/coupons/${id}`, { isActive }, 'PUT');
-        showToast('Coupon status updated', 'success');
+        alert('Coupon status updated');
         fetchCoupons();
     } catch (e) {
-        showToast('Error updating status', 'error');
+        alert('Error updating status');
     }
 }
 
@@ -754,10 +754,10 @@ async function deleteCoupon(id) {
     if (!confirm('Are you sure you want to completely delete this coupon? This action cannot be undone.')) return;
     try {
         await apiPost(`/api/admin/coupons/${id}`, {}, 'DELETE');
-        showToast('Coupon deleted', 'success');
+        alert('Coupon deleted');
         fetchCoupons();
     } catch (e) {
-        showToast('Error deleting coupon', 'error');
+        alert('Error deleting coupon');
     }
 }
 
