@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Facelook Admin Panel</title>
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Chart.js for Dashboard Charts -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Quill Rich Text Editor -->
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
   <!-- Main Styles -->
   <style>
 /* ==========================================================================
@@ -977,32 +979,20 @@ input:focus, select:focus, textarea:focus {
               <p>Configure the text for the About, Refund, Shipping, and Return pages.</p>
               
               <div class="form-group" style="margin-bottom: 20px;">
-                <label style="display: flex; justify-content: space-between; align-items: center;">
-                  About Section
-                  <button type="button" class="btn btn-secondary" style="padding: 2px 10px; font-weight: bold; font-size: 12px;" onclick="makeBold('policy-about')">B (Bold)</button>
-                </label>
-                <textarea id="policy-about" rows="6" placeholder="Enter HTML or plain text for the About page..."></textarea>
+                <label>About Section</label>
+                <div id="editor-about" style="height: 200px; background: #fff;"></div>
               </div>
               <div class="form-group" style="margin-bottom: 20px;">
-                <label style="display: flex; justify-content: space-between; align-items: center;">
-                  Refund Policy
-                  <button type="button" class="btn btn-secondary" style="padding: 2px 10px; font-weight: bold; font-size: 12px;" onclick="makeBold('policy-refund')">B (Bold)</button>
-                </label>
-                <textarea id="policy-refund" rows="6" placeholder="Enter HTML or plain text for the Refund Policy..."></textarea>
+                <label>Refund Policy</label>
+                <div id="editor-refund" style="height: 200px; background: #fff;"></div>
               </div>
               <div class="form-group" style="margin-bottom: 20px;">
-                <label style="display: flex; justify-content: space-between; align-items: center;">
-                  Shipping Policy
-                  <button type="button" class="btn btn-secondary" style="padding: 2px 10px; font-weight: bold; font-size: 12px;" onclick="makeBold('policy-shipping')">B (Bold)</button>
-                </label>
-                <textarea id="policy-shipping" rows="6" placeholder="Enter HTML or plain text for the Shipping Policy..."></textarea>
+                <label>Shipping Policy</label>
+                <div id="editor-shipping" style="height: 200px; background: #fff;"></div>
               </div>
               <div class="form-group" style="margin-bottom: 20px;">
-                <label style="display: flex; justify-content: space-between; align-items: center;">
-                  Return Policy (Terms)
-                  <button type="button" class="btn btn-secondary" style="padding: 2px 10px; font-weight: bold; font-size: 12px;" onclick="makeBold('policy-return')">B (Bold)</button>
-                </label>
-                <textarea id="policy-return" rows="6" placeholder="Enter HTML or plain text for the Return Policy / Terms..."></textarea>
+                <label>Return Policy (Terms)</label>
+                <div id="editor-return" style="height: 200px; background: #fff;"></div>
               </div>
             </div>
           </div>
@@ -1995,10 +1985,10 @@ async function fetchSettings() {
         
         if (data.announcement_banner) document.getElementById('announcement-banner').value = data.announcement_banner;
         
-        if (data.policy_about) document.getElementById('policy-about').value = data.policy_about;
-        if (data.policy_refund) document.getElementById('policy-refund').value = data.policy_refund;
-        if (data.policy_shipping) document.getElementById('policy-shipping').value = data.policy_shipping;
-        if (data.policy_return) document.getElementById('policy-return').value = data.policy_return;
+        if (data.policy_about) quillAbout.root.innerHTML = data.policy_about;
+        if (data.policy_refund) quillRefund.root.innerHTML = data.policy_refund;
+        if (data.policy_shipping) quillShipping.root.innerHTML = data.policy_shipping;
+        if (data.policy_return) quillReturn.root.innerHTML = data.policy_return;
         
     } catch (e) {
         console.error("Failed to fetch settings", e);
@@ -2007,10 +1997,10 @@ async function fetchSettings() {
 
 async function savePolicies() {
     const payload = {
-        policy_about: document.getElementById('policy-about').value,
-        policy_refund: document.getElementById('policy-refund').value,
-        policy_shipping: document.getElementById('policy-shipping').value,
-        policy_return: document.getElementById('policy-return').value
+        policy_about: quillAbout.root.innerHTML,
+        policy_refund: quillRefund.root.innerHTML,
+        policy_shipping: quillShipping.root.innerHTML,
+        policy_return: quillReturn.root.innerHTML
     };
     try {
         const btns = document.querySelectorAll('#settings-view .btn-primary');
@@ -2141,6 +2131,29 @@ async function saveSettings() {
         }
     });
 });
+// Initialize Quill Editors
+let quillAbout, quillRefund, quillShipping, quillReturn;
+function initQuill() {
+    const options = {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [2, 3, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['clean']
+            ]
+        }
+    };
+    quillAbout = new Quill('#editor-about', options);
+    quillRefund = new Quill('#editor-refund', options);
+    quillShipping = new Quill('#editor-shipping', options);
+    quillReturn = new Quill('#editor-return', options);
+}
+
+// Call initQuill immediately since script is in head
+initQuill();
+
 </script>
 </body>
 </html>
