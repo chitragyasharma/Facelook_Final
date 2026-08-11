@@ -87,16 +87,19 @@ router.post('/login', async (req, res) => {
                         service: 'gmail',
                         auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
                     });
-                    // Fire and forget - don't await so it doesn't hang the API response!
-                    transporter.sendMail({
+                    console.log('Sending Admin OTP email...');
+                    await transporter.sendMail({
                         from: '"Facelook Admin" <' + process.env.EMAIL_USER + '>',
-                        to: 'facelook.cs51@gmail.com',
+                        to: email,
                         subject: 'Your Admin Login OTP',
                         text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
-                    }).catch(err => console.error('Background OTP email error:', err.message));
+                    });
+                    console.log('Admin OTP email sent successfully.');
                 } catch (err) {
-                    console.error('Error sending OTP email:', err);
+                    console.error('Error sending OTP email:', err.message);
                 }
+            } else {
+                console.log('EMAIL_USER and EMAIL_PASS missing in env, skipping email dispatch.');
             }
             
             return res.json({ requires2FA: true, message: 'OTP sent to your email' });
@@ -111,6 +114,54 @@ router.post('/login', async (req, res) => {
         res.json({ token, admin: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } });
     } catch (error) {
         res.status(500).json({ error: 'Server error during login' });
+    }
+});
+
+// Admin Resend OTP
+router.post('/resend-otp', async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ error: 'Email required' });
+
+        const admin = await AdminUser.findOne({ email, isActive: true });
+        if (!admin || !admin.twoFactorEnabled) {
+            return res.status(400).json({ error: 'Cannot resend OTP for this user' });
+        }
+
+        // Generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        ADMIN_OTP_STORE[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000, adminId: admin.id };
+        
+        // ALWAYS log the OTP to the server logs as a fallback
+        console.log(`\n========================================`);
+        console.log(`🔐 ADMIN 2FA OTP for ${email}: ${otp}`);
+        console.log(`========================================\n`);
+        
+        // Send email
+        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            try {
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+                });
+                console.log('Sending Admin OTP email...');
+                await transporter.sendMail({
+                    from: '"Facelook Admin" <' + process.env.EMAIL_USER + '>',
+                    to: email,
+                    subject: 'Your Admin Login OTP',
+                    text: `Your Facelook Admin login OTP is: ${otp}. It expires in 5 minutes.`
+                });
+                console.log('Admin OTP email sent successfully.');
+            } catch (err) {
+                console.error('Error sending OTP email:', err.message);
+            }
+        } else {
+            console.log('EMAIL_USER and EMAIL_PASS missing in env, skipping email dispatch.');
+        }
+        
+        return res.json({ message: 'OTP resent to your email' });
+    } catch (error) {
+        res.status(500).json({ error: 'Server error during resend' });
     }
 });
 

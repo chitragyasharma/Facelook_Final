@@ -614,6 +614,11 @@ input:focus, select:focus, textarea:focus {
           <input type="text" id="admin-otp" placeholder="6-digit code">
         </div>
         <button class="btn-primary" onclick="verifyOtp()">Verify OTP</button>
+        <div style="margin-top: 15px; text-align: center;">
+          <button id="resend-otp-btn" class="btn-secondary" onclick="resendOtp()" disabled style="font-size: 0.9em; padding: 5px 10px;">
+            Resend OTP (30s)
+          </button>
+        </div>
       </div>
       
       <div id="login-error" class="error-msg"></div>
@@ -835,14 +840,13 @@ input:focus, select:focus, textarea:focus {
 
         <!-- Coupons View -->
         <div id="coupons-view" class="view-section" style="display: none;">
-          <div class="view-header">
-            <h2>Coupons & Discounts</h2>
-            <div class="actions">
-              <button id="create-coupon-btn" class="btn btn-primary" onclick="openCouponModal()">+ Create Coupon</button>
-            </div>
-          </div>
-          
           <div class="card">
+            <div class="card-header">
+              <h3>Coupons & Discounts</h3>
+              <div class="actions">
+                <button id="create-offer-btn" class="btn-primary" onclick="openCouponModal()">+ Create Coupon</button>
+              </div>
+            </div>
             <div class="table-responsive">
               <table class="data-table">
                 <thead>
@@ -1091,47 +1095,47 @@ input:focus, select:focus, textarea:focus {
   </div>
 
   <!-- Coupon Modal -->
-  <div id="coupon-modal" class="modal-overlay" style="display: none;">
+  <div id="offer-modal" class="modal-overlay" style="display: none;">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="coupon-modal-title">Create Coupon</h3>
+        <h3 id="offer-modal-title">Create Coupon</h3>
         <button class="close-btn" onclick="closeCouponModal()">&times;</button>
       </div>
-      <form id="coupon-form">
+      <form id="offer-form">
         <div class="modal-body">
-          <input type="hidden" id="coupon-id">
+          <input type="hidden" id="offer-id">
           <div class="form-group">
             <label>Coupon Code</label>
             <div style="display:flex; gap:10px;">
-              <input type="text" id="coupon-code" required style="text-transform: uppercase; flex: 1;">
-              <button type="button" class="btn btn-secondary" onclick="document.getElementById('coupon-code').value = Math.random().toString(36).substring(2, 10).toUpperCase()">Generate</button>
+              <input type="text" id="offer-code" required style="text-transform: uppercase; flex: 1;">
+              <button type="button" class="btn btn-secondary" onclick="document.getElementById('offer-code').value = Math.random().toString(36).substring(2, 10).toUpperCase()">Generate</button>
             </div>
           </div>
           <div class="form-grid">
             <div class="form-group">
               <label>Discount Type</label>
-              <select id="coupon-type" required>
+              <select id="offer-type" required>
                 <option value="flat">Flat Amount (₹)</option>
                 <option value="percentage">Percentage (%)</option>
               </select>
             </div>
             <div class="form-group">
               <label>Discount Value</label>
-              <input type="number" id="coupon-value" required>
+              <input type="number" id="offer-value" required>
             </div>
             <div class="form-group">
               <label>Minimum Order (₹)</label>
-              <input type="number" id="coupon-minOrder" value="0">
+              <input type="number" id="offer-minOrder" value="0">
             </div>
             <div class="form-group">
               <label>Valid To (Date)</label>
-              <input type="date" id="coupon-validTo">
+              <input type="date" id="offer-validTo">
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn-secondary" onclick="closeCouponModal()">Cancel</button>
-          <button type="button" class="btn-primary" onclick="if(document.getElementById('coupon-form').reportValidity()) { saveCoupon(); }">Save Coupon</button>
+          <button type="button" class="btn-primary" onclick="if(document.getElementById('offer-form').reportValidity()) { saveCoupon(); }">Save Coupon</button>
         </div>
       </form>
     </div>
@@ -1188,6 +1192,7 @@ async function login() {
     if (res.ok && data.requires2FA) {
        document.getElementById('login-step-1').style.display = 'none';
        document.getElementById('login-step-2').style.display = 'block';
+       startResendTimer();
     } else if (res.ok && data.token) {
       localStorage.setItem('admin_token', data.token);
       window.location.reload();
@@ -1218,8 +1223,61 @@ async function verifyOtp() {
      } else {
         errEl.innerText = data.error || 'OTP Verification Failed';
      }
-  } catch(e) {
+   } catch(e) {
      errEl.innerText = 'Network error';
+  }
+}
+
+let resendTimerInterval;
+function startResendTimer() {
+  const resendBtn = document.getElementById('resend-otp-btn');
+  let timeLeft = 30;
+  resendBtn.disabled = true;
+  resendBtn.innerText = `Resend OTP (${timeLeft}s)`;
+
+  clearInterval(resendTimerInterval);
+  resendTimerInterval = setInterval(() => {
+    timeLeft--;
+    if (timeLeft <= 0) {
+      clearInterval(resendTimerInterval);
+      resendBtn.disabled = false;
+      resendBtn.innerText = 'Resend OTP';
+    } else {
+      resendBtn.innerText = `Resend OTP (${timeLeft}s)`;
+    }
+  }, 1000);
+}
+
+async function resendOtp() {
+  const email = document.getElementById('admin-email').value.trim();
+  const errEl = document.getElementById('login-error');
+  const resendBtn = document.getElementById('resend-otp-btn');
+  errEl.innerText = '';
+
+  resendBtn.disabled = true;
+  resendBtn.innerText = 'Sending...';
+
+  try {
+    const res = await fetch('/api/admin/resend-otp', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      startResendTimer();
+      errEl.style.color = '#10b981'; // Success green
+      errEl.innerText = 'A new OTP has been sent to your email!';
+      setTimeout(() => { errEl.style.color = ''; errEl.innerText = ''; }, 4000);
+    } else {
+      errEl.innerText = data.error || 'Failed to resend OTP';
+      resendBtn.disabled = false;
+      resendBtn.innerText = 'Resend OTP';
+    }
+  } catch(e) {
+    errEl.innerText = 'Network error while resending OTP';
+    resendBtn.disabled = false;
+    resendBtn.innerText = 'Resend OTP';
   }
 }
 
@@ -1760,17 +1818,17 @@ async function fetchCoupons() {
 
 function openCouponModal() {
     try {
-        const form = document.getElementById('coupon-form');
+        const form = document.getElementById('offer-form');
         if (form && typeof form.reset === 'function') {
             form.reset();
         }
-        const idField = document.getElementById('coupon-id');
+        const idField = document.getElementById('offer-id');
         if (idField) idField.value = '';
         
-        const titleField = document.getElementById('coupon-modal-title');
+        const titleField = document.getElementById('offer-modal-title');
         if (titleField) titleField.innerText = 'Create Coupon';
         
-        const modal = document.getElementById('coupon-modal');
+        const modal = document.getElementById('offer-modal');
         if (modal) {
             modal.style.display = 'flex';
             modal.style.opacity = '1';
@@ -1786,16 +1844,16 @@ function openCouponModal() {
 }
 
 function closeCouponModal() {
-    document.getElementById('coupon-modal').style.display = 'none';
+    document.getElementById('offer-modal').style.display = 'none';
 }
 
 async function saveCoupon() {
-    const id = document.getElementById('coupon-id').value;
-    const code = document.getElementById('coupon-code').value.trim().toUpperCase();
-    const type = document.getElementById('coupon-type').value;
-    const value = document.getElementById('coupon-value').value;
-    const minOrder = document.getElementById('coupon-minOrder').value;
-    const validTo = document.getElementById('coupon-validTo').value;
+    const id = document.getElementById('offer-id').value;
+    const code = document.getElementById('offer-code').value.trim().toUpperCase();
+    const type = document.getElementById('offer-type').value;
+    const value = document.getElementById('offer-value').value;
+    const minOrder = document.getElementById('offer-minOrder').value;
+    const validTo = document.getElementById('offer-validTo').value;
     
     if (!code || !value) {
         showToast('Please fill required fields', 'error');
