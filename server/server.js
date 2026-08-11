@@ -150,8 +150,9 @@ const otpLimiter = rateLimit({
 
 app.post('/api/auth/send-otp', otpLimiter, async (req, res) => {
     try {
-        const { phone } = req.body;
+        let { phone } = req.body;
         if (!phone) return res.status(400).json({ error: 'Phone number required' });
+        phone = phone.replace(/\D/g, ''); // Remove spaces and non-digits
 
         if (MSG91_AUTH_KEY && MSG91_TEMPLATE_ID) {
             console.log(`[MSG91] Attempting to send OTP to ${phone}`);
@@ -180,8 +181,9 @@ app.post('/api/auth/send-otp', otpLimiter, async (req, res) => {
 
 app.post('/api/auth/verify-otp', async (req, res) => {
     try {
-        const { phone, otp } = req.body;
+        let { phone, otp } = req.body;
         if (!phone || !otp) return res.status(400).json({ error: 'Phone and OTP required' });
+        phone = phone.replace(/\D/g, ''); // Remove spaces and non-digits
 
         if (MSG91_AUTH_KEY) {
             const mobile = phone.startsWith('91') ? phone : '91' + phone.replace(/^\+91/, '');
@@ -210,7 +212,8 @@ app.post('/api/auth/verify-otp', async (req, res) => {
         const token = jwt.sign({ id: user.id, name: user.name, phone: user.phone }, SECRET_KEY, { expiresIn: '7d' });
         res.json({ token, user: { name: user.name, phone: user.phone } });
     } catch (error) {
-        res.status(500).json({ error: 'Server error verifying OTP' });
+        console.error('Verify OTP Error:', error);
+        res.status(500).json({ error: 'Server error: ' + error.message });
     }
 });
 
