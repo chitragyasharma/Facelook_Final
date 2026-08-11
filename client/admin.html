@@ -884,7 +884,7 @@ input:focus, select:focus, textarea:focus {
               <div class="form-group">
                 <label>Banner Text (Displayed scrolling at the top of the site)</label>
                 <div style="display: flex; gap: 10px;">
-                  <button type="button" class="btn btn-secondary" style="padding: 0 15px; font-weight: bold;" onclick="makeBold('announcement-banner')">B</button>
+                  <button type="button" class="btn btn-secondary" style="padding: 0 15px; font-weight: bold;" onmousedown="event.preventDefault(); makeBold('announcement-banner')">B</button>
                   <input type="text" id="announcement-banner" placeholder="e.g. ✦ FACÉLOOK 2026 Collection — Free Shipping on ₹599+ ✦" style="flex: 1;">
                 </div>
               </div>
