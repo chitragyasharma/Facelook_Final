@@ -881,7 +881,10 @@ input:focus, select:focus, textarea:focus {
             <div style="padding: 20px;">
               <div class="form-group">
                 <label>Banner Text (Displayed scrolling at the top of the site)</label>
-                <input type="text" id="announcement-banner" placeholder="e.g. ✦ FACÉLOOK 2026 Collection — Free Shipping on ₹599+ ✦">
+                <div style="display: flex; gap: 10px;">
+                  <button type="button" class="btn btn-secondary" style="padding: 0 15px; font-weight: bold;" onclick="makeBold('announcement-banner')">B</button>
+                  <input type="text" id="announcement-banner" placeholder="e.g. ✦ FACÉLOOK 2026 Collection — Free Shipping on ₹599+ ✦" style="flex: 1;">
+                </div>
               </div>
             </div>
 
@@ -974,19 +977,31 @@ input:focus, select:focus, textarea:focus {
               <p>Configure the text for the About, Refund, Shipping, and Return pages.</p>
               
               <div class="form-group" style="margin-bottom: 20px;">
-                <label>About Section</label>
+                <label style="display: flex; justify-content: space-between; align-items: center;">
+                  About Section
+                  <button type="button" class="btn btn-secondary" style="padding: 2px 10px; font-weight: bold; font-size: 12px;" onclick="makeBold('policy-about')">B (Bold)</button>
+                </label>
                 <textarea id="policy-about" rows="6" placeholder="Enter HTML or plain text for the About page..."></textarea>
               </div>
               <div class="form-group" style="margin-bottom: 20px;">
-                <label>Refund Policy</label>
+                <label style="display: flex; justify-content: space-between; align-items: center;">
+                  Refund Policy
+                  <button type="button" class="btn btn-secondary" style="padding: 2px 10px; font-weight: bold; font-size: 12px;" onclick="makeBold('policy-refund')">B (Bold)</button>
+                </label>
                 <textarea id="policy-refund" rows="6" placeholder="Enter HTML or plain text for the Refund Policy..."></textarea>
               </div>
               <div class="form-group" style="margin-bottom: 20px;">
-                <label>Shipping Policy</label>
+                <label style="display: flex; justify-content: space-between; align-items: center;">
+                  Shipping Policy
+                  <button type="button" class="btn btn-secondary" style="padding: 2px 10px; font-weight: bold; font-size: 12px;" onclick="makeBold('policy-shipping')">B (Bold)</button>
+                </label>
                 <textarea id="policy-shipping" rows="6" placeholder="Enter HTML or plain text for the Shipping Policy..."></textarea>
               </div>
               <div class="form-group" style="margin-bottom: 20px;">
-                <label>Return Policy (Terms)</label>
+                <label style="display: flex; justify-content: space-between; align-items: center;">
+                  Return Policy (Terms)
+                  <button type="button" class="btn btn-secondary" style="padding: 2px 10px; font-weight: bold; font-size: 12px;" onclick="makeBold('policy-return')">B (Bold)</button>
+                </label>
                 <textarea id="policy-return" rows="6" placeholder="Enter HTML or plain text for the Return Policy / Terms..."></textarea>
               </div>
             </div>
@@ -1318,6 +1333,25 @@ function initNavigation() {
             loadView(view);
         });
     });
+}
+
+function makeBold(inputId) {
+  const input = document.getElementById(inputId);
+  const start = input.selectionStart;
+  const end = input.selectionEnd;
+  const text = input.value;
+  
+  if (start === end) {
+    // No text selected, just insert <b></b> at cursor
+    input.value = text.substring(0, start) + '<b></b>' + text.substring(end);
+    input.focus();
+    input.setSelectionRange(start + 3, start + 3);
+  } else {
+    const selectedText = text.substring(start, end);
+    input.value = text.substring(0, start) + '<b>' + selectedText + '</b>' + text.substring(end);
+    input.focus();
+    input.setSelectionRange(start + 3, end + 3);
+  }
 }
 
 function loadView(view) {

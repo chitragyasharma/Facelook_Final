@@ -6008,7 +6008,7 @@
         api('/api/settings')
           .then(settings => {
              if (settings) {
-                 if(settings.announcement_banner) document.getElementById('announcement-text').innerText = settings.announcement_banner;
+                 if(settings.announcement_banner) document.getElementById('announcement-text').innerHTML = settings.announcement_banner;
                  if(settings.policy_about) document.getElementById('page-about').innerHTML = settings.policy_about;
                  if(settings.policy_refund) document.getElementById('page-refund').innerHTML = settings.policy_refund;
                  if(settings.policy_shipping) document.getElementById('page-shipping').innerHTML = settings.policy_shipping;
