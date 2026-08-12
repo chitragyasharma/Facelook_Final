@@ -3688,7 +3688,7 @@
         <div>
           <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);font-weight:600;">
             Email Us</div>
-          <div style="font-size:14px;color:var(--td);font-weight:500;">hello@facelook.in</div>
+          <div style="font-size:14px;color:var(--td);font-weight:500;">facelook.cs51@gmail.com</div>
         </div>
       </div>
       <div class="contact-card">
@@ -3706,7 +3706,7 @@
         <div>
           <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);font-weight:600;">
             Visit Us</div>
-          <div style="font-size:14px;color:var(--td);font-weight:500;">Mumbai, Maharashtra</div>
+          <div style="font-size:14px;color:var(--td);font-weight:500;">F-51, DSIIDC Industrial Area, Sector 1, Bawana, Delhi, 110039</div>
         </div>
       </div>
       <div class="contact-card">
@@ -3714,7 +3714,7 @@
         <div>
           <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);font-weight:600;">
             Hours</div>
-          <div style="font-size:14px;color:var(--td);font-weight:500;">Mon–Sat, 10am–7pm IST</div>
+          <div style="font-size:14px;color:var(--td);font-weight:500;">Mon- Sat , 9am-6pm IST</div>
         </div>
       </div>
       <div id="contact-form-area">
@@ -4558,7 +4558,7 @@
         ${p.image ? `<img loading="lazy" src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;">` : `<span style="font-size:50px;">${p.emoji || '💄'}</span>`}
         ${p.tag ? `<span class="product-tag">${p.tag}</span>` : ''}
         <button class="product-wish ${inWish ? 'active' : ''}" onclick="event.preventDefault();event.stopPropagation();toggleWish(${p.id})">${inWish ? '♥' : '♡'}</button>
-        <span class="product-discount">${disc}% OFF</span>
+        ${(p.orig && p.orig > p.price) ? `<span class="product-discount">${disc}% OFF</span>` : ''}
         ${p.stock === 0 ? `<div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.6);display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;"><span style="background:var(--danger, #ea5455);color:#fff;padding:6px 12px;border-radius:4px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:1px;box-shadow:var(--shadow-sm);">Out of Stock</span></div>` : ''}
       </div>
       <div class="product-info">
@@ -4568,7 +4568,7 @@
         ${p.stock > 0 && p.stock <= 10 ? `<div style="color:var(--danger, #ea5455);font-size:11px;font-weight:700;margin-top:2px;letter-spacing:0.5px;">Only ${p.stock} left in stock!</div>` : ''}
         ${swatchesHTML}
         <div class="product-row" style="margin-top: 8px;">
-          <div><span class="product-price">₹${p.price}</span><span class="product-orig">₹${p.orig}</span></div>
+          <div><span class="product-price">₹${p.price}</span>${(p.orig && p.orig > p.price) ? `<span class="product-orig">₹${p.orig}</span>` : ''}</div>
           ${p.stock === 0 ? 
             `<button class="add-cart-btn" style="background:#e0e0e0;color:#999;cursor:not-allowed;" onclick="event.preventDefault();event.stopPropagation();">Sold</button>` :
             `<button class="add-cart-btn" onclick="event.preventDefault();event.stopPropagation();addToCart(${p.id})">+</button>`
@@ -4805,8 +4805,15 @@
       }
 
       document.getElementById('detail-price').textContent = '₹' + p.price;
-      document.getElementById('detail-orig').textContent = '₹' + p.orig;
-      document.getElementById('detail-discount').textContent = disc + '% OFF';
+      if (p.orig && p.orig > p.price) {
+        document.getElementById('detail-orig').textContent = '₹' + p.orig;
+        document.getElementById('detail-discount').textContent = disc + '% OFF';
+        document.getElementById('detail-orig').style.display = '';
+        document.getElementById('detail-discount').style.display = '';
+      } else {
+        document.getElementById('detail-orig').style.display = 'none';
+        document.getElementById('detail-discount').style.display = 'none';
+      }
       document.getElementById('detail-stars').textContent = stars(p.rating);
       document.getElementById('detail-reviews').textContent = '(' + p.reviews + ' reviews)';
       document.getElementById('detail-desc').textContent = p.desc || 'No description available.';
