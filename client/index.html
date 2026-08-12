@@ -4650,7 +4650,6 @@
             let titleAttr = c.name ? `title="${c.name.replace(/"/g, '&quot;')}"` : '';
             return `<div class="grid-swatch" style="${bg}" ${titleAttr}></div>`;
           }).join('') +
-          (extraCount > 0 ? `<div class="grid-swatch-more">+${extraCount}</div>` : '') +
           `</div>`;
       }
 
