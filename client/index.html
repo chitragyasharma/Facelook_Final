@@ -130,12 +130,23 @@
 
     /* Policy Pages Styling */
     .policy-page {
-      padding: 100px 20px 60px;
-      max-width: 800px;
-      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(62, 39, 35, 0.05);
+      padding: 60px 80px;
+      max-width: 850px;
+      margin: 120px auto 80px;
       line-height: 1.7;
       color: var(--td);
       font-family: 'Jost', sans-serif;
+    }
+
+    @media (max-width: 768px) {
+      .policy-page {
+        margin: 100px 16px 40px;
+        padding: 40px 24px;
+        border-radius: 12px;
+      }
     }
 
     .policy-page h1, .policy-page h2 {
