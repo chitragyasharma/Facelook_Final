@@ -188,6 +188,7 @@
       line-height: 1.8;
       margin-bottom: 24px;
       color: var(--tm);
+      text-align: justify; /* Fix alignment as requested */
     }
 
     .policy-page strong, .policy-page b {
@@ -204,8 +205,22 @@
       letter-spacing: 1.5px;
       text-transform: uppercase;
       color: var(--td);
-      margin-top: 40px;
+      margin-top: 24px; /* Reduced from 40px to prevent disjointed text */
       margin-bottom: 12px;
+      text-align: left;
+    }
+    
+    /* Add styled bullet points to all subheadings */
+    .policy-page h3::before,
+    .policy-page p > strong:only-child::before,
+    .policy-page p > b:only-child::before {
+      content: '✦';
+      color: var(--rose);
+      margin-right: 8px;
+      font-size: 1.2em;
+      vertical-align: middle;
+      display: inline-block;
+      margin-top: -3px;
     }
 
     .policy-page ul, .policy-page ol {
