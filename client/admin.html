@@ -897,7 +897,7 @@ input:focus, select:focus, textarea:focus {
               </div>
             </div>
             <div style="padding: 20px;">
-              <p>Configure the 3 main slides on the homepage. Video files must be < 5MB.</p>
+              <p>Configure the 3 main slides on the homepage. Video files must be &lt; 5MB.</p>
               
               <!-- SLIDE 1 -->
               <div class="slide-setting-box" style="border:1px solid var(--border); border-radius:8px; padding:15px; margin-bottom:20px;">
@@ -911,7 +911,7 @@ input:focus, select:focus, textarea:focus {
                   <div class="form-group col-6"><label>Subtitle</label><input type="text" id="hero-sub-1"></div>
                 </div>
                 <div class="form-group">
-                  <label>Background Media (Image or MP4 Video < 5MB)</label>
+                  <label>Background Media (Image or MP4 Video &lt; 5MB)</label>
                   <div class="drop-zone" id="hero-drop-1" onclick="if(!event.target.classList.contains('remove-img-btn')) document.getElementById('hero-file-1').click()">
                     <span id="hero-text-1">Click or Drop Media Here</span>
                     <input type="file" id="hero-file-1" accept="image/*,video/mp4" style="display:none;" onchange="processHeroFile(this, 1)">
@@ -933,7 +933,7 @@ input:focus, select:focus, textarea:focus {
                   <div class="form-group col-6"><label>Subtitle</label><input type="text" id="hero-sub-2"></div>
                 </div>
                 <div class="form-group">
-                  <label>Background Media (Image or MP4 Video < 5MB)</label>
+                  <label>Background Media (Image or MP4 Video &lt; 5MB)</label>
                   <div class="drop-zone" id="hero-drop-2" onclick="if(!event.target.classList.contains('remove-img-btn')) document.getElementById('hero-file-2').click()">
                     <span id="hero-text-2">Click or Drop Media Here</span>
                     <input type="file" id="hero-file-2" accept="image/*,video/mp4" style="display:none;" onchange="processHeroFile(this, 2)">
@@ -955,7 +955,7 @@ input:focus, select:focus, textarea:focus {
                   <div class="form-group col-6"><label>Subtitle</label><input type="text" id="hero-sub-3"></div>
                 </div>
                 <div class="form-group">
-                  <label>Background Media (Image or MP4 Video < 5MB)</label>
+                  <label>Background Media (Image or MP4 Video &lt; 5MB)</label>
                   <div class="drop-zone" id="hero-drop-3" onclick="if(!event.target.classList.contains('remove-img-btn')) document.getElementById('hero-file-3').click()">
                     <span id="hero-text-3">Click or Drop Media Here</span>
                     <input type="file" id="hero-file-3" accept="image/*,video/mp4" style="display:none;" onchange="processHeroFile(this, 3)">
@@ -1544,8 +1544,8 @@ function openProductModal(product = null) {
         document.getElementById('prod-id').value = product.id;
         document.getElementById('prod-name').value = product.name;
         document.getElementById('prod-cat').value = product.cat;
-        document.getElementById('prod-price').value = product.price;
-        document.getElementById('prod-discountPrice').value = product.discountPrice || '';
+        document.getElementById('prod-price').value = product.orig || product.price;
+        document.getElementById('prod-discountPrice').value = (product.orig && product.orig > product.price) ? product.price : '';
         document.getElementById('prod-stock').value = product.stock;
         document.getElementById('prod-tag').value = product.tag || '';
         
@@ -1715,8 +1715,8 @@ async function saveProduct() {
     const body = {
         name: document.getElementById('prod-name').value,
         cat: document.getElementById('prod-cat').value,
-        price: parseFloat(document.getElementById('prod-price').value),
-        discountPrice: document.getElementById('prod-discountPrice').value ? parseFloat(document.getElementById('prod-discountPrice').value) : null,
+        orig: parseFloat(document.getElementById('prod-price').value),
+        price: document.getElementById('prod-discountPrice').value ? parseFloat(document.getElementById('prod-discountPrice').value) : parseFloat(document.getElementById('prod-price').value),
         stock: parseInt(document.getElementById('prod-stock').value),
         tag: document.getElementById('prod-tag').value,
         image: uploadedImages.length > 0 ? uploadedImages[0] : '',

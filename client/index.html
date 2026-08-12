@@ -3264,10 +3264,10 @@
       <button class="sidebar-close" onclick="closeSidebar()">✕</button>
     </div>
     <div class="sidebar-greeting" id="sidebar-greeting"></div>
-    <a href="/" onclick="event.preventDefault(); goTo('home')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🏠 Home</a>
-    <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🛍️ Shop All</a>
-    <a href="/wishlist" onclick="event.preventDefault(); goTo('wishlist')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">♡ Wishlist</a>
-    <a href="/cart" onclick="event.preventDefault(); goTo('cart')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">🛒 Cart</a>
+    <a href="/" onclick="event.preventDefault(); goTo('home'); closeSidebar();" class="sidebar-link" style="text-decoration:none;display:block;">🏠 Home</a>
+    <a href="/shop" onclick="event.preventDefault(); goTo('shop'); closeSidebar();" class="sidebar-link" style="text-decoration:none;display:block;">🛍️ Shop All</a>
+    <a href="/wishlist" onclick="event.preventDefault(); goTo('wishlist'); closeSidebar();" class="sidebar-link" style="text-decoration:none;display:block;">♡ Wishlist</a>
+    <a href="/cart" onclick="event.preventDefault(); goTo('cart'); closeSidebar();" class="sidebar-link" style="text-decoration:none;display:block;">🛒 Cart</a>
     
     <a href="#" onclick="event.preventDefault(); toggleMobileNotifications()" class="sidebar-link" style="text-decoration:none;display:block;position:relative;">
       🔔 Notifications
@@ -3280,8 +3280,8 @@
     
     <a href="/account" onclick="event.preventDefault(); goTo('account'); closeSidebar();" class="sidebar-link" style="text-decoration:none;display:block;">👤 Account</a>
     
-    <a href="/about" onclick="event.preventDefault(); goTo('about')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📖 About Us</a>
-    <a href="/contact" onclick="event.preventDefault(); goTo('contact')" class="sidebar-link" onclick="closeSidebar()" style="text-decoration:none;display:block;">📬 Contact</a>
+    <a href="/about" onclick="event.preventDefault(); goTo('about'); closeSidebar();" class="sidebar-link" style="text-decoration:none;display:block;">📖 About Us</a>
+    <a href="/contact" onclick="event.preventDefault(); goTo('contact'); closeSidebar();" class="sidebar-link" style="text-decoration:none;display:block;">📬 Contact</a>
     <div style="margin-top:22px; display:none;" id="sidebar-auth-btn">
       <button class="btn btn-ghost btn-full" onclick="logout()" style="border-radius:12px;">SIGN OUT</button>
     </div>
