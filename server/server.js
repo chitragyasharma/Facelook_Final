@@ -69,18 +69,36 @@ function authenticateToken(req, res, next) {
 
 // --- EMAIL & NOTIFICATIONS UTILITY ---
 const sendCustomerEmail = async (to, subject, text) => {
-    if (!to || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) return;
+    if (!to) return;
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-        });
-        transporter.sendMail({
-            from: '"Facelook Cosmetics" <' + process.env.EMAIL_USER + '>',
-            to,
-            subject,
-            text
-        }).catch(err => console.error('Background email error:', err.message));
+        if (process.env.RESEND_API_KEY) {
+            fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    from: 'onboarding@resend.dev',
+                    to,
+                    subject,
+                    text
+                })
+            }).then(async (response) => {
+                if (!response.ok) console.error('Resend customer email error:', await response.text());
+            }).catch(err => console.error('Background customer email error (Resend):', err.message));
+        } else if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+            });
+            transporter.sendMail({
+                from: '"Facelook Cosmetics" <' + process.env.EMAIL_USER + '>',
+                to,
+                subject,
+                text
+            }).catch(err => console.error('Background email error:', err.message));
+        }
     } catch (err) {
         console.error('Error sending customer email:', err.message);
     }

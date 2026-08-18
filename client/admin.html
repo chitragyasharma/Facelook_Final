@@ -777,6 +777,26 @@ input:focus, select:focus, textarea:focus {
 
         <!-- PRODUCTS VIEW -->
         <div id="products-view" class="view-section" style="display: none;">
+          <!-- FEATURED & SECTION CATEGORY MANAGER CARD -->
+          <div class="card" style="margin-bottom: 24px; border: 1px solid rgba(234,84,85,0.2); background: #ffffff;">
+            <div class="card-header" style="background: linear-gradient(135deg, #fff5f7, #fbe4e8); border-bottom: 1px solid rgba(234,84,85,0.15); padding: 16px 20px;">
+              <div>
+                <h3 style="margin: 0; color: #2b181c; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                  <span>🔥</span> Hot Selling & <span>🌟</span> Best Seller Manager
+                </h3>
+                <small style="color: #665559; font-size: 12px; margin-top:2px; display:block;">Select which products appear in the Best Selling and Hot Selling sections on the website</small>
+              </div>
+              <div class="actions">
+                <button class="btn-secondary" onclick="loadFeaturedCategoryManager()" style="font-size:12px; padding:6px 14px; background:#fff;">🔄 Refresh Manager</button>
+              </div>
+            </div>
+            <div style="padding: 18px 20px;">
+              <div id="featured-manager-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; max-height: 380px; overflow-y: auto; padding-right: 4px;">
+                <!-- Dynamically loaded product cards with instant toggles -->
+              </div>
+            </div>
+          </div>
+
           <div class="card">
             <div class="card-header">
               <h3>Products Inventory</h3>
@@ -791,7 +811,7 @@ input:focus, select:focus, textarea:focus {
                   <tr>
                     <th>ID</th>
                     <th>Image</th>
-                    <th>Name</th>
+                    <th>Name & Badges</th>
                     <th>Category</th>
                     <th>Price</th>
                     <th>Stock</th>
@@ -1028,12 +1048,13 @@ input:focus, select:focus, textarea:focus {
           </div>
           <div class="form-row">
             <div class="form-group col-4">
-              <label>Price (₹)</label>
-              <input type="number" id="prod-price" required>
+              <label>MRP / Original Price (₹)</label>
+              <input type="number" id="prod-price" placeholder="e.g. 349" required>
             </div>
             <div class="form-group col-4">
-              <label>Discounted Price (₹)</label>
-              <input type="number" id="prod-discountPrice">
+              <label>Selling / Discounted Price (₹)</label>
+              <input type="number" id="prod-discountPrice" placeholder="e.g. 299">
+              <small style="font-size:10px; color:#888; display:block; margin-top:2px;">Leave empty if product has no discount</small>
             </div>
             <div class="form-group col-4">
               <label>Stock</label>
@@ -1041,13 +1062,20 @@ input:focus, select:focus, textarea:focus {
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group col-6">
-              <label>Section Tag</label>
-              <select id="prod-tag">
-                <option value="">None</option>
-                <option value="Bestseller">Best Seller</option>
-                <option value="Hot Selling">Hot Selling</option>
-              </select>
+            <div class="form-group col-12">
+              <label style="font-weight:600; display:block; margin-bottom:8px;">Featured Sections & Badges</label>
+              <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:center; background:#fcf8f9; padding:12px 16px; border-radius:10px; border:1px solid #f7d6dc;">
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:600; color:#2b181c;">
+                  <input type="checkbox" id="tag-bestseller-check" onchange="syncTagCheckboxes()"> 🌟 Best Seller
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:600; color:#2b181c;">
+                  <input type="checkbox" id="tag-hotselling-check" onchange="syncTagCheckboxes()"> 🔥 Hot Selling
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:600; color:#2b181c;">
+                  <input type="checkbox" id="tag-new-check" onchange="syncTagCheckboxes()"> ✨ New Arrival
+                </label>
+              </div>
+              <input type="hidden" id="prod-tag">
             </div>
           </div>
           <div class="form-group">
@@ -1500,6 +1528,14 @@ async function syncShiprocket(orderId) {
 // ----------------------------------------------------------------------------
 let currentProductPage = 1;
 let productSearchTimer = null;
+let currentAdminProductsList = [];
+
+function editProductById(id) {
+    const product = currentAdminProductsList.find(p => p.id === id);
+    if (product) {
+        openProductModal(product);
+    }
+}
 
 function debounceSearchProducts() {
     clearTimeout(productSearchTimer);
@@ -1512,34 +1548,72 @@ async function fetchProducts(page = 1) {
     try {
         const data = await apiGet(`/api/admin/products?page=${page}&limit=10&search=${search}`);
         const tbody = document.getElementById('products-tbody');
+        currentAdminProductsList = data.products || [];
         
         if (data.products.length === 0) {
             tbody.innerHTML = '<tr><td colspan="8" class="text-center">No products found</td></tr>';
         } else {
-            tbody.innerHTML = data.products.map(p => `
+            tbody.innerHTML = data.products.map(p => {
+                let tagBadges = '';
+                const tagStr = p.tag || '';
+                if (tagStr.includes('Bestseller') || tagStr.includes('Best')) {
+                    tagBadges += `<span style="background:#fffbeb; color:#b45309; border:1px solid #fde68a; font-size:10px; font-weight:700; padding:2px 6px; border-radius:10px; margin-right:4px;">⭐ Bestseller</span>`;
+                }
+                if (tagStr.includes('Hot')) {
+                    tagBadges += `<span style="background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; font-size:10px; font-weight:700; padding:2px 6px; border-radius:10px; margin-right:4px;">🔥 Hot Selling</span>`;
+                }
+                if (tagStr.includes('New')) {
+                    tagBadges += `<span style="background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; font-size:10px; font-weight:700; padding:2px 6px; border-radius:10px;">✨ New</span>`;
+                }
+
+                return `
                 <tr>
                     <td>${p.id}</td>
-                    <td><img src="${p.image}" alt="${p.name}"></td>
-                    <td><strong>${p.name}</strong><br><small class="text-muted">SKU: ${p.sku}</small></td>
+                    <td><img src="${p.image}" alt="${p.name}" style="width:40px; height:40px; object-fit:contain; border-radius:4px;"></td>
+                    <td>
+                        <strong>${p.name}</strong><br>
+                        <small class="text-muted">SKU: ${p.sku}</small>
+                        ${tagBadges ? `<div style="margin-top:4px;">${tagBadges}</div>` : ''}
+                    </td>
                     <td style="text-transform: capitalize;">${p.cat}</td>
-                    <td>₹${p.price}</td>
+                    <td>₹${p.price} ${(p.orig && p.orig > p.price) ? `<small style="text-decoration:line-through;color:#888;margin-left:4px;">₹${p.orig}</small>` : ''}</td>
                     <td>${p.stock}</td>
                     <td><span class="badge ${p.isActive !== false ? 'active' : 'inactive'}">${p.isActive !== false ? 'Active' : 'Archived'}</span></td>
                     <td>
-                        <button class="btn-info" onclick='openProductModal(${JSON.stringify(p).replace(/'/g, "\\'")})'>Edit</button>
-                        <button class="btn-danger" style="margin-left:5px; background: #dc3545; color: white;" onclick='deleteProduct(${p.id})'>Delete</button>
+                        <button class="btn-info" onclick="editProductById(${p.id})">Edit</button>
+                        <button class="btn-danger" style="margin-left:5px; background: #dc3545; color: white;" onclick="deleteProduct(${p.id})">Delete</button>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
         }
         renderPagination('products-pagination', page, Math.ceil(data.total/10), 'fetchProducts');
+        loadFeaturedCategoryManager();
     } catch (e) { console.error(e); }
+}
+
+function syncTagCheckboxes() {
+    const isBest = document.getElementById('tag-bestseller-check').checked;
+    const isHot = document.getElementById('tag-hotselling-check').checked;
+    const isNew = document.getElementById('tag-new-check').checked;
+    
+    let tags = [];
+    if (isBest) tags.push('Bestseller');
+    if (isHot) tags.push('Hot Selling');
+    if (isNew) tags.push('New');
+    
+    document.getElementById('prod-tag').value = tags.join(' & ');
 }
 
 function openProductModal(product = null) {
     const modal = document.getElementById('product-modal');
     document.getElementById('modal-title').innerText = product ? 'Edit Product' : 'Add New Product';
     
+    const tagStr = product ? (product.tag || '') : '';
+    document.getElementById('tag-bestseller-check').checked = tagStr.includes('Bestseller') || tagStr.includes('Best');
+    document.getElementById('tag-hotselling-check').checked = tagStr.includes('Hot');
+    document.getElementById('tag-new-check').checked = tagStr.includes('New');
+    document.getElementById('prod-tag').value = tagStr;
+
     if (product) {
         document.getElementById('prod-id').value = product.id;
         document.getElementById('prod-name').value = product.name;
@@ -1547,7 +1621,6 @@ function openProductModal(product = null) {
         document.getElementById('prod-price').value = product.orig || product.price;
         document.getElementById('prod-discountPrice').value = (product.orig && product.orig > product.price) ? product.price : '';
         document.getElementById('prod-stock').value = product.stock;
-        document.getElementById('prod-tag').value = product.tag || '';
         
         let allImages = [];
         if (product.images && product.images.length > 0) {
@@ -1581,6 +1654,10 @@ function openProductModal(product = null) {
     } else {
         document.getElementById('product-form').reset();
         document.getElementById('prod-id').value = '';
+        document.getElementById('tag-bestseller-check').checked = false;
+        document.getElementById('tag-hotselling-check').checked = false;
+        document.getElementById('tag-new-check').checked = false;
+        document.getElementById('prod-tag').value = '';
         uploadedImages = [];
         paletteShades = [];
         renderImagePreviews();
@@ -1588,6 +1665,75 @@ function openProductModal(product = null) {
     }
     
     modal.style.display = 'flex';
+}
+
+async function loadFeaturedCategoryManager() {
+    const container = document.getElementById('featured-manager-container');
+    if (!container) return;
+    try {
+        const res = await apiGet('/api/admin/products?limit=100');
+        const products = res.products || [];
+        if (products.length === 0) {
+            container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 20px; color:#888;">No products found</div>';
+            return;
+        }
+        
+        container.innerHTML = products.map(p => {
+            const tagStr = p.tag || '';
+            const isBest = tagStr.includes('Bestseller') || tagStr.includes('Best');
+            const isHot = tagStr.includes('Hot');
+            return `
+            <div style="background:#ffffff; border:1px solid #eef0f3; border-radius:12px; padding:12px 14px; display:flex; align-items:center; gap:12px; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+              <img src="${p.image || ''}" alt="${p.name}" style="width:46px; height:46px; object-fit:contain; border-radius:8px; background:#f9fafb; border:1px solid #f0f0f0; flex-shrink:0;">
+              <div style="flex:1; min-width:0;">
+                <div style="font-weight:700; font-size:13px; color:#2b181c; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${p.name}">${p.name}</div>
+                <div style="font-size:11px; color:#6b7280; margin-top:2px;">${p.cat || 'General'} • ₹${p.price}</div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:5px; flex-shrink:0;">
+                <button onclick="toggleProductTag(${p.id}, 'Bestseller')" style="padding:4px 10px; font-size:11px; font-weight:700; border-radius:20px; border:1px solid ${isBest ? '#f59e0b' : '#e5e7eb'}; background:${isBest ? '#fffbeb' : '#ffffff'}; color:${isBest ? '#b45309' : '#6b7280'}; cursor:pointer; transition:all 0.2s;">
+                  ${isBest ? '⭐ Bestseller' : '+ Best Seller'}
+                </button>
+                <button onclick="toggleProductTag(${p.id}, 'Hot Selling')" style="padding:4px 10px; font-size:11px; font-weight:700; border-radius:20px; border:1px solid ${isHot ? '#ef4444' : '#e5e7eb'}; background:${isHot ? '#fef2f2' : '#ffffff'}; color:${isHot ? '#b91c1c' : '#6b7280'}; cursor:pointer; transition:all 0.2s;">
+                  ${isHot ? '🔥 Hot Selling' : '+ Hot Selling'}
+                </button>
+              </div>
+            </div>`;
+        }).join('');
+    } catch (e) {
+        console.error("Error loading featured category manager:", e);
+    }
+}
+
+async function toggleProductTag(id, tagType) {
+    try {
+        const res = await apiGet(`/api/admin/products?limit=100`);
+        const p = (res.products || []).find(item => item.id === id);
+        if (!p) return;
+        
+        let currentTag = p.tag || '';
+        let hasBest = currentTag.includes('Bestseller') || currentTag.includes('Best');
+        let hasHot = currentTag.includes('Hot');
+        let hasNew = currentTag.includes('New');
+
+        if (tagType === 'Bestseller') {
+            hasBest = !hasBest;
+        } else if (tagType === 'Hot Selling') {
+            hasHot = !hasHot;
+        }
+
+        let newTags = [];
+        if (hasBest) newTags.push('Bestseller');
+        if (hasHot) newTags.push('Hot Selling');
+        if (hasNew) newTags.push('New');
+        
+        const updatedTag = newTags.join(' & ');
+        
+        await apiPost(`/api/admin/products/${id}`, { tag: updatedTag }, 'PUT');
+        loadFeaturedCategoryManager();
+        fetchProducts(currentProductPage);
+    } catch(e) {
+        alert("Error updating product tag: " + e.message);
+    }
 }
 
 // Drag and Drop Logic

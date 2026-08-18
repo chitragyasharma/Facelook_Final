@@ -1,12 +1,11 @@
-const CACHE_NAME = 'facelook-cache-v2';
+const CACHE_NAME = 'facelook-cache-v3';
 
-// Install Event: Pre-cache some important assets if needed
+// Install Event: Pre-cache core assets
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll([
         '/',
-        '/index.html.html',
         '/assets/images/facelook_update_final-Photoroom.png'
       ]);
     })
@@ -14,7 +13,7 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activate Event: Clean up old caches
+// Activate Event: Clean up old caches immediately
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -26,30 +25,41 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch Event: Stale-While-Revalidate Strategy
+// Fetch Event: Network-First for HTML navigation, Stale-While-Revalidate for static assets
 self.addEventListener('fetch', event => {
-  // Only cache GET requests
   if (event.request.method !== 'GET') return;
-  
-  // Exclude some requests if needed (e.g. browser extensions)
-  if (!event.request.url.startsWith('http') && !event.request.url.startsWith('https')) return;
+  if (!event.request.url.startsWith('http')) return;
 
-  event.respondWith(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.match(event.request).then(cachedResponse => {
-        const fetchedResponse = fetch(event.request).then(networkResponse => {
-          // Put the new response in cache if it's a valid response
-          if (networkResponse && networkResponse.status === 200 && (networkResponse.type === 'basic' || networkResponse.type === 'cors')) {
-            cache.put(event.request, networkResponse.clone());
+  const isHTML = event.request.mode === 'navigate' || (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html'));
+
+  if (isHTML) {
+    // Network-First for HTML pages so live deploys update instantly
+    event.respondWith(
+      fetch(event.request)
+        .then(networkResponse => {
+          if (networkResponse && networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
           }
           return networkResponse;
-        }).catch(() => {
-          // If network fetch fails, do nothing (will just return cached response below if available)
-        });
+        })
+        .catch(() => caches.match(event.request))
+    );
+  } else {
+    // Stale-While-Revalidate for static assets
+    event.respondWith(
+      caches.open(CACHE_NAME).then(cache => {
+        return cache.match(event.request).then(cachedResponse => {
+          const fetchedResponse = fetch(event.request).then(networkResponse => {
+            if (networkResponse && networkResponse.status === 200) {
+              cache.put(event.request, networkResponse.clone());
+            }
+            return networkResponse;
+          }).catch(() => {});
 
-        // Return cached response immediately if available, otherwise wait for network
-        return cachedResponse || fetchedResponse;
-      });
-    })
-  );
+          return cachedResponse || fetchedResponse;
+        });
+      })
+    );
+  }
 });

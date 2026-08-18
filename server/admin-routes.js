@@ -7,18 +7,36 @@ const { AdminUser, User, Product, Order, Cart, Wishlist, ActivityLog, Coupon, Re
 const { authenticateAdmin, requireRole, logActivity, getClientIP, ADMIN_SECRET } = require('./admin-middleware');
 
 const sendCustomerEmail = async (to, subject, text) => {
-    if (!to || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) return;
+    if (!to) return;
     try {
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-        });
-        transporter.sendMail({
-            from: '"Facelook Cosmetics" <' + process.env.EMAIL_USER + '>',
-            to,
-            subject,
-            text
-        }).catch(err => console.error('Background email error:', err.message));
+        if (process.env.RESEND_API_KEY) {
+            fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    from: 'onboarding@resend.dev',
+                    to,
+                    subject,
+                    text
+                })
+            }).then(async (response) => {
+                if (!response.ok) console.error('Resend customer email error:', await response.text());
+            }).catch(err => console.error('Background customer email error (Resend):', err.message));
+        } else if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+            });
+            transporter.sendMail({
+                from: '"Facelook Cosmetics" <' + process.env.EMAIL_USER + '>',
+                to,
+                subject,
+                text
+            }).catch(err => console.error('Background email error:', err.message));
+        }
     } catch (err) {
         console.error('Error sending customer email:', err.message);
     }
@@ -372,7 +390,7 @@ router.get('/orders/:id', authenticateAdmin, async (req, res) => {
 router.put('/orders/:id/status', authenticateAdmin, async (req, res) => {
     try {
         const { status } = req.body;
-        const order = await Order.findOneAndUpdate({ id: parseInt(req.params.id) }, { status }, { new: true });
+        const order = await Order.findOneAndUpdate({ id: parseInt(req.params.id) }, { status }, { returnDocument: 'after' });
         
         // Notify customer
         if (order) {
@@ -559,7 +577,7 @@ router.post('/products', authenticateAdmin, requireRole('super_admin', 'manager'
 
 router.put('/products/:id', authenticateAdmin, requireRole('super_admin', 'manager'), async (req, res) => {
     try {
-        const product = await Product.findOneAndUpdate({ id: parseInt(req.params.id) }, req.body, { new: true });
+        const product = await Product.findOneAndUpdate({ id: parseInt(req.params.id) }, req.body, { returnDocument: 'after' });
         await logActivity(req.admin.id, req.admin.name, `Product updated: ${product.name}`, 'products', '', req);
         res.json(product);
     } catch (error) {
@@ -655,7 +673,7 @@ router.post('/coupons', authenticateAdmin, requireRole('super_admin', 'manager',
 
 router.put('/coupons/:id', authenticateAdmin, requireRole('super_admin', 'manager', 'admin'), async (req, res) => {
     try {
-        const coupon = await Coupon.findOneAndUpdate({ id: parseInt(req.params.id) }, req.body, { new: true });
+        const coupon = await Coupon.findOneAndUpdate({ id: parseInt(req.params.id) }, req.body, { returnDocument: 'after' });
         await logActivity(req.admin.id, req.admin.name, `Coupon updated: ${coupon.code}`, 'coupons', '', req);
         res.json(coupon);
     } catch (error) {
@@ -697,7 +715,7 @@ router.put('/returns/:id', authenticateAdmin, requireRole('super_admin', 'manage
         if (refundAmount) update.refundAmount = refundAmount;
         if (refundMethod) update.refundMethod = refundMethod;
         if (status === 'approved' || status === 'rejected' || status === 'refunded') update.resolvedAt = new Date();
-        const ret = await Return.findOneAndUpdate({ id: parseInt(req.params.id) }, update, { new: true });
+        const ret = await Return.findOneAndUpdate({ id: parseInt(req.params.id) }, update, { returnDocument: 'after' });
         await logActivity(req.admin.id, req.admin.name, `Return #${req.params.id} → ${status}`, 'returns', '', req);
         res.json(ret);
     } catch (error) {
@@ -734,7 +752,7 @@ router.post('/influencers', authenticateAdmin, requireRole('super_admin', 'manag
 
 router.put('/influencers/:id', authenticateAdmin, requireRole('super_admin', 'manager'), async (req, res) => {
     try {
-        const influencer = await Influencer.findOneAndUpdate({ id: parseInt(req.params.id) }, req.body, { new: true });
+        const influencer = await Influencer.findOneAndUpdate({ id: parseInt(req.params.id) }, req.body, { returnDocument: 'after' });
         await logActivity(req.admin.id, req.admin.name, `Influencer updated: ${influencer.name}`, 'influencers', '', req);
         res.json(influencer);
     } catch (error) {
