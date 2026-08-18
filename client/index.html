@@ -2245,9 +2245,7 @@
     .about-custom-content h3,
     .about-custom-content h4,
     .about-custom-content h5,
-    .about-custom-content h6,
-    .about-custom-content p > b:only-child,
-    .about-custom-content p > strong:only-child {
+    .about-custom-content h6 {
       display: block;
       font-family: 'Playfair Display', serif;
       font-size: 20px;
@@ -2263,7 +2261,7 @@
       font-family: 'Playfair Display', serif;
       color: var(--rose-d, #c43855);
       font-weight: 700;
-      display: inline;
+      display: inline !important;
       font-size: inherit;
     }
 
@@ -7015,16 +7013,55 @@
 
     function renderAboutPage(customHtml) {
       const container = document.getElementById('about-dynamic-content');
-      if (container && customHtml && customHtml.trim()) {
-        let cleaned = customHtml
-          .replace(/<p>\s*Welcome to\s*<\/p>/gi, '<p>Welcome to ')
-          .replace(/<p>\s*<b>\s*Facelook\s*<\/b>\s*<\/p>\s*<p>\s*,\s*/gi, '<b>Facelook</b>, ')
-          .replace(/<p>\s*<b>\s*Facelook\s*<\/b>\s*<\/p>/gi, '<b>Facelook</b>')
-          .replace(/<\/b>\s*<\/p>\s*<p>\s*,\s*/gi, '</b>, ')
-          .replace(/<\/p>\s*<p>\s*,\s*/gi, ', ')
-          .replace(/<\/b>\s*,\s*/gi, '</b>, ');
-        container.innerHTML = `<div class="about-custom-content">${cleaned}</div>`;
+      if (!container || !customHtml || !customHtml.trim()) return;
+
+      const temp = document.createElement('div');
+      temp.innerHTML = customHtml;
+
+      // Remove empty paragraphs
+      temp.querySelectorAll('p').forEach(p => {
+        if (!p.textContent.trim() && !p.querySelector('img, iframe, hr')) {
+          p.remove();
+        }
+      });
+
+      // Merge split paragraphs ("Welcome to", "Facelook", ", where...") into a single continuous sentence
+      const paragraphs = Array.from(temp.querySelectorAll('p'));
+      for (let i = 0; i < paragraphs.length; i++) {
+        const p = paragraphs[i];
+        if (!p.parentNode) continue;
+        const text = p.textContent.trim();
+
+        if (/^welcome to$/i.test(text)) {
+          const next = p.nextElementSibling;
+          if (next && next.tagName === 'P') {
+            const third = next.nextElementSibling;
+            let combined = 'Welcome to ' + next.innerHTML;
+            if (third && third.tagName === 'P' && third.textContent.trim().startsWith(',')) {
+              combined += third.innerHTML;
+              third.remove();
+            }
+            p.innerHTML = combined;
+            next.remove();
+          }
+        } else if (text.startsWith(',')) {
+          const prev = p.previousElementSibling;
+          if (prev && prev.tagName === 'P') {
+            prev.innerHTML = prev.innerHTML.trim() + p.innerHTML;
+            p.remove();
+          }
+        }
       }
+
+      let cleaned = temp.innerHTML
+        .replace(/<p>\s*Welcome to\s*<\/p>/gi, '<p>Welcome to ')
+        .replace(/<p>\s*<(b|strong)[^>]*>\s*Facelook\s*<\/(b|strong)>\s*<\/p>\s*<p>\s*,\s*/gi, '<strong>Facelook</strong>, ')
+        .replace(/<p>\s*<(b|strong)[^>]*>\s*Facelook\s*<\/(b|strong)>\s*<\/p>/gi, '<strong>Facelook</strong>')
+        .replace(/<\/(b|strong)>\s*<\/p>\s*<p>\s*,\s*/gi, '$1, ')
+        .replace(/<\/p>\s*<p>\s*,\s*/gi, ', ')
+        .replace(/<\/b>\s*,\s*/gi, '</b>, ');
+
+      container.innerHTML = `<div class="about-custom-content">${cleaned}</div>`;
     }
 
     function renderPolicyPage(pageId, customHtml) {
