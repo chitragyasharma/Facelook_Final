@@ -4051,7 +4051,7 @@
     <div class="divider"></div>
 
     <!-- Promo -->
-    <div class="promo">
+    <div class="promo" id="home-promo-container">
       <div>
         <div class="promo-eyebrow">Limited Offer</div>
         <div class="promo-title">30% OFF<br>LIPS</div>
@@ -7082,6 +7082,38 @@
       }
     }
 
+    function renderPromoBanner(data) {
+      const bannerContainer = document.getElementById('home-promo-container');
+      if (!bannerContainer || !data) return;
+
+      const pb = typeof data === 'string' ? JSON.parse(data) : data;
+
+      if (pb.enabled === false) {
+        bannerContainer.style.display = 'none';
+        return;
+      }
+
+      bannerContainer.style.display = 'flex';
+      const eyebrow = pb.eyebrow !== undefined ? pb.eyebrow : 'Limited Offer';
+      const title1 = pb.title1 !== undefined ? pb.title1 : '30% OFF';
+      const title2 = pb.title2 !== undefined ? pb.title2 : 'LIPS';
+      const sub = pb.sub !== undefined ? pb.sub : 'Use code QUEEN30';
+      const btnText = pb.btn_text || 'GRAB DEAL';
+      const filter = pb.btn_filter || 'Lips';
+      const bgImg = pb.image || '/assets/images/lips_makeup.png';
+
+      bannerContainer.style.background = `linear-gradient(to right, rgba(44, 24, 16, 0.95) 0%, rgba(44, 24, 16, 0.45) 100%), url('${bgImg}') center/cover`;
+
+      bannerContainer.innerHTML = `
+        <div>
+          ${eyebrow ? `<div class="promo-eyebrow">${eyebrow}</div>` : ''}
+          <div class="promo-title">${title1}${title2 ? `<br>${title2}` : ''}</div>
+          ${sub ? `<div class="promo-sub">${sub}</div>` : ''}
+          <button class="promo-btn" onclick="shopByFilter('${filter}')">${btnText}</button>
+        </div>
+      `;
+    }
+
     function renderHeroSlider(slides) {
       const carousel = document.querySelector('.hero-carousel');
       const dotsContainer = document.querySelector('.hero-dots');
@@ -7312,6 +7344,7 @@
           .then(settings => {
             if (settings) {
               if (settings.announcement_banner) document.getElementById('announcement-text').innerHTML = settings.announcement_banner;
+              if (settings.promo_banner) renderPromoBanner(settings.promo_banner);
               if (settings.policy_about) renderAboutPage(settings.policy_about);
               if (settings.policy_privacy) renderPolicyPage('page-privacy', settings.policy_privacy);
               if (settings.policy_refund) renderPolicyPage('page-refund', settings.policy_refund);
