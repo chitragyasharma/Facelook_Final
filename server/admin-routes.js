@@ -344,12 +344,35 @@ router.get('/dashboard/revenue-chart', authenticateAdmin, async (req, res) => {
     }
 });
 
-// Top selling products
+// Top selling products (Calculated from actual Orders)
 router.get('/dashboard/top-products', authenticateAdmin, async (req, res) => {
     try {
-        const products = await Product.find({}, '-_id -__v').sort({ reviews: -1 }).limit(5);
-        res.json(products);
+        const topSold = await Order.aggregate([
+            { $unwind: "$details.cart" },
+            { $group: {
+                _id: "$details.cart.id",
+                name: { $first: "$details.cart.name" },
+                price: { $first: "$details.cart.price" },
+                image: { $first: "$details.cart.image" },
+                totalSold: { $sum: "$details.cart.qty" }
+            }},
+            { $sort: { totalSold: -1 } },
+            { $limit: 5 }
+        ]);
+
+        if (topSold && topSold.length > 0) {
+            return res.json(topSold.map(p => ({
+                id: p._id,
+                name: p.name || 'Product',
+                price: p.price || 0,
+                image: p.image || '',
+                totalSold: p.totalSold
+            })));
+        }
+
+        res.json([]);
     } catch (error) {
+        console.error('Error fetching top products:', error);
         res.status(500).json({ error: 'Error fetching top products' });
     }
 });

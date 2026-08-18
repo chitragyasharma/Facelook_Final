@@ -1486,17 +1486,17 @@ async function fetchDashboardData() {
 
         const topProducts = await apiGet('/api/admin/dashboard/top-products');
         const tpBody = document.getElementById('top-products-body');
-        if(topProducts.length === 0) {
-            tpBody.innerHTML = '<tr><td colspan="3">No products</td></tr>';
+        if (!topProducts || topProducts.length === 0) {
+            tpBody.innerHTML = '<tr><td colspan="3" class="text-center" style="padding:20px; color:#888;">No sales recorded yet</td></tr>';
         } else {
             tpBody.innerHTML = topProducts.map(p => `
                 <tr>
                     <td style="display:flex; align-items:center; gap:10px;">
-                        <img src="${p.image}" alt="">
-                        <span>${p.name.substring(0,25)}...</span>
+                        <img src="${p.image}" alt="" style="width:30px; height:30px; object-fit:contain; border-radius:4px;">
+                        <span>${p.name.length > 25 ? p.name.substring(0,25) + '...' : p.name}</span>
                     </td>
                     <td>₹${p.price}</td>
-                    <td>${p.reviews || 0} sold</td>
+                    <td><strong>${p.totalSold || 0}</strong> sold</td>
                 </tr>
             `).join('');
         }
