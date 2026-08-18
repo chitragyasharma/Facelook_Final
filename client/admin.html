@@ -951,7 +951,10 @@ input:focus, select:focus, textarea:focus {
               </div>
 
               <div class="form-group">
-                <label>Banner Background Picture (Upload Image or Paste URL)</label>
+                <label style="display:flex; align-items:center; justify-block:space-between; flex-wrap:wrap; gap:6px;">
+                  <span>Banner Background Picture (Upload Image or Paste URL)</span>
+                  <span style="font-size:11px; color:#c43855; font-weight:700; background:#fef2f2; border:1px solid #fecaca; padding:2px 8px; border-radius:12px;">📐 Recommended Size: 1200 × 500 px (Landscape 12:5 ratio)</span>
+                </label>
                 <div class="drop-zone" id="promo-banner-drop" onclick="if(!event.target.classList.contains('remove-img-btn')) document.getElementById('promo-banner-file').click()" style="border: 2px dashed #ccc; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; background: #fafafa;">
                   <span id="promo-banner-drop-text" style="color: #666; font-size: 13px;">Click or Drag & Drop Picture File Here</span>
                   <input type="file" id="promo-banner-file" accept="image/*" style="display:none;" onchange="processPromoBannerFile(this)">
@@ -984,7 +987,10 @@ input:focus, select:focus, textarea:focus {
                   <div class="form-group col-6"><label>Subtitle</label><input type="text" id="hero-sub-1"></div>
                 </div>
                 <div class="form-group">
-                  <label>Background Media (Image or MP4 Video &lt; 5MB)</label>
+                  <label style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+                    <span>Background Media (Image or MP4 Video &lt; 5MB)</span>
+                    <span style="font-size:11px; color:#c43855; font-weight:700; background:#fef2f2; border:1px solid #fecaca; padding:2px 8px; border-radius:12px;">📐 Recommended Size: 1920 × 800 px (Widescreen 16:9 ratio)</span>
+                  </label>
                   <div class="drop-zone" id="hero-drop-1" onclick="if(!event.target.classList.contains('remove-img-btn')) document.getElementById('hero-file-1').click()">
                     <span id="hero-text-1">Click or Drop Media Here</span>
                     <input type="file" id="hero-file-1" accept="image/*,video/mp4" style="display:none;" onchange="processHeroFile(this, 1)">
@@ -1006,7 +1012,10 @@ input:focus, select:focus, textarea:focus {
                   <div class="form-group col-6"><label>Subtitle</label><input type="text" id="hero-sub-2"></div>
                 </div>
                 <div class="form-group">
-                  <label>Background Media (Image or MP4 Video &lt; 5MB)</label>
+                  <label style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+                    <span>Background Media (Image or MP4 Video &lt; 5MB)</span>
+                    <span style="font-size:11px; color:#c43855; font-weight:700; background:#fef2f2; border:1px solid #fecaca; padding:2px 8px; border-radius:12px;">📐 Recommended Size: 1920 × 800 px (Widescreen 16:9 ratio)</span>
+                  </label>
                   <div class="drop-zone" id="hero-drop-2" onclick="if(!event.target.classList.contains('remove-img-btn')) document.getElementById('hero-file-2').click()">
                     <span id="hero-text-2">Click or Drop Media Here</span>
                     <input type="file" id="hero-file-2" accept="image/*,video/mp4" style="display:none;" onchange="processHeroFile(this, 2)">
@@ -1028,7 +1037,10 @@ input:focus, select:focus, textarea:focus {
                   <div class="form-group col-6"><label>Subtitle</label><input type="text" id="hero-sub-3"></div>
                 </div>
                 <div class="form-group">
-                  <label>Background Media (Image or MP4 Video &lt; 5MB)</label>
+                  <label style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+                    <span>Background Media (Image or MP4 Video &lt; 5MB)</span>
+                    <span style="font-size:11px; color:#c43855; font-weight:700; background:#fef2f2; border:1px solid #fecaca; padding:2px 8px; border-radius:12px;">📐 Recommended Size: 1920 × 800 px (Widescreen 16:9 ratio)</span>
+                  </label>
                   <div class="drop-zone" id="hero-drop-3" onclick="if(!event.target.classList.contains('remove-img-btn')) document.getElementById('hero-file-3').click()">
                     <span id="hero-text-3">Click or Drop Media Here</span>
                     <input type="file" id="hero-file-3" accept="image/*,video/mp4" style="display:none;" onchange="processHeroFile(this, 3)">
@@ -1140,7 +1152,10 @@ input:focus, select:focus, textarea:focus {
             </div>
           </div>
           <div class="form-group">
-            <label>Product Images</label>
+            <label style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+              <span>Product Images</span>
+              <span style="font-size:11px; color:#c43855; font-weight:700; background:#fef2f2; border:1px solid #fecaca; padding:2px 8px; border-radius:12px;">📐 Recommended Size: 800 × 800 px (Square 1:1 ratio)</span>
+            </label>
             <div class="drop-zone" id="image-drop-zone">
               <span id="drop-zone-text">Drag and drop images here or click to browse</span>
               <input type="file" id="prod-img-file" accept="image/*" multiple style="display: none;">
@@ -1170,7 +1185,10 @@ input:focus, select:focus, textarea:focus {
             <textarea id="prod-ingredients" rows="3" style="white-space: pre-wrap; font-family: inherit; width:100%; border-radius:8px; padding:10px;"></textarea>
           </div>
           <div class="form-group">
-            <label>Colour Palette (Shades)</label>
+            <label style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+              <span>Colour Palette (Shades)</span>
+              <span style="font-size:11px; color:#c43855; font-weight:700; background:#fef2f2; border:1px solid #fecaca; padding:2px 8px; border-radius:12px;">📐 Swatch Size: 200 × 200 px (Square 1:1 ratio)</span>
+            </label>
             <div id="palette-shades-container"></div>
             <button type="button" class="btn-secondary" style="margin-top:5px; font-size:12px; padding:6px 12px;" onclick="addPaletteShade()">+ Add Shade</button>
           </div>
