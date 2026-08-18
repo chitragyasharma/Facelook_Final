@@ -1444,10 +1444,12 @@
       font-size: 14px;
       color: var(--tm);
       line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .accordion-item.active .accordion-content {
-      max-height: 500px;
+      max-height: 2000px;
       padding-bottom: 16px;
     }
 
@@ -1621,6 +1623,8 @@
       color: var(--tm);
       line-height: 1.8;
       margin-bottom: 20px;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .qty-row {
@@ -6048,12 +6052,26 @@
       }
       document.getElementById('detail-stars').textContent = stars(p.rating);
       document.getElementById('detail-reviews').textContent = p.reviews ? '(' + p.reviews + ' reviews)' : '';
-      document.getElementById('detail-desc').textContent = p.desc || 'No description available.';
+      function setFormattedField(id, text, fallback) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const val = (text && text.trim()) ? text.trim() : fallback;
+        if (!val) {
+          el.innerHTML = '';
+          return;
+        }
+        if (/<[a-z][\s\S]*>/i.test(val)) {
+          el.innerHTML = val;
+        } else {
+          el.textContent = val;
+        }
+      }
 
-      document.getElementById('detail-delivery-info').textContent = p.deliveryInfo || 'Free standard shipping on all orders over ₹500. Cash on delivery is available for most locations.';
-      document.getElementById('detail-how-to-use').textContent = p.howToUse || 'Apply directly from the bullet or use a brush for precision. Build coverage as desired.';
-      document.getElementById('detail-ingredients').textContent = p.ingredients || 'Enriched with essential oils and natural extracts to nourish your skin.';
-      document.getElementById('detail-other-info').textContent = p.otherInfo || 'Store in a cool, dry place away from direct sunlight.';
+      setFormattedField('detail-desc', p.desc, 'No description available.');
+      setFormattedField('detail-delivery-info', p.deliveryInfo, 'Free standard shipping on all orders over ₹500. Cash on delivery is available for most locations.');
+      setFormattedField('detail-how-to-use', p.howToUse, 'Apply directly from the bullet or use a brush for precision. Build coverage as desired.');
+      setFormattedField('detail-ingredients', p.ingredients, 'Enriched with essential oils and natural extracts to nourish your skin.');
+      setFormattedField('detail-other-info', p.otherInfo, 'Store in a cool, dry place away from direct sunlight.');
       document.getElementById('detail-qty').textContent = state.detailQty;
 
       const stockWarning = document.getElementById('detail-stock-warning');
