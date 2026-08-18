@@ -1066,7 +1066,15 @@ input:focus, select:focus, textarea:focus {
               <div class="form-group" style="margin-bottom: 20px;">
                 <label>Return Policy (Terms)</label>
                 <div id="editor-return" style="height: 200px; background: #fff;"></div>
+            <!-- Reset Database Card -->
+            <div class="card-header" style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
+              <h3 style="color: #dc3545;">⚠️ Reset Orders, Revenue & Customers Data</h3>
+              <div class="actions">
+                <button type="button" class="btn btn-danger" style="background: #dc3545; color: #fff; padding: 8px 16px; border-radius: 6px; font-weight: 600;" onclick="resetAdminData()">Reset Data to Zero</button>
               </div>
+            </div>
+            <div style="padding: 20px;">
+              <p style="color: #666; font-size: 13px;">Clear all test orders, revenue metrics, customer accounts, carts, and notifications. Inventory and product catalog will remain untouched.</p>
             </div>
           </div>
         </div>
@@ -2274,6 +2282,19 @@ function removePromoBannerImage() {
     document.getElementById('promo-banner-image').value = '';
     document.getElementById('promo-banner-file').value = '';
     renderPromoBannerPreview('');
+}
+
+async function resetAdminData() {
+    if (!confirm('Are you sure you want to reset all Total Revenue, Orders, and Customers data? This will purge test orders and customer entries.')) return;
+    try {
+        await apiPost('/api/admin/reset-data', {}, 'POST');
+        alert('All orders, revenue, and customer records have been reset successfully!');
+        if (typeof fetchDashboard === 'function') fetchDashboard();
+        if (typeof fetchOrders === 'function') fetchOrders(1);
+        if (typeof fetchCustomers === 'function') fetchCustomers(1);
+    } catch (e) {
+        alert('Failed to reset data: ' + (e.message || 'Error'));
+    }
 }
 
 async function savePolicies() {

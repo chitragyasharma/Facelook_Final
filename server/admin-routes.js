@@ -805,6 +805,23 @@ router.post('/settings', authenticateAdmin, requireRole('super_admin'), async (r
     }
 });
 
+router.post('/reset-data', authenticateAdmin, requireRole('super_admin'), async (req, res) => {
+    try {
+        await Promise.all([
+            Order.deleteMany({}),
+            User.deleteMany({}),
+            Cart.deleteMany({}),
+            Wishlist.deleteMany({}),
+            Return.deleteMany({}),
+            Notification.deleteMany({})
+        ]);
+        await logActivity(req.admin.id, req.admin.name, `Reset all orders, revenue, and customer records`, 'system', '', req);
+        res.json({ success: true, message: 'All orders, revenue, and customer data reset successfully.' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error resetting orders and customer data' });
+    }
+});
+
 // ═══════════════════════════════════════
 //  ANALYTICS
 // ═══════════════════════════════════════
