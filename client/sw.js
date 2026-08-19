@@ -1,4 +1,4 @@
-const CACHE_NAME = 'facelook-cache-v3';
+const CACHE_NAME = 'facelook-cache-v4';
 
 // Install Event: Pre-cache core assets
 self.addEventListener('install', event => {
