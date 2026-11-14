@@ -296,19 +296,47 @@ app.get('/api/admin/force-sync-products', async (req, res) => {
 app.get('/api/products', async (req, res) => {
     try {
         const mongoose = require('mongoose');
-        const products = await Product.find({ isActive: { $ne: false } }, '-_id -__v').sort({ id: 1 });
+        let products = await Product.find({ isActive: { $ne: false } }, '-_id -__v').sort({ id: 1 }).lean();
+        
+        // If database is empty or has no active products, fallback to products.json
+        if (!products || products.length === 0) {
+            const fs = require('fs');
+            const data = fs.readFileSync(path.join(__dirname, 'products.json'), 'utf-8');
+            products = JSON.parse(data);
+        }
+
+        // Format image URLs
+        products.forEach(p => {
+            if (p.image && !p.image.startsWith('/') && !p.image.startsWith('http')) {
+                p.image = '/' + p.image.replace(/^\/+/, '');
+                if (!p.image.startsWith('/assets/')) {
+                    p.image = '/assets/images/' + p.image.substring(1);
+                }
+            }
+        });
+
         res.json(products);
     } catch (error) {
         console.error('Error fetching products:', error);
         try {
             const fs = require('fs');
             const data = fs.readFileSync(path.join(__dirname, 'products.json'), 'utf-8');
-            return res.json(JSON.parse(data));
+            const products = JSON.parse(data);
+            products.forEach(p => {
+                if (p.image && !p.image.startsWith('/') && !p.image.startsWith('http')) {
+                    p.image = '/' + p.image.replace(/^\/+/, '');
+                    if (!p.image.startsWith('/assets/')) {
+                        p.image = '/assets/images/' + p.image.substring(1);
+                    }
+                }
+            });
+            return res.json(products);
         } catch (e) {
             res.status(500).json({ error: 'Error fetching products' });
         }
     }
 });
+
 
 // --- CART ---
 app.get('/api/cart', authenticateToken, async (req, res) => {

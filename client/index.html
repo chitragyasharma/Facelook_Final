@@ -18,14 +18,13 @@
   <meta property="og:url" content="https://facelookcosmetics.in">
   <meta property="og:image" content="https://facelookcosmetics.in/assets/og-image.jpg">
 
-  <!-- Google Analytics (Placeholder) -->
-  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <!-- Google TagManager (Placeholder) -->
+  <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-MSDT2583"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
-  </script> -->
+  </script>
 
   <!-- Meta Pixel (Placeholder) -->
   <!-- <script>
@@ -41,9 +40,13 @@
     fbq('track', 'PageView');
   </script> -->
 
+  <link rel="preload" as="image" href="/assets/images/lips_makeup.png" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/images/velvet bloome grp - 4.png" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/images/liq lip- wine dine.png" fetchpriority="high">
   <link
     href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Jost:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
+
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <style>
     /* ══════════════════════════════════════
@@ -1115,6 +1118,22 @@
       padding: 20px 16px;
     }
 
+    @media (max-width: 360px) {
+      .products-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    @media (min-width: 520px) and (max-width: 767px) {
+      .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        padding: 16px;
+      }
+    }
+
+
     .product-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -1261,12 +1280,39 @@
       align-items: center;
       justify-content: center;
       transition: all .2s;
+      flex-shrink: 0;
     }
 
     .add-cart-btn:hover {
       background: var(--rose-d);
       transform: scale(1.12);
     }
+
+    @media (max-width: 480px) {
+      .product-info {
+        padding: 8px 10px 11px;
+      }
+
+      .product-name {
+        font-size: 12px;
+      }
+
+      .product-price {
+        font-size: 13px;
+      }
+
+      .product-orig {
+        font-size: 9px;
+        margin-left: 2px;
+      }
+
+      .add-cart-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 16px;
+      }
+    }
+
 
     /* ══════════════════════════════════════
    PROMO BANNER
@@ -3246,52 +3292,67 @@
         font-size: 40px;
       }
 
-      /* Enhance grids */
-      .products-grid,
+      /* Responsive Grids & Layouts */
+      .products-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 24px !important;
+        padding: 24px 32px !important;
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+
       .products-scroll {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 30px;
-        padding: 20px 40px;
-        overflow-x: hidden;
+        display: flex !important;
+        overflow-x: auto !important;
+        gap: 20px !important;
+        padding: 16px 32px !important;
+        scrollbar-width: thin;
       }
 
       .product-card {
-        border-radius: 24px;
-        min-width: 100% !important;
-        max-width: 100% !important;
-        width: 100% !important;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
       }
 
       .product-img {
         aspect-ratio: 1;
-        font-size: 100px;
+        font-size: 90px;
       }
 
       .product-name {
-        font-size: 16px;
+        font-size: 15px;
         margin-bottom: 6px;
       }
 
       .product-price {
-        font-size: 18px;
+        font-size: 17px;
       }
 
       .promo {
-        margin: 40px;
-        padding: 60px;
-        border-radius: 30px;
+        margin: 30px auto;
+        max-width: 1240px;
+        padding: 40px 50px;
+        border-radius: 24px;
       }
 
       .promo-title {
-        font-size: 60px;
+        font-size: 52px;
       }
 
       .promo-emoji {
-        font-size: 120px;
+        font-size: 90px;
       }
 
     }
+
+    @media (min-width: 1200px) {
+      .products-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 28px !important;
+      }
+    }
+
 
     /* Base NL Styles */
     .nl-split {
@@ -3815,6 +3876,12 @@
 
 <body>
 
+  <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-MSDT2583"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+  </script>
   <!-- GLOBAL PRELOADER -->
   <div id="global-preloader">
     <img src="assets/images/facelook_update_final-Photoroom.png" alt="Loading..." class="preloader-img">
@@ -4001,39 +4068,59 @@
       <div class="hero-blob blob3"></div>
 
       <div class="hero-carousel" id="heroCarousel">
-        <div class="hero-slide">
-          <div class="hero-tag">✦ New Collection 2026 ✦</div>
-          <div class="hero-eyebrow">Where Beauty Meets</div>
-          <div class="hero-title">CONFIDENCE</div>
-          <p class="hero-sub">Lips that Rule Hearts</p>
-          <div class="hero-btns">
-            <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn btn-primary"
-              style="text-decoration:none; display:inline-block;">Shop Now</a>
-            <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn btn-secondary"
-              style="text-decoration:none; display:inline-block;">Explore</a>
+        <div class="hero-slide" style="position:relative; overflow:hidden;">
+          <img loading="eager" fetchpriority="high" src="/assets/images/lips_makeup.png"
+            style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none;">
+          <div
+            style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7)); z-index:1; pointer-events:none;">
+          </div>
+          <div class="hero-content-custom">
+            <div class="hero-tag-custom">✦ NEW COLLECTION 2026 ✦</div>
+            <div class="hero-eyebrow-custom">WHERE BEAUTY MEETS</div>
+            <h1 class="hero-title-custom">CONFIDENCE</h1>
+            <p class="hero-subtitle-custom">Lips that Rule Hearts</p>
+            <div class="hero-btns-custom">
+              <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn-hero-primary">SHOP NOW</a>
+              <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn-hero-secondary">EXPLORE</a>
+            </div>
           </div>
         </div>
-        <div class="hero-slide">
-          <div class="hero-tag">✦ Best Sellers ✦</div>
-          <div class="hero-eyebrow">Glow All Day</div>
-          <div class="hero-title">RADIANCE</div>
-          <p class="hero-sub">Flawless Skin, Endless Compliments</p>
-          <div class="hero-btns">
-            <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn btn-primary"
-              style="text-decoration:none; display:inline-block;">View Products</a>
+        <div class="hero-slide" style="position:relative; overflow:hidden;">
+          <img loading="lazy" src="/assets/images/face_makeup.png"
+            style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none;">
+          <div
+            style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7)); z-index:1; pointer-events:none;">
+          </div>
+          <div class="hero-content-custom">
+            <div class="hero-tag-custom">✦ BEST SELLERS ✦</div>
+            <div class="hero-eyebrow-custom">GLOW ALL DAY</div>
+            <h1 class="hero-title-custom">RADIANCE</h1>
+            <p class="hero-subtitle-custom">Flawless Skin, Endless Compliments</p>
+            <div class="hero-btns-custom">
+              <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn-hero-primary">SHOP NOW</a>
+              <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn-hero-secondary">EXPLORE</a>
+            </div>
           </div>
         </div>
-        <div class="hero-slide">
-          <div class="hero-tag">✦ Cruelty-Free ✦</div>
-          <div class="hero-eyebrow">Guilt-Free Glamour</div>
-          <div class="hero-title">ETHICAL</div>
-          <p class="hero-sub">Kind to Animals, Kind to You</p>
-          <div class="hero-btns">
-            <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn btn-secondary"
-              style="text-decoration:none; display:inline-block;">Our Values</a>
+        <div class="hero-slide" style="position:relative; overflow:hidden;">
+          <img loading="lazy" src="/assets/images/eyes_makeup.png"
+            style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none;">
+          <div
+            style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7)); z-index:1; pointer-events:none;">
+          </div>
+          <div class="hero-content-custom">
+            <div class="hero-tag-custom">✦ CRUELTY-FREE ✦</div>
+            <div class="hero-eyebrow-custom">GUILT-FREE GLAMOUR</div>
+            <h1 class="hero-title-custom">ETHICAL</h1>
+            <p class="hero-subtitle-custom">Kind to Animals, Kind to You</p>
+            <div class="hero-btns-custom">
+              <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="btn-hero-primary">SHOP NOW</a>
+              <a href="/about" onclick="event.preventDefault(); goTo('about')" class="btn-hero-secondary">EXPLORE</a>
+            </div>
           </div>
         </div>
       </div>
+
 
       <div class="hero-dots" id="heroDots">
         <div class="hero-dot active" onclick="setSlide(0)"></div>
@@ -4050,7 +4137,110 @@
       <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="sec-link"
         style="text-decoration:none; color:inherit;">View All →</a>
     </div>
-    <div class="products-grid" id="home-featured"></div>
+    <div class="products-grid" id="home-featured">
+      <a href="/product/velvet-bloome-lip-tint" onclick="event.preventDefault(); openProduct(2)" target="_blank"
+        class="product-card" data-id="2" style="text-decoration:none; color:inherit; display:block;">
+        <div class="product-img">
+          <img loading="eager" src="/assets/images/velvet bloome grp - 4.png" alt=""
+            onerror="this.onerror=null;this.src='/assets/images/facelook_update_final-Photoroom.png';this.style.objectFit='contain';"
+            style="width:100%;height:100%;object-fit:contain;">
+          <span class="product-tag">Hot</span>
+          <button class="product-wish "
+            onclick="event.preventDefault();event.stopPropagation();toggleWish(2)">♡</button>
+          <span class="product-discount">10% OFF</span>
+        </div>
+        <div class="product-info">
+          <div class="product-stars">★★★★☆</div>
+          <div class="product-name">Velvet Bloome Lip Tint</div>
+          <div class="grid-swatches-container">
+            <div class="grid-swatch" style="background-color:#C41432;" title="01"></div>
+            <div class="grid-swatch" style="background-color:#CA154B;" title="02"></div>
+            <div class="grid-swatch" style="background-color:#A51118;" title="03"></div>
+            <div class="grid-swatch" style="background-color:#A6173B;" title="04"></div>
+          </div>
+          <div class="product-row" style="margin-top: 8px;">
+            <div><span class="product-price">₹225</span><span class="product-orig">₹249</span></div>
+            <button class="add-cart-btn"
+              onclick="event.preventDefault();event.stopPropagation();addToCart(2)">+</button>
+          </div>
+        </div>
+      </a>
+      <a href="/product/sindoor" onclick="event.preventDefault(); openProduct(4)" target="_blank" class="product-card"
+        data-id="4" style="text-decoration:none; color:inherit; display:block;">
+        <div class="product-img">
+          <img loading="eager" src="/assets/images/Sindoor 1.webp" alt=""
+            onerror="this.onerror=null;this.src='/assets/images/facelook_update_final-Photoroom.png';this.style.objectFit='contain';"
+            style="width:100%;height:100%;object-fit:contain;">
+          <span class="product-tag">Hot</span>
+          <button class="product-wish "
+            onclick="event.preventDefault();event.stopPropagation();toggleWish(4)">♡</button>
+          <span class="product-discount">20% OFF</span>
+        </div>
+        <div class="product-info">
+          <div class="product-stars">★★★★☆</div>
+          <div class="product-name">Sindoor</div>
+          <div class="product-shade">Petal & Mauve</div>
+          <div class="grid-swatches-container">
+            <div class="grid-swatch" style="background-color:#550000;" title="Majestic Maroon"></div>
+            <div class="grid-swatch" style="background-color:#CD1C18;" title="Chili Red"></div>
+          </div>
+          <div class="product-row" style="margin-top: 8px;">
+            <div><span class="product-price">₹119</span><span class="product-orig">₹149</span></div>
+            <button class="add-cart-btn"
+              onclick="event.preventDefault();event.stopPropagation();addToCart(4)">+</button>
+          </div>
+        </div>
+      </a>
+      <a href="/product/matte-lipstick" onclick="event.preventDefault(); openProduct(5)" target="_blank"
+        class="product-card" data-id="5" style="text-decoration:none; color:inherit; display:block;">
+        <div class="product-img">
+          <img loading="eager" src="/assets/images/diamond shade 01.webp" alt=""
+            onerror="this.onerror=null;this.src='/assets/images/facelook_update_final-Photoroom.png';this.style.objectFit='contain';"
+            style="width:100%;height:100%;object-fit:contain;">
+          <span class="product-tag">Trending</span>
+          <button class="product-wish "
+            onclick="event.preventDefault();event.stopPropagation();toggleWish(5)">♡</button>
+          <span class="product-discount">15% OFF</span>
+        </div>
+        <div class="product-info">
+          <div class="product-stars">★★★★☆</div>
+          <div class="product-name">Matte Lipstick</div>
+          <div class="product-shade">Natural Beige</div>
+          <div class="grid-swatches-container">
+            <div class="grid-swatch" style="background-color:#B4040E;" title="True Red"></div>
+            <div class="grid-swatch" style="background-color:#AD0A3F;" title="Vivid Berry"></div>
+            <div class="grid-swatch" style="background-color:#AF0614;" title="Cherry Red"></div>
+          </div>
+          <div class="product-row" style="margin-top: 8px;">
+            <div><span class="product-price">₹169</span><span class="product-orig">₹199</span></div>
+            <button class="add-cart-btn"
+              onclick="event.preventDefault();event.stopPropagation();addToCart(5)">+</button>
+          </div>
+        </div>
+      </a>
+      <a href="/product/nail-lacquer" onclick="event.preventDefault(); openProduct(7)" target="_blank"
+        class="product-card" data-id="7" style="text-decoration:none; color:inherit; display:block;">
+        <div class="product-img">
+          <img loading="eager" src="/assets/images/nails_makeup.png" alt=""
+            onerror="this.onerror=null;this.src='/assets/images/facelook_update_final-Photoroom.png';this.style.objectFit='contain';"
+            style="width:100%;height:100%;object-fit:contain;">
+          <span class="product-tag">Trending</span>
+          <button class="product-wish "
+            onclick="event.preventDefault();event.stopPropagation();toggleWish(7)">♡</button>
+          <span class="product-discount">29% OFF</span>
+        </div>
+        <div class="product-info">
+          <div class="product-stars">★★★★☆</div>
+          <div class="product-name">Nail Lacquer</div>
+          <div class="product-shade">Ballet Pink</div>
+          <div class="product-row" style="margin-top: 8px;">
+            <div><span class="product-price">₹199</span><span class="product-orig">₹279</span></div>
+            <button class="add-cart-btn"
+              onclick="event.preventDefault();event.stopPropagation();addToCart(7)">+</button>
+          </div>
+        </div>
+      </a>
+    </div>
 
     <div class="divider"></div>
 
@@ -4070,7 +4260,106 @@
       <a href="/shop" onclick="event.preventDefault(); goTo('shop')" class="sec-link"
         style="text-decoration:none; color:inherit;">See More →</a>
     </div>
-    <div class="products-grid" id="home-bestsellers"></div>
+    <div class="products-grid" id="home-bestsellers">
+      <a href="/product/dreamgirl-liquid-lip-color" onclick="event.preventDefault(); openProduct(1)" target="_blank"
+        class="product-card" data-id="1" style="text-decoration:none; color:inherit; display:block;">
+        <div class="product-img">
+          <img loading="eager" src="/assets/images/liq lip- wine dine.png" alt=""
+            onerror="this.onerror=null;this.src='/assets/images/facelook_update_final-Photoroom.png';this.style.objectFit='contain';"
+            style="width:100%;height:100%;object-fit:contain;">
+          <span class="product-tag">Bestseller</span>
+          <button class="product-wish "
+            onclick="event.preventDefault();event.stopPropagation();toggleWish(1)">♡</button>
+          <span class="product-discount">30% OFF</span>
+        </div>
+        <div class="product-info">
+          <div class="product-stars">★★★★☆</div>
+          <div class="product-name">DreamGirl Liquid Lip Color</div>
+          <div class="product-shade">Rosewood</div>
+          <div class="grid-swatches-container">
+            <div class="grid-swatch" style="background-color:#8B1A2A;" title="Wine Dine"></div>
+            <div class="grid-swatch" style="background-color:#602532;" title="Plum Desire"></div>
+            <div class="grid-swatch" style="background-color:#963345;" title="Berry Blush"></div>
+            <div class="grid-swatch" style="background-color:#CF4B3C;" title="Coral Crush"></div>
+          </div>
+          <div class="product-row" style="margin-top: 8px;">
+            <div><span class="product-price">₹349</span><span class="product-orig">₹499</span></div>
+            <button class="add-cart-btn"
+              onclick="event.preventDefault();event.stopPropagation();addToCart(1)">+</button>
+          </div>
+        </div>
+      </a>
+      <a href="/product/cover-me-compact-powder-2-in-1" onclick="event.preventDefault(); openProduct(3)" target="_blank"
+        class="product-card" data-id="3" style="text-decoration:none; color:inherit; display:block;">
+        <div class="product-img">
+          <img loading="eager" src="/assets/images/CompactMe 1.webp" alt=""
+            onerror="this.onerror=null;this.src='/assets/images/facelook_update_final-Photoroom.png';this.style.objectFit='contain';"
+            style="width:100%;height:100%;object-fit:contain;">
+          <span class="product-tag">Bestseller</span>
+          <button class="product-wish "
+            onclick="event.preventDefault();event.stopPropagation();toggleWish(3)">♡</button>
+          <span class="product-discount">25% OFF</span>
+        </div>
+        <div class="product-info">
+          <div class="product-stars">★★★★★</div>
+          <div class="product-name">COVER ME - Compact Powder 2 in 1</div>
+          <div class="product-shade">Pearl Blush</div>
+          <div class="product-row" style="margin-top: 8px;">
+            <div><span class="product-price">₹150</span><span class="product-orig">₹199</span></div>
+            <button class="add-cart-btn"
+              onclick="event.preventDefault();event.stopPropagation();addToCart(3)">+</button>
+          </div>
+        </div>
+      </a>
+      <a href="/product/facelook-mini-lipstick" onclick="event.preventDefault(); openProduct(6)" target="_blank"
+        class="product-card" data-id="6" style="text-decoration:none; color:inherit; display:block;">
+        <div class="product-img">
+          <img loading="eager" src="/assets/images/Mini lipstick shade 1.webp" alt=""
+            onerror="this.onerror=null;this.src='/assets/images/facelook_update_final-Photoroom.png';this.style.objectFit='contain';"
+            style="width:100%;height:100%;object-fit:contain;">
+          <span class="product-tag">Bestseller</span>
+          <button class="product-wish "
+            onclick="event.preventDefault();event.stopPropagation();toggleWish(6)">♡</button>
+          <span class="product-discount">10% OFF</span>
+        </div>
+        <div class="product-info">
+          <div class="product-stars">★★★★☆</div>
+          <div class="product-name">Facelook Mini Lipstick</div>
+          <div class="product-shade">Nude Romance</div>
+          <div class="grid-swatches-container">
+            <div class="grid-swatch" style="background-color:#B4040E;" title="True Red"></div>
+            <div class="grid-swatch" style="background-color:#AD0A3F;" title="Vivid Berry"></div>
+          </div>
+          <div class="product-row" style="margin-top: 8px;">
+            <div><span class="product-price">₹179</span><span class="product-orig">₹199</span></div>
+            <button class="add-cart-btn"
+              onclick="event.preventDefault();event.stopPropagation();addToCart(6)">+</button>
+          </div>
+        </div>
+      </a>
+      <a href="/product/facelook-max-lipstick" onclick="event.preventDefault(); openProduct(8)" target="_blank"
+        class="product-card" data-id="8" style="text-decoration:none; color:inherit; display:block;">
+        <div class="product-img">
+          <img loading="eager" src="/assets/images/lipgloss shade 01.webp" alt=""
+            onerror="this.onerror=null;this.src='/assets/images/facelook_update_final-Photoroom.png';this.style.objectFit='contain';"
+            style="width:100%;height:100%;object-fit:contain;">
+          <span class="product-tag">Bestseller</span>
+          <button class="product-wish "
+            onclick="event.preventDefault();event.stopPropagation();toggleWish(8)">♡</button>
+          <span class="product-discount">14% OFF</span>
+        </div>
+        <div class="product-info">
+          <div class="product-stars">★★★★☆</div>
+          <div class="product-name">Facelook Max Lipstick</div>
+          <div class="product-shade">Dewy Finish</div>
+          <div class="product-row" style="margin-top: 8px;">
+            <div><span class="product-price">₹299</span><span class="product-orig">₹349</span></div>
+            <button class="add-cart-btn"
+              onclick="event.preventDefault();event.stopPropagation();addToCart(8)">+</button>
+          </div>
+        </div>
+      </a>
+    </div>
 
     <!-- Shade strip -->
     <div
@@ -5397,7 +5686,172 @@
       }
     }
 
-    let PRODUCTS = [];
+    function fixImgUrl(img) {
+      if (!img || typeof img !== 'string') return '';
+      img = img.trim();
+      if (!img) return '';
+      if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:')) {
+        return img;
+      }
+      img = img.replace(/^\/+/, '');
+      if (!img.startsWith('assets/')) {
+        img = 'assets/images/' + img;
+      }
+      return '/' + img;
+    }
+
+    const DEFAULT_PRODUCTS = [
+      {
+        id: 1,
+        name: "DreamGirl Liquid Lip Color",
+        cat: "Lips",
+        price: 349,
+        orig: 499,
+        rating: 4.9,
+        reviews: 234,
+        shade: "Rosewood",
+        tag: "Bestseller",
+        desc: "Long-lasting matte formula enriched with Vitamin E. Stays put 12 hours without drying.",
+        image: "/assets/images/liq lip- wine dine.png",
+        palette: [
+          { name: "Wine Dine", hex: "#8B1A2A", image: "/assets/images/liq lip- wine dine.png" },
+          { name: "Plum Desire", hex: "#602532", image: "/assets/images/dream girl - plum desire.png" },
+          { name: "Berry Blush", hex: "#963345", image: "/assets/images/dream girl - berry blush.png" },
+          { name: "Coral Crush", hex: "#CF4B3C", image: "/assets/images/dream girl - coral crush.png" }
+        ],
+        stock: 100
+      },
+      {
+        id: 2,
+        name: "Velvet Bloome Lip Tint",
+        cat: "Lips",
+        price: 225,
+        orig: 249,
+        rating: 4.6,
+        reviews: 145,
+        tag: "Hot",
+        desc: "Creamy, precise lip liner that defines and fills for a fuller, longer-lasting look.",
+        image: "/assets/images/velvet bloome grp - 4.png",
+        palette: [
+          { name: "01", hex: "#C41432", image: "/assets/images/velvet bloome - 01.png" },
+          { name: "02", hex: "#CA154B", image: "/assets/images/velvet bloome - 02.png" },
+          { name: "03", hex: "#A51118", image: "/assets/images/velvet bloome - 03.png" },
+          { name: "04", hex: "#A6173B", image: "/assets/images/velvet bloome - 04.png" }
+        ],
+        stock: 100
+      },
+      {
+        id: 3,
+        name: "COVER ME - Compact Powder 2 in 1",
+        cat: "Face",
+        price: 150,
+        orig: 199,
+        rating: 5,
+        reviews: 312,
+        shade: "Pearl Blush",
+        tag: "Bestseller",
+        desc: "Buildable, blinding highlight for cheekbones, brow bones and inner corners. Ultra-pigmented.",
+        image: "/assets/images/CompactMe 1.webp",
+        palette: [],
+        stock: 100
+      },
+      {
+        id: 4,
+        name: "Sindoor",
+        cat: "Face",
+        price: 119,
+        orig: 149,
+        rating: 4.8,
+        reviews: 156,
+        shade: "Petal & Mauve",
+        tag: "Hot",
+        desc: "Two complementary blush shades in one compact. Natural flushed finish for all skin tones.",
+        image: "/assets/images/Sindoor 1.webp",
+        palette: [
+          { name: "Majestic Maroon", hex: "#550000", image: "/assets/images/Sindoor 2.webp" },
+          { name: "Chili Red", hex: "#CD1C18", image: "/assets/images/Sindoor 3.webp" }
+        ],
+        stock: 100
+      },
+      {
+        id: 5,
+        name: "Matte Lipstick",
+        cat: "Lips",
+        price: 169,
+        orig: 199,
+        rating: 4.6,
+        reviews: 278,
+        shade: "Natural Beige",
+        tag: "Trending",
+        desc: "Lightweight tinted moisturizer with SPF30. Buildable coverage with hydration benefits.",
+        image: "/assets/images/diamond shade 01.webp",
+        palette: [
+          { name: "True Red", hex: "#B4040E", image: "/assets/images/diamond shade 01.webp" },
+          { name: "Vivid Berry", hex: "#AD0A3F", image: "/assets/images/diamond shade 02.webp" },
+          { name: "Cherry Red", hex: "#AF0614", image: "/assets/images/diamond shade 03.webp" }
+        ],
+        stock: 100
+      },
+      {
+        id: 6,
+        name: "Facelook Mini Lipstick",
+        cat: "Lips",
+        price: 179,
+        orig: 199,
+        rating: 4.9,
+        reviews: 421,
+        shade: "Nude Romance",
+        tag: "Bestseller",
+        desc: "12 curated shades from matte to shimmer. Perfect for everyday and full glam looks.",
+        image: "/assets/images/Mini lipstick shade 1.webp",
+        palette: [
+          { name: "True Red", hex: "#B4040E", image: "/assets/images/Mini lipstick shade 1.webp" },
+          { name: "Vivid Berry", hex: "#AD0A3F", image: "/assets/images/Mini lipstick shade 2.webp" }
+        ],
+        stock: 100
+      },
+      {
+        id: 7,
+        name: "Nail Lacquer",
+        cat: "Nails",
+        price: 199,
+        orig: 279,
+        rating: 4.7,
+        reviews: 98,
+        shade: "Ballet Pink",
+        tag: "Trending",
+        desc: "7-free formula with chip-resistant gloss finish that lasts up to 10 days.",
+        image: "/assets/images/nails_makeup.png",
+        palette: [],
+        stock: 100
+      },
+      {
+        id: 8,
+        name: "Facelook Max Lipstick",
+        cat: "Lips",
+        price: 299,
+        orig: 349,
+        rating: 4.8,
+        reviews: 203,
+        shade: "Dewy Finish",
+        tag: "Bestseller",
+        desc: "Lock makeup all day with this lightweight hydrating mist. Natural finish guaranteed.",
+        image: "/assets/images/lipgloss shade 01.webp",
+        palette: [],
+        stock: 100
+      }
+    ];
+
+    DEFAULT_PRODUCTS.forEach(p => {
+      p.slug = slugify(p.name);
+      if (p.image) p.image = fixImgUrl(p.image);
+      if (p.images) p.images = p.images.map(img => fixImgUrl(img));
+      if (p.palette) p.palette.forEach(sh => { if (sh.image) sh.image = fixImgUrl(sh.image); });
+    });
+
+    let PRODUCTS = [...DEFAULT_PRODUCTS];
+
+
 
     // Connect to localhost backend when developing locally, otherwise use Render production URL
     const isLocal = window.location.hostname === 'localhost' ||
@@ -5771,17 +6225,19 @@
         const extraCount = p.palette.length - 4;
         swatchesHTML = `<div class="grid-swatches-container">` +
           displayPalettes.map(c => {
-            let bg = c.hex ? `background-color:${c.hex};` : (c.image ? `background:url('${c.image}') center/cover;` : `background-color:#ccc;`);
+            let bg = c.hex ? `background-color:${c.hex};` : (c.image ? `background:url('${fixImgUrl(c.image)}') center/cover;` : `background-color:#ccc;`);
             let titleAttr = c.name ? `title="${c.name.replace(/"/g, '&quot;')}"` : '';
             return `<div class="grid-swatch" style="${bg}" ${titleAttr}></div>`;
           }).join('') +
           `</div>`;
       }
 
+      const cardImgUrl = fixImgUrl(p.image);
       return `
     <a href="/product/${p.slug}" onclick="event.preventDefault(); openProduct(${p.id})" target="_blank" class="product-card" data-id="${p.id}" style="${extraStyle}; text-decoration:none; color:inherit; display:block;">
       <div class="product-img">
-        ${p.image ? `<img loading="lazy" src="${p.image}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;">` : `<span style="font-size:50px;">${p.emoji || '💄'}</span>`}
+        ${cardImgUrl ? `<img loading="lazy" src="${cardImgUrl}" alt="" onerror="this.onerror=null;this.src='/assets/images/facelook_update_final-Photoroom.png';this.style.objectFit='contain';" style="width:100%;height:100%;object-fit:contain;">` : `<span style="font-size:50px;">${p.emoji || '💄'}</span>`}
+
         ${p.tag ? `<span class="product-tag">${p.tag}</span>` : ''}
         <button class="product-wish ${inWish ? 'active' : ''}" onclick="event.preventDefault();event.stopPropagation();toggleWish(${p.id})">${inWish ? '♥' : '♡'}</button>
         ${(p.orig && p.orig > p.price) ? `<span class="product-discount">${disc}% OFF</span>` : ''}
@@ -5978,10 +6434,11 @@
       const disc = Math.round((1 - p.price / p.orig) * 100);
       const inW = state.wishlist.find(w => w.id === p.id);
 
-      let mainSrc = p.image;
-      if (p.images && p.images.length > 0) mainSrc = p.images[0];
+      let mainSrc = fixImgUrl(p.image);
+      if (p.images && p.images.length > 0) mainSrc = fixImgUrl(p.images[0]);
 
-      document.getElementById('detail-emoji').innerHTML = mainSrc ? `<img loading="lazy" src="${mainSrc}" id="main-detail-img" style="width:100%;object-fit:contain;">` : (p.emoji || '💄');
+      document.getElementById('detail-emoji').innerHTML = mainSrc ? `<img loading="lazy" src="${mainSrc}" id="main-detail-img" onerror="this.onerror=null;this.src='/assets/images/facelook_update_final-Photoroom.png';" style="width:100%;object-fit:contain;">` : (p.emoji || '💄');
+
 
 
       const thumbGallery = document.getElementById('thumbnail-gallery');
@@ -7146,8 +7603,10 @@
           if (isVideo) {
             mediaHtml = `<video src="${slide.media}" autoplay loop muted playsinline style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none;"></video>`;
           } else {
-            mediaHtml = `<img loading="lazy" src="${slide.media}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none;">`;
+            const loadingAttr = index === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+            mediaHtml = `<img ${loadingAttr} src="${slide.media}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none;">`;
           }
+
         }
 
         const overlayHtml = `<div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7)); z-index:1; pointer-events:none;"></div>`;
@@ -7345,46 +7804,59 @@
       const targetPage = document.getElementById('page-' + initialPage);
       if (targetPage) targetPage.classList.add('active');
 
+      // Fetch settings & hero slides in parallel without waiting for products fetch
+      api('/api/settings/hero_slides')
+        .then(slides => {
+          if (slides && slides.length > 0) {
+            renderHeroSlider(slides);
+          }
+        })
+        .catch(err => console.error('Failed to load hero slides', err));
+
+      api('/api/settings')
+        .then(settings => {
+          if (settings) {
+            if (settings.announcement_banner) document.getElementById('announcement-text').innerHTML = settings.announcement_banner;
+            if (settings.promo_banner) renderPromoBanner(settings.promo_banner);
+            if (settings.policy_about) renderAboutPage(settings.policy_about);
+            if (settings.policy_privacy) renderPolicyPage('page-privacy', settings.policy_privacy);
+            if (settings.policy_refund) renderPolicyPage('page-refund', settings.policy_refund);
+            if (settings.policy_shipping) renderPolicyPage('page-shipping', settings.policy_shipping);
+            if (settings.policy_terms) renderPolicyPage('page-terms', settings.policy_terms);
+          }
+        })
+        .catch(err => console.error('Failed to load settings', err));
+
+      // Trigger route immediately with instant pre-rendered content and default products
+      handleRoute();
+      updateAuthUI();
+      updateBadges();
+
       try {
-        PRODUCTS = await api('/api/products');
-        PRODUCTS.forEach(p => p.slug = slugify(p.name));
-
-        api('/api/settings/hero_slides')
-          .then(slides => {
-            if (slides && slides.length > 0) {
-              renderHeroSlider(slides);
-            }
-          })
-          .catch(err => console.error('Failed to load hero slides', err));
-
-        api('/api/settings')
-          .then(settings => {
-            if (settings) {
-              if (settings.announcement_banner) document.getElementById('announcement-text').innerHTML = settings.announcement_banner;
-              if (settings.promo_banner) renderPromoBanner(settings.promo_banner);
-              if (settings.policy_about) renderAboutPage(settings.policy_about);
-              if (settings.policy_privacy) renderPolicyPage('page-privacy', settings.policy_privacy);
-              if (settings.policy_refund) renderPolicyPage('page-refund', settings.policy_refund);
-              if (settings.policy_shipping) renderPolicyPage('page-shipping', settings.policy_shipping);
-              if (settings.policy_terms || settings.policy_return) renderPolicyPage('page-terms', settings.policy_terms || settings.policy_return);
-            }
-          })
-          .catch(err => console.error('Failed to load store policies', err));
+        api('/api/products').then(fetchedProducts => {
+          if (fetchedProducts && fetchedProducts.length > 0) {
+            PRODUCTS = fetchedProducts;
+            PRODUCTS.forEach(p => {
+              p.slug = slugify(p.name);
+              if (p.image) p.image = fixImgUrl(p.image);
+              if (p.images) p.images = p.images.map(img => fixImgUrl(img));
+              if (p.palette) p.palette.forEach(sh => { if (sh.image) sh.image = fixImgUrl(sh.image); });
+            });
+            renderHome();
+            if (state.page === 'shop') renderShop();
+          }
+        }).catch(err => console.error("Products background fetch error:", err));
 
         if (state.token) {
           state.cart = await api('/api/cart');
           state.wishlist = await api('/api/wishlist');
           fetchNotifications();
         }
+
       } catch (err) {
         console.error("Init Error:", err);
       }
 
-      // Trigger route
-      handleRoute();
-
-      updateAuthUI();
-      updateBadges();
       resetInterval();
     }
     initApp();
